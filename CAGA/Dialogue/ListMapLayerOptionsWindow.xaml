@@ -1,0 +1,69 @@
+﻿<Window x:Class="CAGA.Dialogue.ListMapLayerOptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select map layers" Height="580" Width="700" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="HoveredItemBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Lavender" Offset="0.15" />
+            <GradientStop Color="AliceBlue" Offset="0.85" />
+            <GradientStop Color="CadetBlue" Offset="1" />
+        </LinearGradientBrush>
+        <DataTemplate x:Key="OptionListTemplate" DataType="Whatever">
+            <Border x:Name="TheBorder" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="4" Margin="5">
+                <StackPanel>
+                    <CheckBox Content="{Binding LayerName}" Width="150" FontSize="13" FontWeight="Bold" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
+                </StackPanel>
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="AliceBlue" Offset="0.15" />
+                        <GradientStop Color="White" Offset="0.85" />
+                        <GradientStop Color="Lavender" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}},Path=IsMouseOver}" Value="True">
+                    <Setter TargetName="TheBorder" Property="Background" Value="{StaticResource HoveredItemBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="TheBorder" Property="Background" Value="{StaticResource HoveredItemBrush}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+
+        </DataTemplate>
+    </Window.Resources>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="480" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="480" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="15" FontWeight="Bold"></TextBlock>
+        <ListBox Grid.Row="1" Grid.Column="0" Name="OptionLB" ItemTemplate="{StaticResource OptionListTemplate}" BorderBrush="Transparent"
+                Background="Transparent">
+            <ListBox.Resources>
+                <!-- Style used if item is selected and listbox has keyboard focus -->
+                <Style x:Key="NoFocusVisualStyle"  TargetType="Control">
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                </Style>
+                <!-- Apply this style -->
+                <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+                    <Setter Property="FocusVisualStyle" Value="{StaticResource NoFocusVisualStyle}" />
+                    <!--<EventSetter Event="Selected" Handler="ListBoxItem_Selected"/>-->
+                </Style>
+                <!-- Color used if item is selected and listbox has focus -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                <!-- Color used if item is selected and listbox does not have focus -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                <!-- Font color used if item is selected and listbox has focus -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+
+            </ListBox.Resources>
+
+        </ListBox>
+        <Grid Name="mapGrid" Grid.Row="1" Grid.Column="1"></Grid>
+    </Grid>
+</Window>

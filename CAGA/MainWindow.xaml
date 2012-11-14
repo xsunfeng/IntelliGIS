@@ -1,0 +1,118 @@
+﻿<r:RibbonWindow x:Class="CAGA.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:r="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+        Title="CAGA" Height="1108" Width="1756" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closing="RibbonWindow_Closing">
+    
+    
+    <Grid Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <r:Ribbon Title="CAGA" x:Name="ribbon" Grid.Row="0">
+            <r:Ribbon.ApplicationMenu>
+                <r:RibbonApplicationMenu Label="File" IsMainMenu="True" SmallImageSource="Images\main_menu.png">
+                    <r:RibbonApplicationMenuItem Header="New..." ImageSource="Images\new_map.png"/>
+                    <r:RibbonApplicationMenuItem Header="Open..." ImageSource="Images\open_map.png"/>
+                </r:RibbonApplicationMenu>
+            </r:Ribbon.ApplicationMenu>
+
+            <r:RibbonTab Header="Map">
+                <r:RibbonGroup Name="RibbonMapGrp" Header="Map">
+                    <r:RibbonButton Name="OpenMapBtn" LargeImageSource="Images\open_map.png" Label="Open..." ToolTip="Open an existing map file" Click="OpenMapBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="SaveMapBtn" LargeImageSource="Images\save_map.png" Label="Save..." ToolTip="Save the current map" Click="SaveMapBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+
+                <r:RibbonGroup Name="RibbonLayersGrp" Header="Layers">
+                    <r:RibbonButton Name="AddLayerBtn" LargeImageSource="Images\add_layer.png" Label="Add Layer..." ToolTip="Add a new layer" Click="AddLayerBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="RemoveLayerBtn" LargeImageSource="Images\remove_layer.png" Label="Remove Layer" ToolTip="Remove the selected layer" Click="RemoveLayerBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonNavGrp" Header="Navigation">
+                    <r:RibbonToggleButton Name="PanMapBtn" LargeImageSource="Images\pan_map.png" Label="Pan" ToolTip="Pan Map" Checked="PanMapBtn_Checked" Unchecked="PanMapBtn_Unchecked"></r:RibbonToggleButton>
+                    <r:RibbonToggleButton Name="ZoomInBtn" LargeImageSource="Images\zoom_in.png" Label="In" ToolTip="Zoom In" Checked="ZoomInBtn_Checked" Unchecked="ZoomInBtn_Unchecked"></r:RibbonToggleButton>
+                    <r:RibbonToggleButton Name="ZoomOutBtn" LargeImageSource="Images\zoom_out.png" Label="Out" ToolTip="Zoom Out" Checked="ZoomOutBtn_Checked" Unchecked="ZoomOutBtn_Unchecked"></r:RibbonToggleButton>
+                    <r:RibbonButton Name="ZoomToExtentBtn" LargeImageSource="Images\zoom_to_extent.png" Label="To Max Extent" ToolTip="Zoom to the maximum extent" Click="ZoomToExtentBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="ZoomToPrevBtn" LargeImageSource="Images\zoom_to_prev.png" Label="To Previous" ToolTip="Zoom to the previous extent" Click="ZoomToPrevBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="ZoomToNextBtn" LargeImageSource="Images\zoom_to_next.png" Label="To Next" ToolTip="Zoom to the next extent" Click="ZoomToNextBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="ZoomToLayerBtn" LargeImageSource="Images\zoom_to_layer.png" Label="To Layer" ToolTip="Zoom to the selected layer" Click="ZoomToLayerBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonSelectionGrp" Header="Selection">
+                    <r:RibbonSplitButton Name="SelectFeatureBtn" Label="Select Feature" LargeImageSource="Images\select_feature.png" IsCheckable="True" Click="SelectFeatureBtn_Click">
+                        <r:RibbonGallery Name="SelectFeatureGallery" SelectedValue="By Rectangle" SelectedValuePath="Content"  MaxColumnCount="1">
+                            <r:RibbonGalleryCategory>
+                                <r:RibbonGalleryItem Content="By Rectangle" Name="SelByRectItem" Selected="SelectFeatureItem_Selected" />
+                                <r:RibbonGalleryItem Content="By Polygon" Name="SelByPolyItem" Selected="SelectFeatureItem_Selected" />
+                                <r:RibbonGalleryItem Content="By Circle" Name="SelByCircleItem" Selected="SelectFeatureItem_Selected" />
+                                <r:RibbonGalleryItem Content="By Line" Name="SelByLineItem" Selected="SelectFeatureItem_Selected" />
+                            </r:RibbonGalleryCategory>
+                        </r:RibbonGallery>                        
+                    </r:RibbonSplitButton>
+                    <r:RibbonButton Name="SelectByGraphicsBtn" LargeImageSource="Images\select_by_graphics.png" Label="By Graphics" ToolTip="Select by graphics" Click="SelectByGraphicsBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="UnselectFeatureBtn" LargeImageSource="Images\unselect_feature.png" Label="Unselect All" ToolTip="Unselect All" Click="UnselectFeatureBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonToolsGrp" Header="Tools">
+                    <r:RibbonToggleButton Name="IdentifyFeatureBtn" LargeImageSource="Images\identify_feature.png" Label="Identify" ToolTip="Identify" Checked="IdentifyFeatureBtn_Checked" Unchecked="IdentifyFeatureBtn_Unchecked"></r:RibbonToggleButton>
+                    <r:RibbonButton Name="AttrTableBtn" LargeImageSource="Images\attr_table.png" Label="Attribute Table" ToolTip="Show the attribute table" Click="AttrTableBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonDrawingGrp" Header="Drawing">
+                    <r:RibbonToggleButton Name="DrawPolygonBtn" LargeImageSource="Images\draw_polygon.png" Label="Polygon" ToolTip="Draw a polygon" Checked="DrawPolygonBtn_Checked" Unchecked="DrawPolygonBtn_Unchecked"></r:RibbonToggleButton>
+                </r:RibbonGroup>
+
+            </r:RibbonTab>
+            <r:RibbonTab Header="Dialogue">
+                <r:RibbonGroup Name="RibbonDlgMgrGrp" Header="Manager">
+                    <r:RibbonButton Name="ToggleDlgBtn" LargeImageSource="Images\start_dlg.png" Label="Start Dialogue" ToolTip="Start a new dialogue" Click="ToggleDlgBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonSpeechRecGrp" Header="Speech">
+                    <r:RibbonButton Name="ToggleSpeechBtn" LargeImageSource="Images\stop_speech.png" Label="Stop Recognition" ToolTip="Stop the speech recognition" Click="ToggleSpeechBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="SimSpeechBtn" LargeImageSource="Images\simulate_speech.png" Label="Simulate" ToolTip="Simulate speech" Click="SimSpeechBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+            </r:RibbonTab>
+            <r:RibbonTab Header="Window">
+            </r:RibbonTab>
+        </r:Ribbon>
+
+        <ad:DockingManager x:Name="dockManager" Grid.Row="1">
+            <ad:ResizingPanel Orientation="Horizontal">
+                <ad:DockablePane ad:ResizingPanel.ResizeWidth="300" >
+                    <ad:DockableContent Title="Layers" Name="LayersPanel">
+                        <Grid Name="tocGrid"/>
+                    </ad:DockableContent>
+                </ad:DockablePane>
+                <ad:DocumentPane SelectionChanged="DocumentPane_SelectionChanged">
+                    <ad:DocumentContent Title="Map" Name="MapPanel">
+                        <Grid Name="mapGrid"/>
+                    </ad:DocumentContent>
+                    <ad:DocumentContent Title="Layout" Name="LayoutPanel">
+                        <Grid Name="layoutGrid"/>
+                    </ad:DocumentContent>
+                </ad:DocumentPane>
+                <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="500">
+                    <ad:DockablePane ad:ResizingPanel.ResizeHeight="400" Name="KinectCtrlPanel">
+                        <ad:DockableContent Title="Color and Skeleton" Name="ColorDisplayPanel">
+                            <Grid>
+                                <Image Name="colorDisplay" Source="{Binding Bitmap}"></Image>
+                                <Canvas Name="skeletonCanvas"></Canvas>
+                            </Grid>
+                        </ad:DockableContent>
+                        <ad:DockableContent Title="Depth" Name="DepthDisplayPanel">
+                            <Grid>
+                                <Image x:Name="depthDisplay" Source="{Binding Bitmap}"></Image>
+                            </Grid>
+                        </ad:DockableContent>
+
+                    </ad:DockablePane>
+                    <ad:DockablePane Name="DevCtrlPanel">
+                        <ad:DockableContent Title="Logs">
+                            <TextBlock HorizontalAlignment="Left" Name="statusTB" Text="" TextWrapping="Wrap" Padding="10" FontSize="14" />
+                        </ad:DockableContent>
+                    </ad:DockablePane>
+                </ad:ResizingPanel>
+                
+            </ad:ResizingPanel>
+        </ad:DockingManager>
+
+    </Grid>
+</r:RibbonWindow>

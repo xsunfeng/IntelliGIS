@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<grammar version="1.0" xml:lang="en-US" mode="voice" root="toplevel" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0" xmlns:sapi="http://schemas.microsoft.com/Speech/2002/06/SRGSExtensions" sapi:alphabet="x-microsoft-ups">
+  <rule id="toplevel" scope="public">
+    <one-of>
+
+
+      <item>
+        <ruleref uri="#MapCtrl"/>
+      </item>
+
+      <item>
+        <ruleref uri="#Say1"/>
+      </item>
+      <item>
+        <ruleref uri="#Say2"/>
+      </item>
+      <item>
+        <ruleref uri="#Say3"/>
+      </item>
+      <item>
+        <ruleref uri="#Say4"/>
+      </item>
+      <item>
+        <ruleref uri="#Say5"/>
+      </item>
+      <item>
+        <ruleref uri="#Say6"/>
+      </item>
+
+      <item>
+        <ruleref uri="#Say7"/>
+      </item>
+      <!--
+      
+      <item>
+        <ruleref uri="#Say8"/>
+      </item>
+      <item>
+        <ruleref uri="#Say9"/>
+      </item>
+      <item>
+        <ruleref uri="#Say10"/>
+      </item>
+      <item>
+        <ruleref uri="#Say11"/>
+      </item>
+      <item>
+        <ruleref uri="#Say12"/>
+      </item>
+      <item>
+        <ruleref uri="#Say13"/>
+      </item>
+      -->
+    </one-of>
+  </rule>
+
+  <rule id="Say1" scope="public">
+    <example> Hi, Jim. There is a nuclear release and we need to plan evacuation </example>
+
+    <item repeat="0-1">
+      <ruleref uri="#Greetings"/>
+    </item>
+    <item repeat="0-1">
+      <ruleref uri="#UserName"/>
+      <tag> out.UserName = rules.UserName; </tag>
+    </item>
+
+    <item>there is a</item>
+
+    <ruleref uri="#Incident"/>
+    <tag> out.Incident = rules.Incident; </tag>
+
+    <item>and we need to</item>
+
+    <ruleref uri="#Intention"/>
+    <tag> out.Intention = rules.Intention; </tag>
+  </rule>
+
+
+  <rule id="Say2" scope="public">
+    <example> It is near Harrisburg </example>
+
+    <item>It is</item>
+    <item repeat="0-1">
+      <ruleref uri="#Preposition"/>
+      <tag> out.Preposition = rules.Preposition; </tag>
+    </item>
+    <ruleref uri="#Location"/>
+    <tag> out.Location = rules.Location; </tag>
+  </rule>
+
+  <rule id="Say3" scope="public">
+    <example> I think it should be this one </example>
+    <item repeat="0-1"> I think </item>
+
+    <one-of>
+      <item> it should be </item>
+      <item> it is </item>
+      <item> it must be </item>
+    </one-of>
+
+    <ruleref uri="#Pointing"/>
+    <tag> out.Pointing = rules.Pointing; </tag>
+  </rule>
+
+  <rule id="Say4" scope="public">
+    <example> What is the population within the two mile EPZ zone around the plant </example>
+
+    <ruleref uri="#WhatQuestion"/>
+    <tag> out.Question = rules.WhatQuestion; </tag>
+
+    <ruleref uri="#Theme"/>
+    <tag> out.Theme = rules.Theme; </tag>
+
+    <ruleref uri="#Preposition"/>
+    <tag> out.Preposition = rules.Preposition; </tag>
+
+    <ruleref uri="#EPZ"/>
+    <tag> out.EPZ = rules.EPZ; </tag>
+
+    <item repeat="0-1"> around the plant </item>
+
+  </rule>
+
+  <rule id="Say5" scope="public">
+    <example> What about five mile EPZ zone </example>
+
+    <ruleref uri="#WhatAboutQuestion"/>
+    <tag> out.Question = rules.WhatAboutQuestion; </tag>
+
+    <ruleref uri="#EPZ"/>
+    <tag> out.EPZ = rules.EPZ; </tag>
+
+    <item repeat="0-1"> around the plant </item>
+
+  </rule>
+
+  <rule id="Say6" scope="public">
+    <example> We should also consider ten mile EPZ zone </example>
+    <item repeat="0-1"> We should </item>
+    <item repeat="0-1"> also </item>
+
+    <ruleref uri="#Consider"/>
+    <tag> out.Consider = rules.Consider; </tag>
+
+    <ruleref uri="#EPZ"/>
+    <tag> out.EPZ = rules.EPZ; </tag>
+
+    <item repeat="0-1"> around the plant </item>
+
+  </rule>
+
+  <rule id="Say7" scope="public">
+    <example> I think we should choose five mile EPZ zone </example>
+    <item repeat="0-1"> I think </item>
+    <item repeat="0-1"> We should </item>
+
+    <ruleref uri="#Choose"/>
+    <tag> out.Choose = rules.Choose; </tag>
+
+    <ruleref uri="#EPZ"/>
+    <tag> out.EPZ = rules.EPZ; </tag>
+
+    <item repeat="0-1"> around the plant </item>
+
+  </rule>
+
+  <rule id="MapCtrl" scope="public">
+    <example> map, zoom in </example>
+    <example> map, zoom out </example>
+    <example> map, move left </example>
+    <example> map, move right </example>
+    <example> map, move up </example>
+    <example> map, move down </example>
+
+
+    <item> map </item>
+    <one-of>
+      <item>
+        <ruleref uri="#Zoom"/>
+        <tag> out.Zoom = rules.Zoom; </tag>
+      </item>
+
+      <item>
+        <ruleref uri="#Move"/>
+        <tag> out.Move = rules.Move; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Zoom">
+    <example> zoom in </example>
+    <example> zoom out </example>
+
+    <item> zoom </item>
+
+    <one-of>
+      <item>
+        in <tag> out = "in"; </tag>
+      </item>
+      <item>
+        out <tag> out = "out"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Move">
+    <example> move left </example>
+    <example> move up </example>
+
+    <item> move </item>
+
+    <one-of>
+      <item>
+        left <tag> out = "left"; </tag>
+      </item>
+      <item>
+        right <tag> out = "right"; </tag>
+      </item>
+      <item>
+        up <tag> out = "up"; </tag>
+      </item>
+      <item>
+        down <tag> out = "down"; </tag>
+      </item>
+
+    </one-of>
+  </rule>
+
+  <rule id="Greetings">
+    <example> hi </example>
+    <example> hello </example>
+    <one-of>
+      <item> hi</item>
+      <item> hello </item>
+    </one-of>
+  </rule>
+
+  <rule id="UserName">
+    <example> Jim </example>
+    <example> Jill </example>
+    <example> Dave </example>
+    <one-of>
+      <item>
+        Jim <tag> out = "Jim"; </tag>
+      </item>
+      <item>
+        Jill <tag> out = "Jill"; </tag>
+      </item>
+      <item>
+        Dave <tag> out = "Dave"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Incident">
+    <example> nuclear release </example>
+    <one-of>
+      <item>
+        nuclear release <tag> out = "nuclear release"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Intention">
+    <example> plan evacuation </example>
+    <one-of>
+      <item>
+        plan evacuation <tag> out = "plan evacuation"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Theme">
+    <example> the population </example>
+    <one-of>
+      <item>
+        the population <tag> out = "population"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="EPZ">
+    <example> the two mile EPZ </example>
+    <example> three mile EPZ zone </example>
+
+    <item repeat="0-1"> the </item>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.Quantity = rules.Quantity; </tag>
+
+    <ruleref uri="#Unit"/>
+    <tag> out.Unit = rules.Unit; </tag>
+
+    <one-of>
+      <item>
+        <token sapi:pron="E P Z">EPZ</token>
+      </item>
+      <item> Evacuation Planning Zone </item>
+      <item> EPZ </item>
+    </one-of>
+
+    <item repeat="0-1"> zone </item>
+  </rule>
+
+
+  <rule id="Preposition">
+    <example> near </example>
+    <example> at </example>
+    <example> within </example>
+    <example> in </example>
+
+    <one-of>
+      <item>
+        near <tag> out = "near"; </tag>
+      </item>
+      <item>
+        at <tag> out = "at"; </tag>
+      </item>
+      <item>
+        within <tag> out = "in"; </tag>
+      </item>
+      <item>
+        in <tag> out = "in"; </tag>
+      </item>
+
+    </one-of>
+  </rule>
+
+  <rule id="Location">
+    <example> Harrisburg </example>
+    <one-of>
+      <item>
+        Harrisburg <tag> out = "Harrisburg"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Pointing">
+    <example> this one </example>
+    <example> this object </example>
+    <example> this location </example>
+    <example> here </example>
+
+    <one-of>
+      <item>
+        this one <tag> out = "this"; </tag>
+      </item>
+      <item>
+        this object <tag> out = "this"; </tag>
+      </item>
+      <item>
+        this location <tag> out = "this"; </tag>
+      </item>
+      <item>
+        here <tag> out = "this"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="WhatQuestion">
+    <example> what is </example>
+    <example> what are </example>
+
+    <one-of>
+      <item>
+        what is <tag> out = "what"; </tag>
+      </item>
+      <item>
+        what are <tag> out = "what"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="WhatAboutQuestion">
+    <example> what about </example>
+    <example> how about </example>
+
+    <one-of>
+      <item>
+        what about <tag> out = "whatabout"; </tag>
+      </item>
+      <item>
+        how about <tag> out = "whatabout"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Consider">
+    <example> think about </example>
+    <example> consider </example>
+
+    <one-of>
+      <item>
+        think about <tag> out = "consider"; </tag>
+      </item>
+      <item>
+        consider <tag> out = "consider"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Choose">
+    <example> choose </example>
+
+    <one-of>
+      <item>
+        choose <tag> out = "choose"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Unit">
+    <example> mile </example>
+    <example> miles </example>
+    <example> kilometers </example>
+    <example> kilometer </example>
+
+    <one-of>
+      <item>
+        mile <tag> out = "mile"; </tag>
+      </item>
+      <item>
+        miles <tag> out = "mile"; </tag>
+      </item>
+      <item>
+        kilometer <tag> out = "kilometer"; </tag>
+      </item>
+      <item>
+        kilometers <tag> out = "kilometer"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Quantity">
+    <example> one </example>
+    <example> two </example>
+    <example> three </example>
+    <example> four </example>
+
+    <one-of>
+      <item>
+        one <tag> out = 1; </tag>
+      </item>
+      <item>
+        two <tag> out = 2; </tag>
+      </item>
+      <item>
+        three <tag> out = 3; </tag>
+      </item>
+      <item>
+        four <tag> out = 4; </tag>
+      </item>
+      <item>
+        five <tag> out = 5; </tag>
+      </item>
+      <item>
+        six <tag> out = 6; </tag>
+      </item>
+      <item>
+        seven <tag> out = 7; </tag>
+      </item>
+      <item>
+        eight <tag> out = 8; </tag>
+      </item>
+      <item>
+        nine <tag> out = 9; </tag>
+      </item>
+      <item>
+        ten <tag> out = 10; </tag>
+      </item>
+    </one-of>
+  </rule>
+</grammar>

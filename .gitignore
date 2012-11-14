@@ -1,0 +1,6 @@
+*.zip 
+*.pdb
+*.exe
+*.o
+*.dll
+*.so

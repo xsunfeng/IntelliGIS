@@ -1,0 +1,27 @@
+﻿<!--
+
+The purpose of this file is to demonstrate how to configure a locally installed Microsoft speech recognizer
+for use with relevant tools included in the Microsoft Speech Platform SDK.
+
+In this example, the configuration file specifies several optional properties that can be set on
+the recognizer.
+
+As an important reminder, in order to configure a local engine, you must have installed both the
+Speech runtime in addition to a runtime language (i.e., language pack or specific language engine).
+
+-->
+
+
+<Configuration>
+
+  <!-- Indicates that the recognizer is installed locally -->
+  <Provider type="local" />
+
+  <!-- Only the 'enginerequiredattributes' values are required; all others are optional -->
+  <Properties
+     completetimeout="0.25s" incompletetimeout="3s"
+     maxnbest="4" requesttimeout="15s" enginerequiredattributes="Language=409;Vendor=Microsoft"
+     engineoptionalattributes="CommandAndControl">
+  </Properties>
+
+</Configuration>

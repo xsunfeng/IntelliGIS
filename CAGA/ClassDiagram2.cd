@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CAGA.Dialogue.DialogueManager">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAQAiAABIQAAIDAQAAAAAEwAAAAICAAAAAgABA=</HashCode>
+      <FileName>Dialogue\DialogueManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.Agent">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAgAAAAABAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogue\Agent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.PlanGraph">
+    <Position X="5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAJACoQAAASQCQQgQBAQIAABCAoAIABAEAAAADIAAA=</HashCode>
+      <FileName>Dialogue\PlanGraph.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.PlanNode">
+    <Position X="8" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAggAAEAABAQAQQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogue\PlanNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.Utility">
+    <Position X="3.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogue\Utility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.SimpleParser">
+    <Position X="13.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAACAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogue\SimpleParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.ActionNode">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAADQAYAAAAIBAACAAEAAAAAAAiAAEAAAAIACAIAAEA=</HashCode>
+      <FileName>Dialogue\ActionNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.Executor" Collapsed="true">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AYGAAAAAAAkAgAQAAAACESAgIAAAAAAIAEAAAogAEAE=</HashCode>
+      <FileName>Dialogue\Executor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.ParamNode">
+    <Position X="6.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAIAAAAEAAABQAEAAAAAAAAAAAoAAAAQCA=</HashCode>
+      <FileName>Dialogue\ParamNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.Parser" Collapsed="true">
+    <Position X="14" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogue\Parser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.DialogueAct">
+    <Position X="15.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAgAAAEAAABAAQAAAAAAAAACABAEAAA=</HashCode>
+      <FileName>Dialogue\DialogueAct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.SQLiteKBase">
+    <Position X="10.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAIAAAAAIICQAAAAAACAJAA=</HashCode>
+      <FileName>Dialogue\SQLiteKBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Dialogue.DialogueResponse">
+    <Position X="12" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAEAAAAAAAQAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Dialogue\DialogueResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAGA.Map.ArcMapManager" Collapsed="true">
+    <Position X="0.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QACSAAkEAyAFB0AhGgBgQjmAUEoQABAIgCBAEEAIUQY=</HashCode>
+      <FileName>Map\ArcMapManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CAGA.Map.MapManager" Collapsed="true">
+    <Position X="4" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAASAAAEAyABAUAAAABAAAEAEEIAAAAAgAAAEAAAAAA=</HashCode>
+      <FileName>Map\MapManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="CAGA.Map.IGeoProcessor">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Map\IGeoProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="CAGA.Dialogue.DialogueActType" Collapsed="true">
+    <Position X="13.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAEAAAAAEAAAgAAQCAAAAAAAAAAQAAAAAAgAAIJA=</HashCode>
+      <FileName>Dialogue\DialogueAct.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CAGA.Dialogue.ParamState" Collapsed="true">
+    <Position X="0.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAABAAAABAABA=</HashCode>
+      <FileName>Dialogue\ParamNode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CAGA.Dialogue.DialogueResponseType" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgAAAIQACAAAAAAAAAAMIAAgAASAEAAIAwAAAAAABCA=</HashCode>
+      <FileName>Dialogue\DialogueResponse.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CAGA.Map.MapFunctionMode" Collapsed="true">
+    <Position X="6.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACBAAAIIEAAAAgAAAAAAAAAAABAAAACIAAAAAEEAAAA=</HashCode>
+      <FileName>Map\MapManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

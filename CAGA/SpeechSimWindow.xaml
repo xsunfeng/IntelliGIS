@@ -1,0 +1,27 @@
+﻿<Window x:Class="CAGA.SpeechSimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Simulate Speech" Height="480" Width="640" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="540" />
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition/>
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <TextBox Name="NewSimInput" Grid.Column="0" Grid.Row="0" Margin="5" TextWrapping="Wrap"></TextBox>
+        <Button Name="AddNewSimInput" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Content="Add" Padding="0" Margin="0" MinWidth="50" MinHeight="25" Click="AddNewSimInput_Click"></Button>
+        <ListBox Name="ScriptList" Grid.Row="1" Grid.ColumnSpan="2" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap" Padding="3"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Name="SimulateBtn" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Content="Simulate" Padding="0" Margin="0" MinWidth="70" MinHeight="30" Click="SimulateBtn_Click"></Button>
+
+    </Grid>
+</Window>

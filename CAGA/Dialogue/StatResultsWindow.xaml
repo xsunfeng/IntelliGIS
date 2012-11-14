@@ -1,0 +1,78 @@
+﻿<Window x:Class="CAGA.Dialogue.StatResultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Selection Statistics" Height="360" Width="480" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow">
+
+    <Window.Resources>
+    <LinearGradientBrush x:Key="HoveredItemBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="Lavender" Offset="0.15" />
+        <GradientStop Color="AliceBlue" Offset="0.85" />
+        <GradientStop Color="CadetBlue" Offset="1" />
+    </LinearGradientBrush>
+    <DataTemplate x:Key="StatListTemplate" DataType="Whatever">
+        <Border x:Name="TheBorder" BorderBrush="Gray" BorderThickness="1" Padding="5" CornerRadius="4" Margin="5">
+            <WrapPanel>
+                <TextBlock Text="{Binding Key}" Width="80" FontWeight="Bold"></TextBlock>
+                <TextBlock Text="{Binding Value}" Width="100"></TextBlock>
+            </WrapPanel>
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="AliceBlue" Offset="0.15" />
+                    <GradientStop Color="White" Offset="0.85" />
+                    <GradientStop Color="Lavender" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}},Path=IsMouseOver}" Value="True">
+                <Setter TargetName="TheBorder" Property="Background" Value="{StaticResource HoveredItemBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <Setter TargetName="TheBorder" Property="Background" Value="{StaticResource HoveredItemBrush}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+
+    </DataTemplate>
+    </Window.Resources>
+    
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <WrapPanel Margin="5">
+                <Label Content="Layer: " FontWeight="Bold" />
+                <TextBlock Text="" Name="LayerNameTB" VerticalAlignment="Center"></TextBlock>
+            </WrapPanel>
+            <WrapPanel Margin="5">
+                <Label Content="Field: " FontWeight="Bold" />
+                <TextBlock Text="" Name="FieldNameTB" VerticalAlignment="Center"></TextBlock>
+            </WrapPanel>
+            <Label Content="Statistics:" Margin="5" Padding="5" FontWeight="Bold" />
+            <ListBox Name="StatisticsLB" ItemTemplate="{StaticResource StatListTemplate}" BorderBrush="Transparent"
+                Background="Transparent">
+                <ListBox.Resources>
+                    <!-- Style used if item is selected and listbox has keyboard focus -->
+                    <Style x:Key="NoFocusVisualStyle"  TargetType="Control">
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                    </Style>
+                    <!-- Apply this style -->
+                    <Style x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+                        <Setter Property="FocusVisualStyle" Value="{StaticResource NoFocusVisualStyle}" />
+                    </Style>
+                    <!-- Color used if item is selected and listbox has focus -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                    <!-- Color used if item is selected and listbox does not have focus -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                    <!-- Font color used if item is selected and listbox has focus -->
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                </ListBox.Resources>
+            </ListBox>
+        </StackPanel>
+        <StackPanel Grid.Column="1" >
+            <Image Name="statGraph"></Image>
+            <Button Name="AddGraphToLayout" Content="Add to Layout" Click="AddGraphToLayout_Click"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

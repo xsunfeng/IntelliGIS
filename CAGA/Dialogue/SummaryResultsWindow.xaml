@@ -1,0 +1,23 @@
+﻿<Window x:Class="CAGA.Dialogue.SummaryResultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        Title="Selection Summary" Height="360" Width="480" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow">
+    
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Height="400" CanVerticallyScroll="True">
+            <WindowsFormsHost>
+                <wf:DataGridView x:Name="SummaryTableGridView"></wf:DataGridView>
+            </WindowsFormsHost>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <Image Name="SummaryGraph"></Image>
+            <Button Name="AddGraphToLayout" Content="Add to Layout" Click="AddGraphToLayout_Click"></Button>
+        </StackPanel>
+        
+    </Grid>
+</Window>
