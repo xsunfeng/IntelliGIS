@@ -4,4 +4,7 @@
 *.o
 *.so
 *.suo
-Data\
+*.exe.manifest
+*.cache
+*.log
+Data/

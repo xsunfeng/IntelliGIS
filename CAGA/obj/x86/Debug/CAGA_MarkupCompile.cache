@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\
+C:\Users\dxc360\Projects\CAGA\CAGA\obj\x86\Debug\
 CAGA
 none
 false
 DEBUG;TRACE
-C:\Work\Projects\CAGA\CAGA\App.xaml
+C:\Users\dxc360\Projects\CAGA\CAGA\App.xaml
 8-1560555276
 
 36919743918
-391674763842
+39677175879
 Dialogue\SummaryResultsWindow.xaml;Dialogue\ListMapLayerOptionsWindow.xaml;Dialogue\ListPlainOptionsWindow.xaml;Dialogue\StatResultsWindow.xaml;Map\AttrTableWindow.xaml;MainWindow.xaml;Map\SymbologyWindow.xaml;SpeechSimWindow.xaml;
 
 False
