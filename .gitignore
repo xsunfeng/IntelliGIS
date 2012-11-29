@@ -3,4 +3,5 @@
 *.exe
 *.o
 *.so
+*.suo
 Data\
