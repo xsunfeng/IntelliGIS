@@ -4,3 +4,6 @@
 *.o
 *.dll
 *.so
+Data\
+CAGA\bin\
+CAGA\obj\

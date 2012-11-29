@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 
 using CAGA.Map;
-using DotSpatial.Controls;
-using DotSpatial.Data;
 
 namespace CAGA.Dialogue
 {
