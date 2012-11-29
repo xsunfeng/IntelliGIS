@@ -232,7 +232,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "data_source")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\Users\dxc360\Projects\CAGA Project\GISLAB\Data\";
+                                string dataSourcePath = @"..\..\..\Data\GISLAB\Data\";
                                 foreach (string value in paramNode.Values)
                                 {
                                     string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
