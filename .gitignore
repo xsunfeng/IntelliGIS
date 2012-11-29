@@ -7,4 +7,5 @@
 *.exe.manifest
 *.cache
 *.log
+*.~vsd
 Data/
