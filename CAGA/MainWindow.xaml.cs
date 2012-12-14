@@ -42,6 +42,7 @@ namespace CAGA
         private Microsoft.Win32.OpenFileDialog openFileDlg;
         private ListPlainOptionsWindow listPlainOptionWindow;
         private ListMapLayerOptionsWindow listMapLayerOptionWindow;
+        private ListOptionsWithExamplesWindow listOptionsWithExampleWindow;
         private StatResultsWindow statResultsWindow;
         private SummaryResultsWindow sumResultsWindow;
 
@@ -51,6 +52,7 @@ namespace CAGA
             openFileDlg = new Microsoft.Win32.OpenFileDialog();
             listPlainOptionWindow = null;
             listMapLayerOptionWindow = null;
+            listOptionsWithExampleWindow = null;
             statResultsWindow = null;
             sumResultsWindow = null;
         }
@@ -102,9 +104,18 @@ namespace CAGA
             MapPanel.Activate();
             
             //mapMgr.LoadMap(@"C:\Work\Data\GISLAB\Data\Oleader.mxd");
+            //ArrayList inputLayers = new ArrayList();
+            //inputLayers.Add("parcels");
+            //inputLayers.Add("FloodAreas");
+            //string outputFile = mapMgr.Overlay(inputLayers);
+
             //mapMgr.LoadMap(@"C:\Work\Data\GISLAB\Maps\test.mxd");
             //mapMgr.AddLayer(@"C:\Work\Data\World\country.shp");
             //mapMgr.AddLayer(@"C:\Work\Data\World\cities.shp");
+            
+            
+            
+
             /*
             Hashtable result = mapMgr.GetFieldStatistics("parcels", "Acreage", true);
             this.statResultsWindow = new StatResultsWindow(result);
@@ -207,7 +218,7 @@ namespace CAGA
                 mapMgr.SetFunctionMode(MapFunctionMode.None);
                 
                 SortedList result = new SortedList();
-                result.Add("Draw Region", name);
+                result.Add("Specify Region By Drawing", name);
                 Log("Drawing is finished and sent to the dialogue manager", "info");
 
                 ArrayList respList = dlgMgr.Update(result);
@@ -225,6 +236,10 @@ namespace CAGA
             if (this.listMapLayerOptionWindow != null)
             {
                 this.listMapLayerOptionWindow.Close();
+            }
+            if (this.listOptionsWithExampleWindow != null)
+            {
+                this.listOptionsWithExampleWindow.Close();
             }
             if (this.statResultsWindow != null)
             {
@@ -255,6 +270,11 @@ namespace CAGA
                 {
                     mapMgr.AddLayer(resp.RespContent.ToString());
                     Log("A new map layer is added: " + resp.RespContent.ToString(), "info");
+                }
+                else if (resp.DlgRespType == DialogueResponseType.mapLayerRemoved)
+                {
+                    mapMgr.HideLayer(resp.RespContent.ToString());
+                    Log("A new map layer is hidden: " + resp.RespContent.ToString(), "info");
                 }
                 else if (resp.DlgRespType == DialogueResponseType.mapDocumentOpened)
                 {
@@ -287,9 +307,31 @@ namespace CAGA
                         this.listMapLayerOptionWindow.LoadMap(mapMgr.GetMapFile());
                     }
                 }
+                else if (resp.DlgRespType == DialogueResponseType.listOptionsWithExamples)
+                {
+                    OptionWithExampleListData optionListData = resp.RespContent as OptionWithExampleListData;
+                    if (optionListData != null)
+                    {
+                        this.listOptionsWithExampleWindow = new ListOptionsWithExamplesWindow(optionListData);
+                        this.speechSyn.SpeakAsync(optionListData.Opening);
+                        this.listOptionsWithExampleWindow.Owner = this;
+                        this.listOptionsWithExampleWindow.Show();
+                        this.listOptionsWithExampleWindow.Closed += this.OnlistOptionsWithExampleWindowClosed;
+                    }
+                }
                 else if (resp.DlgRespType == DialogueResponseType.drawPolygonStarted)
                 {
                     mapMgr.DrawPolygon(resp.RespContent.ToString());
+                }
+                else if (resp.DlgRespType == DialogueResponseType.selectByAttributes)
+                {
+                    if (mapMgr != null)
+                    {
+                        SelectByAttributeWindow selectWindow = new SelectByAttributeWindow(mapMgr);
+                        selectWindow.Show();
+                        selectWindow.Owner = this;
+                        selectWindow.Closed += this.OnSelectByAttributeWindowClosed;
+                    }
                 }
                 else if (resp.DlgRespType == DialogueResponseType.statisticResults)
                 {
@@ -654,6 +696,29 @@ namespace CAGA
         {
         }
 
+        private void OnlistOptionsWithExampleWindowClosed(object sender, EventArgs e)
+        {
+            OptionWithExampleItemData itemData = ((ListOptionsWithExamplesWindow)sender).SelectedItem;
+            if (itemData != null)
+            {
+                this.kinectMgr.speechRecognizer.Simulate(itemData.Title);
+            }
+        }
+        
+
+        private void OnSelectByAttributeWindowClosed(object sender, EventArgs e)
+        {
+            SelectByAttributeWindow window = sender as SelectByAttributeWindow;
+
+            if (window.LayerName != "")
+            {
+                SortedList result = new SortedList();
+                result.Add("Specify Region By Attributes", window.LayerName);
+                Log("Specify Region By Attributes is finished and sent to the dialogue manager", "info");
+                ArrayList respList = dlgMgr.Update(result);
+                Process_Response(respList);
+            }
+        }
         
         private void DocumentPane_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

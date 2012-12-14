@@ -166,3 +166,7 @@ C:\Users\dxc360\Projects\CAGA\CAGA\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\Users\dxc360\Projects\CAGA\CAGA\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Users\dxc360\Projects\CAGA\CAGA\obj\x86\Debug\CAGA.exe
 C:\Users\dxc360\Projects\CAGA\CAGA\obj\x86\Debug\CAGA.pdb
+C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.baml
+C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.g.cs
+C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.baml
+C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.g.cs

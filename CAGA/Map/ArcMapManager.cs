@@ -274,7 +274,15 @@ namespace CAGA.Map
             return false;
         }
 
-
+        public void HideLayer(string layerName)
+        {
+            ILayer layer = this._getLayerByName(layerName);
+            if (layer != null)
+            {
+                layer.Visible = false;
+                //this._axMapCtrl.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewAll, null, null);
+            }
+        }
 
         public override void RemoveLayer()
         {
@@ -372,6 +380,119 @@ namespace CAGA.Map
                 }
             }
         }
+
+        public void SelectFeaturesByAttributes(string layerName, string whereClause)
+        {
+            ILayer layer = this._getLayerByName(layerName);
+            if (layer != null)
+            {
+                // Create the query filter.
+                IQueryFilter queryFilter = new QueryFilterClass();
+                // Set the filter to return only restaurants.
+                queryFilter.WhereClause = whereClause;
+                IFeatureSelection pFeatureSelection = layer as IFeatureSelection;
+                pFeatureSelection.SelectFeatures(queryFilter, esriSelectionResultEnum.esriSelectionResultNew, false);
+                this._axMapCtrl.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeoSelection, null, null);
+            }
+        }
+
+        public void SelectFeaturesByLocation(string in_layer_name, string select_features_name, string overlap_type = "INTERSECT", string selection_type = "NEW_SELECTION")
+        {
+            //create a new instance of a SelectByLocation tool
+            ESRI.ArcGIS.DataManagementTools.SelectLayerByLocation SelectByLocation = new ESRI.ArcGIS.DataManagementTools.SelectLayerByLocation();
+            SelectByLocation.in_layer = this._getLayerByName(in_layer_name) as IFeatureLayer2;
+            SelectByLocation.select_features = this._getLayerByName(select_features_name) as IFeatureLayer2;
+            SelectByLocation.overlap_type = overlap_type;
+            SelectByLocation.selection_type = selection_type;
+            //execute the geoprocessing tool
+            try
+            {
+                IGeoProcessorResult results = (IGeoProcessorResult)this._geoProcessor.Execute(SelectByLocation, null);
+
+                //RunTool(this._geoProcessor, SelectByLocation, null);
+                if (results.Status == esriJobStatus.esriJobSucceeded)
+                {
+                    this._axMapCtrl.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeoSelection, null, null);
+                }
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err.Message);
+            }
+            
+        }
+
+        private static void RunTool(Geoprocessor geoprocessor, IGPProcess process, ITrackCancel TC)
+        {
+
+            // Set the overwrite output option to true
+            geoprocessor.OverwriteOutput = true;
+
+            // Execute the tool            
+            try
+            {
+                geoprocessor.Execute(process, null);
+                ReturnMessages(geoprocessor);
+
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err.Message);
+                ReturnMessages(geoprocessor);
+            }
+        }
+
+        // Function for returning the tool messages.
+        private static void ReturnMessages(Geoprocessor gp)
+        {
+            if (gp.MessageCount > 0)
+            {
+                for (int Count = 0; Count <= gp.MessageCount - 1; Count++)
+                {
+                    Console.WriteLine(gp.GetMessage(Count));
+                }
+            }
+
+        }
+
+        public ArrayList GetLayerNames()
+        {
+            ArrayList layerNames = new ArrayList(); 
+            //get the layers from the map
+            IEnumLayer layers = this._axMapCtrl.Map.get_Layers();
+            layers.Reset();
+
+            ILayer layer = null;
+            while ((layer = layers.Next()) != null)
+            {
+                layerNames.Add(layer.Name);
+            }
+            return layerNames;
+        }
+
+        public ArrayList GetFieldNames(string layerName)
+        {
+            ArrayList fieldNames = new ArrayList();
+            ILayer layer = this._getLayerByName(layerName);
+            if (layer != null)
+            {
+                // Get the Fields collection from the feature class.
+                IFeatureLayer featureLayer = layer as IFeatureLayer;
+
+                IFields fields = featureLayer.FeatureClass.Fields;
+                IField field = null;
+
+                // On a zero based index, iterate through the fields in the collection.
+                for (int i = 0; i < fields.FieldCount; i++)
+                {
+                    // Get the field at the given index.
+                    field = fields.get_Field(i);
+                    fieldNames.Add(field.Name);
+                }
+            }
+            return fieldNames;
+        }
+
 
         public int GetTotalSelectedFeaturesInLayer(string layerName)
         {
@@ -866,6 +987,67 @@ namespace CAGA.Map
             }
         }
 
+        public string Overlay(ArrayList inLayerNames, string outLayerName = "", string overlayType = "INTERSECT")
+        {
+            string inLayers = "";
+            foreach(string layerName in inLayerNames)
+            {
+                ILayer layer = this._getLayerByName(layerName);
+                ESRI.ArcGIS.Geodatabase.IDataset dataset = (ESRI.ArcGIS.Geodatabase.IDataset)(layer); // Explicit Cast
+
+                this._geoProcessor.SetEnvironmentValue("workspace", dataset.Workspace.PathName);
+                //inLayers += featureClass.FeatureDataset.Name + "\\" + featureClass.AliasName + ";";
+                inLayers += layerName + ";";
+            }
+            
+            if (inLayers == "")
+            {
+                return "";
+            }
+
+            string tempDir = System.IO.Path.GetTempPath();
+            string outLayerFile = "";
+            if (outLayerName == "")
+            {
+                string filename = "";
+                foreach(string layerName in inLayerNames)
+                {
+                    filename += layerName + "_";    
+                }
+                filename += "overlay_" + DateTime.Now.ToString("MM_dd_yy_H_mm_ss") + ".shp";
+                outLayerFile = System.IO.Path.Combine(tempDir, filename);
+            }
+            else
+            {
+                outLayerFile = System.IO.Path.Combine(tempDir, outLayerName + ".shp");
+            }
+            if (System.IO.File.Exists(outLayerFile))
+            {
+                return outLayerFile;
+            }
+
+            //create a new instance of an overlay tool
+            IGeoProcessorResult results = null;
+            if (overlayType == "INTERSECT")
+            {
+                ESRI.ArcGIS.AnalysisTools.Intersect process = new ESRI.ArcGIS.AnalysisTools.Intersect();
+                process.in_features = inLayers;
+                process.out_feature_class = outLayerFile;
+                results = (IGeoProcessorResult)this._geoProcessor.Execute(process, null);
+                //RunTool(this._geoProcessor, process, null);
+            }
+            else if (overlayType == "UNION")
+            {
+                ESRI.ArcGIS.AnalysisTools.Union process = new ESRI.ArcGIS.AnalysisTools.Union(inLayers, outLayerFile);
+                results = (IGeoProcessorResult)this._geoProcessor.Execute(process, null);
+            }
+
+            if (results != null && results.Status == esriJobStatus.esriJobSucceeded)
+            {
+                return outLayerFile;
+            }
+            return "";
+        }
 
         public string Buffer(string inLayerName, string distString, string outLayerName = "")
         {

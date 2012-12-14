@@ -30,7 +30,7 @@ namespace CAGA.Dialogue
                 // Test for answer to previous questions
                 foreach (DialogueResponse resp in this._prevDlgResp)
                 {
-                    if (resp.DlgRespType == DialogueResponseType.speechQuestion || resp.DlgRespType == DialogueResponseType.listPlainOptions || resp.DlgRespType == DialogueResponseType.listMapLayerOptions)
+                    if (resp.DlgRespType == DialogueResponseType.speechQuestion || resp.DlgRespType == DialogueResponseType.listPlainOptions || resp.DlgRespType == DialogueResponseType.listMapLayerOptions || resp.DlgRespType == DialogueResponseType.listOptionsWithExamples)
                     {
                         if (speech.ContainsKey("affirmative"))
                         {
@@ -52,6 +52,11 @@ namespace CAGA.Dialogue
                 foreach (DialogueResponse resp in this._prevDlgResp)
                 {
                     if (resp.DlgRespType == DialogueResponseType.drawPolygonStarted)
+                    {
+                        dlgAct = new DialogueAct(agent, speech, gesture, DialogueActType.Feedback);
+                        return dlgAct;
+                    }
+                    else if (resp.DlgRespType == DialogueResponseType.selectByAttributes)
                     {
                         dlgAct = new DialogueAct(agent, speech, gesture, DialogueActType.Feedback);
                         return dlgAct;

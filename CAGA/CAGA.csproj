@@ -71,6 +71,10 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\..\..\Windows\assembly\GAC_32\ESRI.ArcGIS.Controls\10.0.0.0__8fc3cc631e44ad86\ESRI.ArcGIS.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="ESRI.ArcGIS.DataManagementTools, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Windows\assembly\GAC_32\ESRI.ArcGIS.DataManagementTools\10.0.0.0__8fc3cc631e44ad86\ESRI.ArcGIS.DataManagementTools.dll</HintPath>
+    </Reference>
     <Reference Include="ESRI.ArcGIS.DataSourcesFile, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -159,6 +163,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogue\ListOptionsWithExamplesWindow.xaml.cs">
+      <DependentUpon>ListOptionsWithExamplesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogue\SelectByAttributeWindow.xaml.cs">
+      <DependentUpon>SelectByAttributeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogue\SummaryResultsWindow.xaml.cs">
       <DependentUpon>SummaryResultsWindow.xaml</DependentUpon>
     </Compile>
@@ -190,6 +200,14 @@
     <Compile Include="SpeechSimWindow.xaml.cs">
       <DependentUpon>SpeechSimWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogue\ListOptionsWithExamplesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogue\SelectByAttributeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogue\SummaryResultsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -280,6 +298,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\region_attributes.PNG" />
+    <Resource Include="Images\region_buffer.PNG" />
+    <Resource Include="Images\region_drawing.PNG" />
     <Resource Include="NUI\Speech\gccm_grm.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +355,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="NUI\Speech\example_script.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\full1.PNG" />
+    <Resource Include="Images\full2.PNG" />
+    <Resource Include="Images\partial1.PNG" />
+    <Resource Include="Images\partial2.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

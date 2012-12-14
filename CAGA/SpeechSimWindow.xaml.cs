@@ -52,6 +52,11 @@ namespace CAGA
             ArrayList itemsList = new ArrayList();
             itemsList.Add("I want to generate a map of parcels within a region");
             itemsList.Add("it is city of Oleader");
+            itemsList.Add("add the flood areas");
+            itemsList.Add("it is a set of features filtered by attributes");
+            itemsList.Add("it is drawn manually");
+            itemsList.Add("it is a buffer zone");
+            itemsList.Add("I am ready to draw");
             return itemsList;
         }
 

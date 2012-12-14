@@ -11,8 +11,15 @@
       <item>
         <ruleref uri="#admin_area_answer"/>
       </item>
+      
       <item>
         <ruleref uri="#add_feature_class"/>
+      </item>
+      <item>
+        <ruleref uri="#region_type_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#partiality_answer"/>
       </item>
       <item>
         <ruleref uri="#rdy_to_draw"/>
@@ -152,6 +159,7 @@
     <example> the parcels </example>
     <example> zoning </example>
     <example> lot boundaries </example>
+    <example> Flood areas </example>
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
@@ -168,6 +176,10 @@
       <item>
         city limit <tag> out = "city limit"; </tag>
       </item>
+      <item>
+        flood areas <tag> out = "flood areas"; </tag>
+      </item>
+     
     </one-of>
   </rule>
 
@@ -276,6 +288,76 @@
     </item>
   </rule>
 
+  <rule id="region_type_answer">
+    <example> The region is a set of features filtered by attributes </example>
+    <example> a set of features filtered by attributes </example>
+    <example> it is drawn manually </example>
+    <example> drawn manually </example>
+    <example> a buffer zone </example>
+    
+    <item repeat="0-1">
+      <one-of>
+        <item> the region is </item>
+        <item> the regio will be </item>
+        <item> the regio should be </item>
+        <item> it is </item>
+        <item> it will be </item>
+        <item> it should be </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#region_type"/>
+      <tag> out.region_type = rules.region_type; </tag>
+    </item>
+  </rule>
+
+  <rule id="region_type">
+    <one-of>
+      <item>
+        a set of features filtered by attributes <tag> out = "features"; </tag>
+      </item>
+
+      <item>
+        drawn manually <tag> out = "drawing"; </tag>
+      </item>
+      <item>
+        a buffer zone <tag> out = "buffer"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="partiality_answer">
+    <example> the features as a whole </example>
+    <example> only the parts inside</example>
+    
+    <item>
+      <ruleref uri="#partiality"/>
+      <tag> out.partiality = rules.partiality; </tag>
+    </item>
+  </rule>
+
+  <rule id="partiality">
+    <one-of>
+      <item>
+        the features as a whole <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        the whole features <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        the parts inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        only the parts inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        their inside parts  <tag> out = "partial"; </tag>
+      </item>
+    </one-of>
+  </rule>
+  
+  
   <rule id="rdy_to_draw" scope="public">
     <example> I'm ready to draw </example>
     
@@ -292,7 +374,7 @@
       </one-of>
     </item>
     
-    <tag> out.intention = "Draw Region"; </tag>
+    <tag> out.intention = "Specify Region By Drawing"; </tag>
   </rule>
 
   <rule id="aff_or_neg" scope="public">
@@ -436,8 +518,9 @@
 
   <rule id="data_field">
     <example> dwelling units </example>
-    <example> area </example>
+    <example> areas of parcels</example>
     <example> land use </example>
+    
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
@@ -446,7 +529,7 @@
         dwelling units <tag> out = "dwelling units"; </tag>
       </item>
       <item>
-        area <tag> out = "area"; </tag>
+        areas of parcels <tag> out = "area"; </tag>
       </item>
       <item>
         land use <tag> out = "land use"; </tag>

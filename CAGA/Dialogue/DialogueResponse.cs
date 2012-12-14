@@ -13,6 +13,7 @@ namespace CAGA.Dialogue
         
         listPlainOptions,
         listMapLayerOptions,
+        listOptionsWithExamples,
 
         mapDocumentOpened,
         mapLayerRemoved,
@@ -21,6 +22,8 @@ namespace CAGA.Dialogue
         mapExtentChanged,
 
         drawPolygonStarted,
+
+        selectByAttributes,
 
         newAgendaItem,
 

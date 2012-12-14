@@ -1,0 +1,58 @@
+﻿<Window x:Class="CAGA.Dialogue.SelectByAttributeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SelectByAttributeWindow" Height="500" Width="300"  WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="260">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0" Margin="5">
+            <Label Content="Layer: " FontWeight="Bold" />
+            <ComboBox Name="LayerNameCB" VerticalAlignment="Center" Width="120" SelectionChanged="LayerNameCB_SelectionChanged" />
+        </WrapPanel>
+        <StackPanel Grid.Row="1" Margin="5">
+            <Label Content="Fields:" Padding="5" FontWeight="Bold" />
+            <ListBox Name="FieldsLB" Height="80" >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="FieldItem_MouseDoubleClick"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="5" >
+            <WrapPanel>
+                <Button Name="EqualBtn" Content="=" Click="EqualBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="NotEqualBtn" Content="&lt;&gt;" Click="NotEqualBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="GreaterBtn" Content="&gt;" Click="GreaterBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="GreaterEqualBtn" Content="&gt;=" Click="GreaterEqualBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="LessBtn" Content="&lt;" Click="LessBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="LessEqualBtn" Content="&lt;=" Click="LessEqualBtn_Click" Margin="2" MinWidth="25"></Button>
+            </WrapPanel>
+            <WrapPanel>
+                <Button Name="AndBtn" Content="And" Click="AndBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="OrBtn" Content="Or" Click="OrBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="NotBtn" Content="Not" Click="NotBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="LikeBtn" Content="Like" Click="LikeBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="IsBtn" Content="Is" Click="IsBtn_Click" Margin="2" MinWidth="25"></Button>
+            </WrapPanel>
+            <WrapPanel>
+                <Button Name="QuestionBtn" Content="?" Click="QuestionBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="StarBtn" Content="*" Click="StarBtn_Click" Margin="2" MinWidth="25"></Button>
+                <Button Name="BracketsBtn" Content="()" Click="BracketsBtn_Click" Margin="2" MinWidth="25"></Button>
+            </WrapPanel>
+        </StackPanel>
+        <TextBlock Name="SelectClauseTB" Grid.Row="3" Text="" Margin="5" Padding="5" />
+        <TextBox Name="WhereClauseTB" Grid.Row="4" Text="" Margin="5" Padding="5" Height="75" TextWrapping="Wrap" />
+        <WrapPanel Grid.Row="5" HorizontalAlignment="Center">
+            <Button Name="OKBtn" Content="Done" Click="OKBtn_Click" Margin="5" MinWidth="50"></Button>
+        </WrapPanel>
+    </Grid>
+</Window>
