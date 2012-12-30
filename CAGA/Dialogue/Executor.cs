@@ -457,7 +457,7 @@ namespace CAGA.Dialogue
                     // fixed at the moment
                     OptionWithExampleListData respContent = new OptionWithExampleListData();
                     respContent.Opening = this._generateQuestionString(paramNode);
-                    respContent.AddOption(new OptionWithExampleItemData("A set of features filtered by attributes", "The region is a set of features filtered by their attributes", "/CAGA;component/Images/region_attributes.png"));
+                    respContent.AddOption(new OptionWithExampleItemData("A set of areal features", "The region is a set of areal features", "/CAGA;component/Images/region_attributes.png"));
                     respContent.AddOption(new OptionWithExampleItemData("Drawn manually", "The region is drawn manually", "/CAGA;component/Images/region_drawing.png"));
                     respContent.AddOption(new OptionWithExampleItemData("A buffer zone", "The region is a buffer zone around some feature", "/CAGA;component/Images/region_buffer.png"));
                     respList.Add(new DialogueResponse(DialogueResponseType.listOptionsWithExamples, respContent));
