@@ -317,7 +317,12 @@
       <item>
         a set of features filtered by attributes <tag> out = "features"; </tag>
       </item>
-
+      <item>
+        a set of areal features <tag> out = "features"; </tag>
+      </item>
+      <item>
+        areal features <tag> out = "features"; </tag>
+      </item>
       <item>
         drawn manually <tag> out = "drawing"; </tag>
       </item>
@@ -330,7 +335,7 @@
   <rule id="partiality_answer">
     <example> the features as a whole </example>
     <example> only the parts inside</example>
-    
+    <example> partially </example>
     <item>
       <ruleref uri="#partiality"/>
       <tag> out.partiality = rules.partiality; </tag>
@@ -353,6 +358,18 @@
       </item>
       <item>
         their inside parts  <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        partially <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        fully <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        partially inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        fully inside <tag> out = "whole"; </tag>
       </item>
     </one-of>
   </rule>
