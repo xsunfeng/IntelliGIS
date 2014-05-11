@@ -17,83 +17,86 @@ namespace CAGA.Dialogue
 
         public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            if (actionNode.Name.ToLower() == "Get Value From Input".ToLower())
+            ArrayList result = new ArrayList();
+            switch (actionNode.Name.ToLower())
             {
-                return this.GetValueFromInput(actionNode, currDlgAct, indent);
+                case "get value from input": //2
+                    result = this.GetValueFromInput(actionNode, currDlgAct, indent);
+                    break;
+                case "ask for value": //3
+                    result = this.AskForValue(actionNode, currDlgAct, indent);
+                    break;
+                case "select from candidates": //11
+                    result = this.SelectFromCandidates(actionNode, currDlgAct, indent);
+                    break;
+                case "draw region": //13
+                    result = this.DrawRegion(actionNode, currDlgAct, indent);
+                    break;
+                case "get existing value from ancestor": //14
+                    result = this.GetExistingValueFromAncestor(actionNode, currDlgAct, indent);
+                    break;
+                case "ask for more value": //15
+                    result = this.AskForMoreValue(actionNode, currDlgAct, indent);
+                    break;
+                case "get current map extent": //16
+                    result = this.GetCurrentMapExtent(actionNode, currDlgAct, indent);
+                    break;
+                case "infer value from other parameter": //18
+                    result = this.InferValueFromOtherParameter(actionNode, currDlgAct, indent);
+                    break;
+                case "choose analytic functions": //19
+                    result = this.ChooseAnalyticFunctions(actionNode, currDlgAct, indent);
+                    break;
+                case "perform selection": //20
+                    result = this.PerformSelection(actionNode, currDlgAct, indent);
+                    break;
+                case "calculate field statistics": //23
+                    result = this.CalculateFieldStatistics(actionNode, currDlgAct, indent);
+                    break;
+                case "calculate data summary": //24
+                    result = this.CalculateDataSummary(actionNode, currDlgAct, indent);
+                    break;
+                case "identify region type": //26
+                    result = this.IdentifyRegionType(actionNode, currDlgAct, indent);
+                    break;
+                case "choose specification method": //27
+                    result = this.ChooseSpecificationMethod(actionNode, currDlgAct, indent);
+                    break;
+                case "specify region by attributes": //28
+                    result = this.SpecifyRegionByAttributes(actionNode, currDlgAct, indent);
+                    break;
+                case "specify region by drawing": //29
+                    result = this.SpecifyRegionByDrawing(actionNode, currDlgAct, indent);
+                    break;
+                case "specify region by buffer": //30
+                    result = this.SpecifyRegionByBuffer(actionNode, currDlgAct, indent);
+                    break;
+                case "ask for partiality": //31
+                    result = this.AskForPartiality(actionNode, currDlgAct, indent);
+                    break;
+                case "perform overlay": //32
+                    result = this.PerformOverlay(actionNode, currDlgAct, indent);
+                    break;
+                default:
+                    break;
             }
-            else if (actionNode.Name.ToLower() == "Ask For Value".ToLower())
-            {
-                return this.AskForValue(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Select From Candidates".ToLower())
-            {
-                return this.SelectFromCandidates(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Get Existing Value From Ancestor".ToLower())
-            {
-                return this.GetExistingValueFromAncestor(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Ask For More Value".ToLower())
-            {
-                return this.AskForMoreValue(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Identify Region Type".ToLower())
-            {
-                return this.IdentifyRegionType(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Choose Specification Method".ToLower())
-            {
-                return this.ChooseSpecificationMethod(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Specify Region By Attributes".ToLower())
-            {
-                return this.SpecifyRegionByAttributes(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Specify Region By Drawing".ToLower())
-            {
-                return this.SpecifyRegionByDrawing(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Specify Region By Buffer".ToLower())
-            {
-                return this.SpecifyRegionByBuffer(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Ask For Partiality".ToLower())
-            {
-                return this.AskForPartiality(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Get Current Map Extent".ToLower())
-            {
-                return this.GetCurrentMapExtent(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Draw Region".ToLower())
-            {
-                return this.DrawRegion(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Infer Value From Other Parameter".ToLower())
-            {
-                return this.InferValueFromOtherParameter(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Choose Analytic Functions".ToLower())
-            {
-                return this.ChooseAnalyticFunctions(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Perform Selection".ToLower())
-            {
-                return this.PerformSelection(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Perform Overlay".ToLower())
-            {
-                return this.PerformOverlay(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Calculate Field Statistics".ToLower())
-            {
-                return this.CalculateFieldStatistics(actionNode, currDlgAct, indent);
-            }
-            else if (actionNode.Name.ToLower() == "Calculate Data Summary".ToLower())
-            {
-                return this.CalculateDataSummary(actionNode, currDlgAct, indent);
-            }
-            return new ArrayList();
+            return result;
+        }
+
+
+        private ArrayList BasicActionTemplate(ActionNode actionNode, DialogueAct currDlgAct)
+        {
+            ArrayList respList = new ArrayList();
+            // change its own state
+            actionNode.ActState = ActionState.Executing;
+
+            // do something:
+            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: "));
+
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
         }
 
 
@@ -114,7 +117,7 @@ namespace CAGA.Dialogue
 
         private ArrayList GetValueFromInput(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.GetValueFromInput actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.GetValueFromInput actionNode: " + actionNode.Name);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -123,11 +126,14 @@ namespace CAGA.Dialogue
             respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetValueFromInput"));
             
             ParamNode paramNode = (ParamNode)actionNode.Parent;
+            Console.WriteLine(indent + "currDlgAct.SpeechContext.Keys");
             foreach (string phrase in currDlgAct.SpeechContext.Keys)
             {
+                Console.WriteLine(indent + "phrase:" + phrase);
                 if (phrase.ToLower() == paramNode.Name.ToLower())
                 {
                     object newValue = _parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                    Console.WriteLine(indent + "currDlgAct.SpeechContext[phrase]:" + currDlgAct.SpeechContext[phrase]);
                     if (newValue != null)
                     {
                         this._addValueToParam(paramNode, newValue);
@@ -143,7 +149,7 @@ namespace CAGA.Dialogue
 
         private ArrayList AskForValue(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.AskForValue actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.AskForValue actionNode: " + actionNode.Name);
             ArrayList respList = new ArrayList();
            
             // if the action has not been executed, set it to executing, raid the question and return
@@ -154,18 +160,15 @@ namespace CAGA.Dialogue
 
                 // do something: raise a question to the user
                 respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: AskForValue"));
-
+                Console.WriteLine(indent + "Ask Question");
                 ParamNode paramNode = (ParamNode)actionNode.Parent;
                 // only ask if there is no value assigned yet
-                if (paramNode.Values.Count == 0)
-                {
+                if (paramNode.Values.Count == 0){
                     respList.Add(new DialogueResponse(DialogueResponseType.speechQuestion, this._generateQuestionString(paramNode)));
                     // change its own state
                     actionNode.ActState = ActionState.Executing;
                     return respList;
-                }
-                else
-                {
+                }else{
                     // change its own state
                     actionNode.ActState = ActionState.Complete;
                     // generate response 
@@ -178,11 +181,14 @@ namespace CAGA.Dialogue
                 ParamNode paramNode = (ParamNode)actionNode.Parent;
                 if (currDlgAct.DlgActType == DialogueActType.Answer)
                 {
+                    Console.WriteLine(indent + "currDlgAct.SpeechContext.Keys");
                     foreach (string phrase in currDlgAct.SpeechContext.Keys)
                     {
+                        Console.WriteLine(indent + "phrase:" + phrase);
                         if (phrase.ToLower() == paramNode.Name.ToLower())
                         {
                             object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                            Console.WriteLine(indent + "currDlgAct.SpeechContext[phrase]:" + currDlgAct.SpeechContext[phrase]);
                             if (newValue != null)
                             {
                                 this._addValueToParam(paramNode, newValue);

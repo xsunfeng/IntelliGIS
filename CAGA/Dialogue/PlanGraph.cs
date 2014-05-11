@@ -631,14 +631,17 @@ namespace CAGA.Dialogue
                 Console.WriteLine(indent + "Parent: " + actionNode.Name);
                 foreach (ParamNode param in actionNode.Params)
                 {
+                    Console.WriteLine(indent + "param: " + param.Name);
                     if (param.Name != planNode.Name)
                     {
+                        Console.WriteLine(indent + "param:" + param.Name+" ParamState:" + param.ParamState);
                         if (param.ParamState != ParamState.Ready)
                         {
                             paramsRdy = false;
                         }
                         foreach (ActionNode subAct in param.SubActions)
                         {
+                            Console.WriteLine(indent + "subAct:" + subAct.Name+" ActState:" + subAct.ActState);
                             if (subAct.ActState == ActionState.Executing)
                             {
                                 paramsRdy = false;
