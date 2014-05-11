@@ -18,6 +18,11 @@ namespace CAGA.Dialogue
 
         public override DialogueAct Parse(SortedList speech, SortedList gesture, Agent agent)
         {
+            Console.WriteLine("Dialogue/SimpleParser: Parse");
+            Console.WriteLine("  speech");
+            foreach (DictionaryEntry item in speech){
+                Console.WriteLine("  key=" + item.Key + ", value=" + item.Value);
+            }
             DialogueAct dlgAct = null;
             // Test for actions
             if (speech.ContainsKey("intention"))

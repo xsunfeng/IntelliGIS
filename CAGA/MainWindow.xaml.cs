@@ -192,6 +192,7 @@ namespace CAGA
 
         void Speech_Recognized(SortedList result)
         {
+            Console.WriteLine("MainWindow: Speech_Recognized");
             Dispatcher.Invoke(new Action(() =>
             {
                 if (dlgMgr.IsRunning == true && speechSyn.State != SynthesizerState.Speaking)

@@ -60,30 +60,29 @@ namespace CAGA.Dialogue
 
         public bool Explain(DialogueAct dlgAct)
         {
+            string indent = "";
+            Console.WriteLine(indent + "Dialogue.PlanGraph Explain" + dlgAct.DlgActType);
             bool isExplained = false;
             if (dlgAct.DlgActType == DialogueActType.Intend)
             {
                 // search the actions from knowledge base
                 // the simplest way: search based on name matching
                 ArrayList tempActions = new ArrayList();
-                foreach (string phrase in dlgAct.SpeechContext.Values)
-                {
+                foreach (string phrase in dlgAct.SpeechContext.Values){
                     Hashtable tempAct = this._kbase.SearchAction(phrase);
-                    if (tempAct != null)
-                    {
+                    if (tempAct != null){
                         tempActions.Add(tempAct);
                     }
                 }
-
                 // Explain the actions into the plangraph
                 ArrayList explainedActs = new ArrayList();
                 foreach (Hashtable tempAct in tempActions)
                 {
-                    ActionNode explainedAct = this._explainAction(tempAct, dlgAct);
+                    ActionNode explainedAct = this._explainAction(tempAct, dlgAct, indent + "  ");
                     if (explainedAct != null)
                     {
                         explainedActs.Add(explainedAct);
-                        AddToAgenda(explainedAct, 0);
+                        AddToAgenda(explainedAct, 0, indent+"  ");
                     }
                 }
                 if (explainedActs.Count > 0)
@@ -97,7 +96,7 @@ namespace CAGA.Dialogue
                 // explain in the agenda
                 foreach (PlanNode planNode in this._agenda.ToArray())
                 {
-                    isExplained = this._explainAnswer(planNode, dlgAct);
+                    isExplained = this._explainAnswer(planNode, dlgAct, indent + "  ");
                     if (isExplained == true)
                     {
                         break;
@@ -110,7 +109,7 @@ namespace CAGA.Dialogue
                 // explain in the agenda
                 foreach (PlanNode planNode in this._agenda.ToArray())
                 {
-                    isExplained = this._explainAffOrNeg(planNode, dlgAct);
+                    isExplained = this._explainAffOrNeg(planNode, dlgAct, indent + "  ");
                     if (isExplained == true)
                     {
                         break;
@@ -123,7 +122,7 @@ namespace CAGA.Dialogue
                 // explain in the agenda
                 foreach (PlanNode planNode in this._agenda.ToArray())
                 {
-                    isExplained = this._explainFeedback(planNode, dlgAct);
+                    isExplained = this._explainFeedback(planNode, dlgAct, indent + "  ");
                     if (isExplained == true)
                     {
                         break;
@@ -134,11 +133,19 @@ namespace CAGA.Dialogue
             {
                 this._currDlgAct = dlgAct;
             }
+
+            Console.WriteLine(indent + "Agenda:");
+            foreach (PlanNode planNode in this._agenda.ToArray())
+            {
+                Console.WriteLine(indent + "-" + planNode.Name);
+            }
+            Console.WriteLine(indent + "IsExplained? " + isExplained);
             return isExplained;
         }
 
-        private bool _explainAnswer(PlanNode planNode, DialogueAct dlgAct)
+        private bool _explainAnswer(PlanNode planNode, DialogueAct dlgAct, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAnswer  " + planNode.Name);
             if (planNode is ActionNode)
             {
                 ActionNode actNode = (ActionNode)planNode;
@@ -156,8 +163,9 @@ namespace CAGA.Dialogue
             return false;
         }
 
-        private bool _explainAffOrNeg(PlanNode planNode, DialogueAct dlgAct)
+        private bool _explainAffOrNeg(PlanNode planNode, DialogueAct dlgAct, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAffOrNeg  " + planNode.Name);
             if (planNode is ActionNode)
             {
                 ActionNode actNode = (ActionNode)planNode;
@@ -176,8 +184,9 @@ namespace CAGA.Dialogue
             return false;
         }
 
-        private bool _explainFeedback(PlanNode planNode, DialogueAct dlgAct)
+        private bool _explainFeedback(PlanNode planNode, DialogueAct dlgAct, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainFeedback  " + planNode.Name);
             if (planNode is ActionNode)
             {
                 ActionNode actNode = (ActionNode)planNode;
@@ -195,8 +204,9 @@ namespace CAGA.Dialogue
             return false;
         }
 
-        private ActionNode _explainAction(Hashtable tempAct, DialogueAct dlgAct)
+        private ActionNode _explainAction(Hashtable tempAct, DialogueAct dlgAct, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAction  ");
             if (this._root == null)
             {
                 // todo: check the top actions before assign it to the root node
@@ -209,22 +219,25 @@ namespace CAGA.Dialogue
             {
                 foreach (PlanNode planNode in this._agenda.ToArray())
                 {
-                    ActionNode actNode = this._explainActionFromNode(planNode, tempAct, dlgAct);
+                    ActionNode actNode = this._explainActionFromNode(planNode, tempAct, dlgAct, indent+"  ");
                     if (actNode != null)
                     {
                         return actNode;
                     }
                 }
             }
-            return this._explainActionFromNode(this._root, tempAct, dlgAct);
+            return this._explainActionFromNode(this._root, tempAct, dlgAct, indent + "  ");
         }
 
 
 
-        private ActionNode _explainActionFromNode(PlanNode planNode, Hashtable tempAct, DialogueAct dlgAct)
+        private ActionNode _explainActionFromNode(PlanNode planNode, Hashtable tempAct, DialogueAct dlgAct, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainActionFromNode  " + planNode.Name);
+            
             if (planNode is ActionNode)
             {
+                Console.WriteLine(indent + "IsActionNode  actionNode:" + planNode.Name.ToLower() + "  tempAct" + tempAct["name"].ToString());
                 ActionNode actionNode = (ActionNode)planNode;
                 if (actionNode.Name.ToLower() == tempAct["name"].ToString().ToLower())
                 {
@@ -262,7 +275,7 @@ namespace CAGA.Dialogue
                 // search the params and subactions
                 foreach (ParamNode paramNode in actionNode.Params)
                 {
-                    ActionNode actNode = this._explainActionFromNode(paramNode, tempAct, dlgAct);
+                    ActionNode actNode = this._explainActionFromNode(paramNode, tempAct, dlgAct, indent + "  ");
                     if (actNode != null)
                     {
                         return actNode;
@@ -270,7 +283,7 @@ namespace CAGA.Dialogue
                 }
                 foreach (ActionNode subActNode in actionNode.SubActions)
                 {
-                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct);
+                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
                     if (actNode != null)
                     {
                         return actNode;
@@ -283,7 +296,7 @@ namespace CAGA.Dialogue
                 ParamNode paramNode = (ParamNode)planNode;
                 foreach (ActionNode subActNode in paramNode.SubActions)
                 {
-                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct);
+                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
                     if (actNode != null)
                     {
                         return actNode;
@@ -294,8 +307,9 @@ namespace CAGA.Dialogue
             return null;
         }
 
-        public int AddToAgenda(PlanNode planNode, int index)
+        public int AddToAgenda(PlanNode planNode, int index, string indent)
         {
+            ﻿Console.WriteLine(indent + "Dialogue.PlanGraph  AddToAgenda  " + planNode.Name);
             int currIdx = this._agenda.IndexOf(planNode);
             if (currIdx >= 0)
             {
@@ -323,8 +337,9 @@ namespace CAGA.Dialogue
             }
         }
 
-        public int RemoveFromAgenda(PlanNode planNode)
+        public int RemoveFromAgenda(PlanNode planNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph  RemoveFromAgenda  " + planNode.Name);
             int index = this._agenda.IndexOf(planNode);
             if (index >= 0)
             {
@@ -341,47 +356,47 @@ namespace CAGA.Dialogue
 
         public ArrayList Elaborate()
         {
+            Console.WriteLine("Dialogue.PlanGraph  Elaborate");
             this._respList.Clear();
 
             foreach (PlanNode planNode in this._agenda.ToArray())
             {
-                this.ElaborateFromNode(planNode);
+                this.ElaborateFromNode(planNode, "");
             }
 
             return this._respList;
         }
 
-        public void ElaborateFromNode(PlanNode planNode)
+        public void ElaborateFromNode(PlanNode planNode, string indent)
         {
             if (planNode is ActionNode)
             {
-                this._elaborateFromActionNode((ActionNode)planNode);
+                this._elaborateFromActionNode((ActionNode)planNode, indent + "  ");
             }
             else if (planNode is ParamNode)
             {
-                this._elaborateFromParamNode((ParamNode)planNode);
+                this._elaborateFromParamNode((ParamNode)planNode, indent + "  ");
             }
         }
 
-        private void _elaborateFromActionNode(ActionNode actionNode)
+        private void _elaborateFromActionNode(ActionNode actionNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue/PlanGraph _elaborateFromActionNode " + actionNode.Name);
             // check the parameters and constraints
-            bool paramsRdy = this._parentParamsRdy(actionNode); // check whether the params are ready
-            if (paramsRdy == false)
-            {
-                return;
-            }
+            bool paramsRdy = this._parentParamsRdy(actionNode, indent + "  "); // check whether the params are ready
+            Console.WriteLine(indent + "paramsRdy = " + paramsRdy);
+            if (paramsRdy == false)return;
 
             // If the action is a basic one and can be executed, then execute it
             if (actionNode.Complexity == "basic")
             {
+                Console.WriteLine(indent + actionNode.Name + " is Basic");
                 // check the state of the action
                 if (actionNode.ActState == ActionState.Initiated || actionNode.ActState == ActionState.Executing)
                 {
-                    
-
-                    // perform the task
-                    ArrayList execResp = this._exec.Execute(actionNode, this._currDlgAct);
+                    Console.WriteLine(indent + "actionNode.ActState before: " + actionNode.ActState);
+                    //// perform the task
+                    ArrayList execResp = this._exec.Execute(actionNode, this._currDlgAct, indent + "  ");
                     // add the execution response to the response list
                     ArrayList newAgendaItems = new ArrayList();
                     foreach (DialogueResponse resp in execResp)
@@ -396,15 +411,16 @@ namespace CAGA.Dialogue
                         }
                     }
 
+                    Console.WriteLine(indent + "actionNode.ActState after: " + actionNode.ActState);
                     // remove the running/complete action from the agenda;
                     if (actionNode.ActState == ActionState.Complete)
                     {
-                        this.RemoveFromAgenda(actionNode);
+                        this.RemoveFromAgenda(actionNode, indent + "  ");
                     }
                     // check whether the parent's state is also complete if the action is complete
                     if (actionNode.ActState == ActionState.Complete)
                     {
-                        this._updateParentState(actionNode);
+                        this._updateParentState(actionNode, indent + "  ");
                     }
 
                     // perform the new agenda item
@@ -422,8 +438,8 @@ namespace CAGA.Dialogue
                                     {
                                         subAct.ActState = ActionState.Initiated;
                                         int idx = this.GetIndexInAgenda(actionNode);
-                                        this.AddToAgenda(subAct, idx + 1);
-                                        this.ElaborateFromNode(subAct);
+                                        this.AddToAgenda(subAct, idx + 1, indent + "  ");
+                                        this.ElaborateFromNode(subAct, indent + "  ");
                                         break;
                                     }
                                 }
@@ -431,37 +447,48 @@ namespace CAGA.Dialogue
                         }
                     }
                 }
+                Console.WriteLine(indent + "Agenda:");
+                foreach (PlanNode planNode in this._agenda.ToArray())
+                {
+                    Console.WriteLine(indent + "-" + planNode.Name);
+                }
                 return;
             }
 
             if (actionNode.Complexity == "complex")
             {
+                Console.WriteLine(indent + actionNode.Name + " is Complex");
                 // check the state of the action
                 if (actionNode.ActState == ActionState.Initiated)
                 {
                     // find and load the recipe
-                    this._loadRecipe(actionNode);
+                    this._loadRecipe(actionNode, indent + "  ");
                     
                 }
                 if (actionNode.ActState == ActionState.Planned)
                 {
-                    int idx = this.RemoveFromAgenda(actionNode);
+                    int idx = this.RemoveFromAgenda(actionNode, indent + "  ");
                     foreach (ParamNode param in actionNode.Params)
                     {
-                        idx = this.AddToAgenda(param, idx);
+                        idx = this.AddToAgenda(param, idx, indent + "  ");
                         idx++;
                     }
                     foreach (ActionNode subAct in actionNode.SubActions)
                     {
-                        idx = this.AddToAgenda(subAct, idx);
+                        idx = this.AddToAgenda(subAct, idx, indent + "  ");
                         idx++;
-                    } 
+                    }
+                    Console.WriteLine(indent + "Agenda:");
+                    foreach (PlanNode planNode in this._agenda.ToArray())
+                    {
+                        Console.WriteLine(indent + "-" + planNode.Name);
+                    }
 
                     // elaborate on the params
                     foreach (ParamNode param in actionNode.Params)
                     {
                         param.ParamState = ParamState.InPreparation;
-                        this._elaborateFromParamNode(param);
+                        this._elaborateFromParamNode(param, indent + "  ");
                     }
 
                     foreach (ActionNode subAct in actionNode.SubActions)
@@ -469,11 +496,11 @@ namespace CAGA.Dialogue
                         if (subAct.Optional == false)
                         {
                             subAct.ActState = ActionState.Initiated;
-                            this._elaborateFromActionNode(subAct);
+                            this._elaborateFromActionNode(subAct, indent + "  ");
                         }
                         else
                         {
-                            this.RemoveFromAgenda(subAct);
+                            this.RemoveFromAgenda(subAct, indent + "  ");
                         }
                     } 
                     
@@ -483,22 +510,21 @@ namespace CAGA.Dialogue
         }
 
 
-        private void _elaborateFromParamNode(ParamNode paramNode)
+        private void _elaborateFromParamNode(ParamNode paramNode, string indent)
         {
-            bool paramsRdy = this._parentParamsRdy(paramNode) ; // check whether the previous params are ready
-            if (paramsRdy == false)
-            {
-                return;
-            }
+            Console.WriteLine(indent + "Dialogue/PlanGraph _elaborateFromParamNode " + paramNode.Name);
+            bool paramsRdy = this._parentParamsRdy(paramNode, indent + "  "); // check whether the previous params are ready
+            Console.WriteLine(indent + "paramsRdy = " + paramsRdy);
+            if (paramsRdy == false)return;
 
             if (paramNode.ParamState == ParamState.InPreparation)
             {
                 if (paramNode.SubActions.Count > 0)
                 {
-                    int idx = this.RemoveFromAgenda(paramNode);
+                    int idx = this.RemoveFromAgenda(paramNode, indent + "  ");
                     foreach (ActionNode subAct in paramNode.SubActions)
                     {
-                        idx = this.AddToAgenda(subAct, idx);
+                        idx = this.AddToAgenda(subAct, idx, indent + "  ");
                         idx++;
                     }                    
                     foreach (ActionNode subAct in paramNode.SubActions)
@@ -506,20 +532,21 @@ namespace CAGA.Dialogue
                         // as soon as the parameter is ready, stop the elaboration
                         if (paramNode.ParamState == ParamState.Ready && subAct.Optional == true)
                         {
-                            this.RemoveFromAgenda(subAct);
+                            this.RemoveFromAgenda(subAct, indent + "  ");
                         }
                         else
                         {
                             subAct.ActState = ActionState.Initiated;
-                            this._elaborateFromActionNode(subAct); 
+                            this._elaborateFromActionNode(subAct, indent + "  "); 
                         }
                     }                    
                 }
             }
         }
 
-        private void _loadRecipe(ActionNode actionNode)
+        private void _loadRecipe(ActionNode actionNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue/PlanGraph _loadRecipe " + actionNode.Name);
             ArrayList recipeList = this._kbase.SearchRecipe(actionNode.Name);
             if (recipeList.Count == 0)
             {
@@ -530,7 +557,7 @@ namespace CAGA.Dialogue
             // load the first one atm
             Hashtable recipeInfo = (Hashtable)recipeList[0];
             string recipeXMl = recipeInfo["content"].ToString();
-            bool parsed = this._parseRecipeXML(recipeXMl, actionNode);
+            bool parsed = this._parseRecipeXML(recipeXMl, actionNode, indent + "  ");
             // if succeed, set the action state to planned, set the states of children, remove the node from the agenda
             if (parsed == true)
             {
@@ -538,8 +565,9 @@ namespace CAGA.Dialogue
             }
         }
 
-        private bool _parseRecipeXML(string recipeXML, ActionNode actionNode)
+        private bool _parseRecipeXML(string recipeXML, ActionNode actionNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue/PlanGraph _parseRecipeXML " + actionNode.Name);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(recipeXML);
             XmlNodeList paramList = doc.GetElementsByTagName("PARA");
@@ -593,12 +621,14 @@ namespace CAGA.Dialogue
             return true;
         }
 
-        private bool _parentParamsRdy(PlanNode planNode)
+        private bool _parentParamsRdy(PlanNode planNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue/PlanGraph _parentParamsRdy " + planNode.Name);
             bool paramsRdy = true; // check whether the previous params are ready
             ActionNode actionNode = planNode.Parent as ActionNode;
             if (actionNode != null)
             {
+                Console.WriteLine(indent + "Parent: " + actionNode.Name);
                 foreach (ParamNode param in actionNode.Params)
                 {
                     if (param.Name != planNode.Name)
@@ -626,14 +656,23 @@ namespace CAGA.Dialogue
                     }
                 }
             }
-
+            else {
+                Console.WriteLine(indent + "Parent: is NULL");
+            }
             return paramsRdy;
         }
 
-        private void _updateParentState(PlanNode planNode)
+        /// <summary>
+        /// When Completed, Update Parent recursively
+        /// </summary>
+        /// <param name="planNode"></param>
+        /// <param name="indent"></param>
+        private void _updateParentState(PlanNode planNode, string indent)
         {
+            Console.WriteLine(indent + "Dialogue.PlanGraph _updateParentState " + planNode.Name);
             if (planNode.Parent != null)
             {
+                Console.WriteLine(indent + "Parent: " + planNode.Parent.Name);
                 if (planNode.Parent is ActionNode)
                 {
                     ActionNode parent = (ActionNode)planNode.Parent;
@@ -641,6 +680,7 @@ namespace CAGA.Dialogue
                     {
                         if (param.ParamState != ParamState.Ready)
                         {
+                            Console.WriteLine(indent + "ActionNode Parent not Completed becasue of param " + param.Name + " " + param.ParamState.ToString());
                             return;
                         }
                     }
@@ -648,27 +688,31 @@ namespace CAGA.Dialogue
                     {
                         if (subAct.Optional == false && subAct.ActState != ActionState.Complete)
                         {
+                            Console.WriteLine(indent + "ActionNode Parent not Completed becasue of subAct " + subAct.Name + " " + subAct.ActState.ToString() + " Optional=false");
                             return;
                         }
                         if (subAct.Optional == true && subAct.ActState != ActionState.Complete && subAct.ActState != ActionState.Unknown)
                         {
+                            Console.WriteLine(indent + "ActionNode Parent not Completed becasue of subAct " + subAct.Name + " " + subAct.ActState.ToString() + " Optional=ture");
                             return;
                         }
                     }
                     parent.ActState = ActionState.Complete;
-                    this._updateParentState(parent);
+                    Console.WriteLine(indent + "ActionNode Parent Completed");
+                    this._updateParentState(parent, indent + "  ");
                 }
                 else if (planNode.Parent is ParamNode)
                 {
                     ParamNode parent = (ParamNode)planNode.Parent;
                     if (parent.Values.Count == 0)
                     {
+                        Console.WriteLine(indent + "ParamNode Parent notReady becasue of 0 value");
                         return;
                     }
                     // assume the parameter is ready as long as it has values
                     // it might be extended to consider the conditions on the parameter
                     parent.ParamState = ParamState.Ready;
-                    this._updateParentState(parent);
+                    this._updateParentState(parent, indent + "  ");
                 }
 
             }

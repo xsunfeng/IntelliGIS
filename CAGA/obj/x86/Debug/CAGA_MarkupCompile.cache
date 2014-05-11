@@ -1,19 +1,19 @@
 ﻿CAGA
 
 
-winexe
+exe
 C#
 .cs
-C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\
+C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\
 CAGA
 none
 false
 DEBUG;TRACE
-C:\Work\Projects\CAGA\CAGA\App.xaml
+C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\App.xaml
 10-221402896
 
 3834848564
-40281902592
+40-1964029381
 Dialogue\ListOptionsWithExamplesWindow.xaml;Dialogue\SelectByAttributeWindow.xaml;Dialogue\SummaryResultsWindow.xaml;Dialogue\ListMapLayerOptionsWindow.xaml;Dialogue\ListPlainOptionsWindow.xaml;Dialogue\StatResultsWindow.xaml;Map\AttrTableWindow.xaml;MainWindow.xaml;Map\SymbologyWindow.xaml;SpeechSimWindow.xaml;
 
 False

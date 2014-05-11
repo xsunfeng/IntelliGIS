@@ -73,6 +73,7 @@ namespace CAGA.Dialogue
 
         public ArrayList Start()
         {
+            Console.WriteLine("Map/DialogueManager: Start");
             ArrayList respList = new ArrayList();
             this._planGraph = new PlanGraph(this._kbase, this._exec);
             this._isRunning = true;
@@ -96,6 +97,7 @@ namespace CAGA.Dialogue
 
         public bool Stop()
         {
+            Console.WriteLine("Map/DialogueManager: Stop");
             if (this._planGraph != null)
             {
                 this._planGraph.Close();
@@ -108,6 +110,7 @@ namespace CAGA.Dialogue
 
         public ArrayList Update(SortedList speech, SortedList gesture=null, Agent agent=null)
         {
+            Console.WriteLine("Map.DialogueManager: Update Begin");
             ArrayList respList = new ArrayList();
             if (speech == null && gesture == null)
             {
@@ -152,6 +155,7 @@ namespace CAGA.Dialogue
             // Elaborate the plan and process the response
             respList = this._planGraph.Elaborate();
             this._parser.SetPrevDlgResponse(respList);
+            Console.WriteLine("Map.DialogueManager: Update End");
             return respList;
         }
 

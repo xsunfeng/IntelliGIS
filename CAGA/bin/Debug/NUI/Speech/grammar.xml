@@ -3,6 +3,9 @@
   <rule id="toplevel" scope="public">
     <one-of>
       <item>
+        <ruleref uri="#mapping_nearby"/>
+      </item>
+      <item>
         <ruleref uri="#mapping_inside"/>
       </item>
       <item>
@@ -32,9 +35,28 @@
       </item>
       <item>
         <ruleref uri="#summarize_data"/>
-      </item>
-      
+      </item>      
     </one-of>
+  </rule>
+
+  <rule id="mapping_nearby" scope="public">
+    <example> mapping nearby </example>
+    <example> find houses near fire stations </example>
+    <item>
+      find
+    </item>
+    <item>
+      houses
+      <tag> out.inlayer = "houses"; </tag>
+    </item>
+    <item>
+      near
+    </item>
+    <item>
+      fire stations
+      <tag> out.outlayer = "fire stations"; </tag>
+    </item>
+    <tag> out.intention = "Mapping Nearby"; </tag>
   </rule>
 
   <rule id="mapping_inside" scope="public">

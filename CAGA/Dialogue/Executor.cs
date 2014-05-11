@@ -15,89 +15,89 @@ namespace CAGA.Dialogue
             this._mapMgr = mapMgr;
         }
 
-        public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct)
+        public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
             if (actionNode.Name.ToLower() == "Get Value From Input".ToLower())
             {
-                return this.GetValueFromInput(actionNode, currDlgAct);
+                return this.GetValueFromInput(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Ask For Value".ToLower())
             {
-                return this.AskForValue(actionNode, currDlgAct);
+                return this.AskForValue(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Select From Candidates".ToLower())
             {
-                return this.SelectFromCandidates(actionNode, currDlgAct);
+                return this.SelectFromCandidates(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Get Existing Value From Ancestor".ToLower())
             {
-                return this.GetExistingValueFromAncestor(actionNode, currDlgAct);
+                return this.GetExistingValueFromAncestor(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Ask For More Value".ToLower())
             {
-                return this.AskForMoreValue(actionNode, currDlgAct);
+                return this.AskForMoreValue(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Identify Region Type".ToLower())
             {
-                return this.IdentifyRegionType(actionNode, currDlgAct);
+                return this.IdentifyRegionType(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Choose Specification Method".ToLower())
             {
-                return this.ChooseSpecificationMethod(actionNode, currDlgAct);
+                return this.ChooseSpecificationMethod(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Specify Region By Attributes".ToLower())
             {
-                return this.SpecifyRegionByAttributes(actionNode, currDlgAct);
+                return this.SpecifyRegionByAttributes(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Specify Region By Drawing".ToLower())
             {
-                return this.SpecifyRegionByDrawing(actionNode, currDlgAct);
+                return this.SpecifyRegionByDrawing(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Specify Region By Buffer".ToLower())
             {
-                return this.SpecifyRegionByBuffer(actionNode, currDlgAct);
+                return this.SpecifyRegionByBuffer(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Ask For Partiality".ToLower())
             {
-                return this.AskForPartiality(actionNode, currDlgAct);
+                return this.AskForPartiality(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Get Current Map Extent".ToLower())
             {
-                return this.GetCurrentMapExtent(actionNode, currDlgAct);
+                return this.GetCurrentMapExtent(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Draw Region".ToLower())
             {
-                return this.DrawRegion(actionNode, currDlgAct);
+                return this.DrawRegion(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Infer Value From Other Parameter".ToLower())
             {
-                return this.InferValueFromOtherParameter(actionNode, currDlgAct);
+                return this.InferValueFromOtherParameter(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Choose Analytic Functions".ToLower())
             {
-                return this.ChooseAnalyticFunctions(actionNode, currDlgAct);
+                return this.ChooseAnalyticFunctions(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Perform Selection".ToLower())
             {
-                return this.PerformSelection(actionNode, currDlgAct);
+                return this.PerformSelection(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Perform Overlay".ToLower())
             {
-                return this.PerformOverlay(actionNode, currDlgAct);
+                return this.PerformOverlay(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Calculate Field Statistics".ToLower())
             {
-                return this.CalculateFieldStatistics(actionNode, currDlgAct);
+                return this.CalculateFieldStatistics(actionNode, currDlgAct, indent);
             }
             else if (actionNode.Name.ToLower() == "Calculate Data Summary".ToLower())
             {
-                return this.CalculateDataSummary(actionNode, currDlgAct);
+                return this.CalculateDataSummary(actionNode, currDlgAct, indent);
             }
             return new ArrayList();
         }
 
 
-        private ArrayList BasicActionTemplate(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList BasicActionTemplate(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
             ArrayList respList = new ArrayList();
             // change its own state
@@ -112,8 +112,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList GetValueFromInput(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList GetValueFromInput(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.GetValueFromInput actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -140,11 +141,11 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList AskForValue(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList AskForValue(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.AskForValue actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
-
-            
+           
             // if the action has not been executed, set it to executing, raid the question and return
             if (actionNode.ActState == ActionState.Initiated)
             {
@@ -215,8 +216,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList SelectFromCandidates(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList SelectFromCandidates(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.SelectFromCandidates actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -262,7 +264,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "data_source")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"..\..\..\Data\GISLAB\Data\";
+                                string dataSourcePath = @"C:\GISLAB\Data\";
                                 foreach (string value in paramNode.Values)
                                 {
                                     string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
@@ -288,8 +290,9 @@ namespace CAGA.Dialogue
         }
 
 
-        private ArrayList GetExistingValueFromAncestor(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList GetExistingValueFromAncestor(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.GetExistingValueFromAncestor actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -340,6 +343,7 @@ namespace CAGA.Dialogue
 
         private ArrayList _searchValueFromAncestor(PlanNode planNode, string paramName)
         {
+            //Console.WriteLine(indent + "Executor._searchValueFromAncestor PlanNode:" + planNode);
             ArrayList matchedValues = new ArrayList();
             if (planNode == null)
                 return matchedValues;
@@ -372,8 +376,9 @@ namespace CAGA.Dialogue
             return matchedValues;
         }
 
-        private ArrayList AskForMoreValue(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList AskForMoreValue(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.AskForMoreValue actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -392,9 +397,9 @@ namespace CAGA.Dialogue
                     MapLayerOptionListData respContent = new MapLayerOptionListData();
                     //respContent.Opening = this._generateQuestionString(paramNode);
                     respContent.Opening = "You may want to consider adding the following layers to the map as background:";
-                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\Work\Data\GISLAB\Data\Oleader\Lot Boundaries.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Zoning", @"C:\Work\Data\GISLAB\Data\Oleader\Zoning.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\Work\Data\GISLAB\Data\Oleader\Flood Areas.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB\Data\Oleader\Lot Boundaries.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Zoning", @"C:\GISLAB\Data\Oleader\Zoning.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB\Data\Oleader\Flood Areas.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
                     return respList;
@@ -419,7 +424,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "feature_class")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\Work\Data\GISLAB\Data\Oleader\";
+                                string dataSourcePath = @"C:\GISLAB\Data\Oleader\";
                                 string filePath = System.IO.Path.Combine(dataSourcePath + (string)newValue + ".lyr");
                                 if (System.IO.File.Exists(filePath))
                                 {
@@ -438,10 +443,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList IdentifyRegionType(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList IdentifyRegionType(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.IdentifyRegionType actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
-
             if (actionNode.ActState == ActionState.Initiated)
             {
                 // change its own state
@@ -492,8 +497,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList ChooseSpecificationMethod(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList ChooseSpecificationMethod(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.ChooseSpecificationMethod actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -545,8 +551,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList SpecifyRegionByAttributes(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList SpecifyRegionByAttributes(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.SpecifyRegionByAttributes actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -619,10 +626,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList SpecifyRegionByDrawing(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList SpecifyRegionByDrawing(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.SpecifyRegionByDrawing actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
-
             if (actionNode.ActState == ActionState.Initiated)
             {
                 // change its own state
@@ -701,8 +708,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList SpecifyRegionByBuffer(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList SpecifyRegionByBuffer(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.SpecifyRegionByBuffer actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -716,9 +724,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        
-        private ArrayList AskForPartiality(ActionNode actionNode, DialogueAct currDlgAct)
+
+        private ArrayList AskForPartiality(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.AskForPartiality actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -786,8 +795,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList GetCurrentMapExtent(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList GetCurrentMapExtent(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.GetCurrentMapExtent actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -804,8 +814,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList DrawRegion(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList DrawRegion(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.DrawRegion actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -883,8 +894,9 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList InferValueFromOtherParameter(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList InferValueFromOtherParameter(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.InferValueFromOtherParameter actionNode:" + actionNode);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -949,8 +961,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList ChooseAnalyticFunctions(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList ChooseAnalyticFunctions(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.ChooseAnalyticFunctions actionNode:" + actionNode);
+
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -1008,8 +1022,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList PerformSelection(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList PerformSelection(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.PerformSelection actionNode:" + actionNode);
+
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -1064,8 +1080,10 @@ namespace CAGA.Dialogue
         }
 
 
-        private ArrayList PerformOverlay(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList PerformOverlay(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.PerformOverlay actionNode:" + actionNode);
+
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -1139,8 +1157,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList CalculateFieldStatistics(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList CalculateFieldStatistics(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.CalculateFieldStatistics actionNode:" + actionNode);
+
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -1192,8 +1212,10 @@ namespace CAGA.Dialogue
             return respList;
         }
 
-        private ArrayList CalculateDataSummary(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList CalculateDataSummary(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.CalculateDataSummary actionNode:" + actionNode);
+
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
