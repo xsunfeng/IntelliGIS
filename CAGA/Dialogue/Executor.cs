@@ -136,7 +136,7 @@ namespace CAGA.Dialogue
                     Console.WriteLine(indent + "currDlgAct.SpeechContext[phrase]:" + currDlgAct.SpeechContext[phrase]);
                     if (newValue != null)
                     {
-                        this._addValueToParam(paramNode, newValue);
+                        this._addValueToParam(paramNode, newValue, indent);
                         break;
                     }
                 }
@@ -191,7 +191,7 @@ namespace CAGA.Dialogue
                             Console.WriteLine(indent + "currDlgAct.SpeechContext[phrase]:" + currDlgAct.SpeechContext[phrase]);
                             if (newValue != null)
                             {
-                                this._addValueToParam(paramNode, newValue);
+                                this._addValueToParam(paramNode, newValue, indent);
                                 // change its own state
                                 actionNode.ActState = ActionState.Complete;
                                 // generate response 
@@ -202,14 +202,14 @@ namespace CAGA.Dialogue
                 }
                 else if (currDlgAct.DlgActType == DialogueActType.Accept && paramNode.ParamType == "boolean")
                 {
-                    this._addValueToParam(paramNode, true);
+                    this._addValueToParam(paramNode, true, indent);
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, paramNode.Name + ": true"));
                     actionNode.ActState = ActionState.Complete;
                     return respList;
                 }
                 else if (currDlgAct.DlgActType == DialogueActType.Accept && paramNode.ParamType == "boolean")
                 {
-                    this._addValueToParam(paramNode, true);
+                    this._addValueToParam(paramNode, true, indent);
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, paramNode.Name + ": false"));
                     actionNode.ActState = ActionState.Complete;
                     return respList;
@@ -224,7 +224,7 @@ namespace CAGA.Dialogue
 
         private ArrayList SelectFromCandidates(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.SelectFromCandidates actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.SelectFromCandidates actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -260,7 +260,7 @@ namespace CAGA.Dialogue
                         object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
                         if (newValue != null)
                         {
-                            this._addValueToParam(paramNode, newValue);
+                            this._addValueToParam(paramNode, newValue, indent);
 
                             // change its own state
                             actionNode.ActState = ActionState.Complete;
@@ -298,7 +298,7 @@ namespace CAGA.Dialogue
 
         private ArrayList GetExistingValueFromAncestor(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.GetExistingValueFromAncestor actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.GetExistingValueFromAncestor actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -317,7 +317,7 @@ namespace CAGA.Dialogue
                     {
                         foreach (object value in ancestorParam.Values)
                         {
-                            this._addValueToParam(paramNode, value);
+                            this._addValueToParam(paramNode, value, indent);
                         }
                     }
                 }
@@ -332,7 +332,7 @@ namespace CAGA.Dialogue
                             {
                                 foreach (object value in param.Values)
                                 {
-                                    this._addValueToParam(paramNode, value);
+                                    this._addValueToParam(paramNode, value, indent);
                                 }
                             }
                         }
@@ -384,7 +384,7 @@ namespace CAGA.Dialogue
 
         private ArrayList AskForMoreValue(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.AskForMoreValue actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.AskForMoreValue actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -422,7 +422,7 @@ namespace CAGA.Dialogue
                         object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
                         if (newValue != null)
                         {
-                            this._addValueToParam(paramNode, newValue);
+                            this._addValueToParam(paramNode, newValue, indent);
 
                             // change its own state
                             actionNode.ActState = ActionState.Complete;
@@ -451,7 +451,7 @@ namespace CAGA.Dialogue
 
         private ArrayList IdentifyRegionType(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.IdentifyRegionType actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.IdentifyRegionType actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             if (actionNode.ActState == ActionState.Initiated)
             {
@@ -487,7 +487,7 @@ namespace CAGA.Dialogue
                         object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
                         if (newValue != null)
                         {
-                            this._addValueToParam(paramNode, newValue);
+                            this._addValueToParam(paramNode, newValue, indent);
 
                             // change its own state
                             actionNode.ActState = ActionState.Complete;
@@ -505,7 +505,7 @@ namespace CAGA.Dialogue
 
         private ArrayList ChooseSpecificationMethod(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.ChooseSpecificationMethod actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.ChooseSpecificationMethod actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -559,7 +559,7 @@ namespace CAGA.Dialogue
 
         private ArrayList SpecifyRegionByAttributes(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.SpecifyRegionByAttributes actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.SpecifyRegionByAttributes actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -606,7 +606,7 @@ namespace CAGA.Dialogue
                                     Hashtable v = new Hashtable();
                                     v.Add("type", "features");
                                     v.Add("value", newValue);
-                                    this._addValueToParam(paramNode, v);
+                                    this._addValueToParam(paramNode, v, indent);
 
                                     // change its own state
                                     actionNode.ActState = ActionState.Complete;
@@ -634,7 +634,7 @@ namespace CAGA.Dialogue
 
         private ArrayList SpecifyRegionByDrawing(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.SpecifyRegionByDrawing actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.SpecifyRegionByDrawing actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             if (actionNode.ActState == ActionState.Initiated)
             {
@@ -678,8 +678,10 @@ namespace CAGA.Dialogue
 
                     if (paramNode != null)
                     {
+                        Console.WriteLine(indent + "paramNode=" + paramNode.Name);
                         foreach (string phrase in currDlgAct.SpeechContext.Keys)
                         {
+                            Console.WriteLine(indent + "phrase=" + phrase);
                             if (phrase.ToLower() == actionNode.Name.ToLower())
                             {
                                 object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
@@ -688,7 +690,7 @@ namespace CAGA.Dialogue
                                     Hashtable v = new Hashtable();
                                     v.Add("type", "drawing");
                                     v.Add("value", newValue);
-                                    this._addValueToParam(paramNode, v);
+                                    this._addValueToParam(paramNode, v, indent);
                                     
                                     // change its own state
                                     actionNode.ActState = ActionState.Complete;
@@ -716,13 +718,66 @@ namespace CAGA.Dialogue
 
         private ArrayList SpecifyRegionByBuffer(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.SpecifyRegionByBuffer actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.SpecifyRegionByBuffer actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
-            // change its own state
-            actionNode.ActState = ActionState.Executing;
+            if (actionNode.ActState == ActionState.Initiated){
+                // change its own state
+                actionNode.ActState = ActionState.Executing;
+                // do something: generate the candiate list           
+                respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: SpecifyRegionByBuffer"));
+                return respList;
+            }
+            // if the action is executing, try to check whether the current input answers the question
+            else if (actionNode.ActState == ActionState.Executing)
+            {
+                    // find the parameter node from the ancestor
+                    PlanNode parent = actionNode.Parent;
+                    ParamNode paramNode = null;
+                    while (parent != null)
+                    {
+                        if (parent.Parent is ParamNode)
+                        {
+                            paramNode = parent.Parent as ParamNode;
+                            break;
+                        }
+                        else if (parent.Parent is ActionNode)
+                        {
+                            parent = parent.Parent;
+                        }
+                    }
 
-            // do something:
-            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "MOCKUP Action: SpecifyRegionByBuffer"));
+                    if (paramNode != null)
+                    {
+                        Console.WriteLine(indent + "paramNode=" + paramNode.Name);
+                        foreach (string phrase in currDlgAct.SpeechContext.Values)
+                        {
+                            Console.WriteLine(indent + "phrase=" + phrase);
+                            if (phrase.ToLower() == actionNode.Name.ToLower())
+                            {
+                                //object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                                if (true)
+                                {
+                                    BufferOp(actionNode, currDlgAct,indent);          
+                                    Hashtable v = new Hashtable();
+                                    v.Add("type", "buffer");
+                                    v.Add("in_layer", "TreeInventory_buffer");
+                                    this._addValueToParam(paramNode, v, indent);
+
+                                    // change its own state
+                                    actionNode.ActState = ActionState.Complete;
+
+                                    // generate response 
+                                    if (paramNode.ParamType == "geometry_polygon")
+                                    {
+                                        // fixed at the moment
+                                        respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "Thanks, you may refer to this region as " + "Region 2"));
+                                        return respList;
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
 
             // change its own state
             actionNode.ActState = ActionState.Complete;
@@ -733,7 +788,7 @@ namespace CAGA.Dialogue
 
         private ArrayList AskForPartiality(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.AskForPartiality actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.AskForPartiality actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -785,7 +840,7 @@ namespace CAGA.Dialogue
                         object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
                         if (newValue != null)
                         {
-                            this._addValueToParam(paramNode, newValue);
+                            this._addValueToParam(paramNode, newValue, indent);
 
                             // change its own state
                             actionNode.ActState = ActionState.Complete;
@@ -803,7 +858,7 @@ namespace CAGA.Dialogue
 
         private ArrayList GetCurrentMapExtent(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.GetCurrentMapExtent actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.GetCurrentMapExtent actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -811,7 +866,7 @@ namespace CAGA.Dialogue
             // do something:
             ParamNode paramNode = (ParamNode)actionNode.Parent;
             object newValue = this._mapMgr.GetMapExtent();
-            this._addValueToParam(paramNode, newValue);
+            this._addValueToParam(paramNode, newValue, indent);
             respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetCurrentMapExtent"));
 
             // change its own state
@@ -822,7 +877,7 @@ namespace CAGA.Dialogue
 
         private ArrayList DrawRegion(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.DrawRegion actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.DrawRegion actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
 
             if (actionNode.ActState == ActionState.Initiated)
@@ -874,7 +929,7 @@ namespace CAGA.Dialogue
                                 object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
                                 if (newValue != null)
                                 {
-                                    this._addValueToParam(paramNode, newValue);
+                                    this._addValueToParam(paramNode, newValue, indent);
 
                                     // change its own state
                                     actionNode.ActState = ActionState.Complete;
@@ -902,7 +957,7 @@ namespace CAGA.Dialogue
 
         private ArrayList InferValueFromOtherParameter(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.InferValueFromOtherParameter actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.InferValueFromOtherParameter actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
             // change its own state
             actionNode.ActState = ActionState.Executing;
@@ -950,12 +1005,12 @@ namespace CAGA.Dialogue
                 {
                     if (matchedParam.Values.Count > 1)
                     {
-                        this._addValueToParam(paramNode, true);
+                        this._addValueToParam(paramNode, true, indent);
                         respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, paramNode.Name + ": true"));
                     }
                     else if (matchedParam.Values.Count == 1)
                     {
-                        this._addValueToParam(paramNode, false);
+                        this._addValueToParam(paramNode, false, indent);
                         respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, paramNode.Name + ": false"));
                     }
                 }
@@ -969,7 +1024,7 @@ namespace CAGA.Dialogue
 
         private ArrayList ChooseAnalyticFunctions(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.ChooseAnalyticFunctions actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.ChooseAnalyticFunctions actionNode:" + actionNode.Name);
 
             ArrayList respList = new ArrayList();
             // change its own state
@@ -1030,7 +1085,7 @@ namespace CAGA.Dialogue
 
         private ArrayList PerformSelection(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.PerformSelection actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.PerformSelection actionNode:" + actionNode.Name);
 
             ArrayList respList = new ArrayList();
             // change its own state
@@ -1047,11 +1102,22 @@ namespace CAGA.Dialogue
             {
                 if (param.ParamState == ParamState.Ready && param.ParamType == "geometry_polygon")
                 {
+                    Console.WriteLine(indent + "**************************************************");
+                    Console.WriteLine(indent + param.Name + " " + param.ParamType);
+                    Console.WriteLine(indent + "**************************************************");
                     region = param.Values[0] as Hashtable;
+                    foreach (DictionaryEntry item in region)
+                    {
+                        Console.WriteLine(indent + "key=" + item.Key+",value="+item.Value);
+                    }
                 }
                 else if (param.ParamState == ParamState.Ready && param.ParamType == "feature_class")
                 {
+                    Console.WriteLine(indent + "**************************************************");
+                    Console.WriteLine(indent + param.Name + " " + param.ParamType);
+                    Console.WriteLine(indent + "**************************************************");
                     featureClass = param.Values[0].ToString();
+                    Console.WriteLine(indent + "string=" + featureClass);
                 }
             }
 
@@ -1061,6 +1127,7 @@ namespace CAGA.Dialogue
                 if (region["type"].ToString() == "drawing")
                 {
                     string graphicsName = region["value"].ToString();
+                    Console.WriteLine(indent + "graphicsName=" + graphicsName);
                     this._mapMgr.SelectFeaturesByGraphics(graphicsName);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + graphicsName + "are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
@@ -1068,15 +1135,28 @@ namespace CAGA.Dialogue
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by drawing"));
                 }
                 else if (region["type"].ToString() == "features")
-                {
+                {                    
                     string in_layer = featureClass;
                     string select_features = region["value"].ToString();
+                    Console.WriteLine(indent + "in_layer=" + in_layer + " select_features=" + select_features);
                     this._mapMgr.SelectFeaturesByLocation(in_layer, select_features);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + select_features + "are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by attributes"));
                 }
+                else if (region["type"].ToString() == "buffer")
+                {
+                    string select_feature = featureClass;
+                    string in_layer = region["in_layer"].ToString();
+                    Console.WriteLine(indent + "in_layer=" + in_layer + " select_feature=" + select_feature);
+                    this._mapMgr.SelectFeaturesByLocation(select_feature,in_layer);
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + select_feature + "are highlighted in the map!"));
+                    int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
+                    respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by buffer"));
+                }
+
             }
 
             // change its own state
@@ -1088,7 +1168,7 @@ namespace CAGA.Dialogue
 
         private ArrayList PerformOverlay(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.PerformOverlay actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.PerformOverlay actionNode:" + actionNode.Name);
 
             ArrayList respList = new ArrayList();
             // change its own state
@@ -1140,7 +1220,7 @@ namespace CAGA.Dialogue
                     string outputFile = this._mapMgr.Overlay(inputLayers, cachedOutputFile);
                     if (outputFile.Length > 0)
                     {
-                        this._addValueToParam(paramNode, cachedOutputFile);
+                        this._addValueToParam(paramNode, cachedOutputFile, indent);
                         respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The overlay of " + featureClass + " and " + select_features + "is added in the map!"));
                         respList.Add(new DialogueResponse(DialogueResponseType.mapLayerAdded, outputFile));
                         respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "overlay " + featureClass + " and " + select_features));
@@ -1165,7 +1245,7 @@ namespace CAGA.Dialogue
 
         private ArrayList CalculateFieldStatistics(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.CalculateFieldStatistics actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.CalculateFieldStatistics actionNode:" + actionNode.Name);
 
             ArrayList respList = new ArrayList();
             // change its own state
@@ -1220,7 +1300,7 @@ namespace CAGA.Dialogue
 
         private ArrayList CalculateDataSummary(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
-            Console.WriteLine(indent + "Executor.CalculateDataSummary actionNode:" + actionNode);
+            Console.WriteLine(indent + "Executor.CalculateDataSummary actionNode:" + actionNode.Name);
 
             ArrayList respList = new ArrayList();
             // change its own state
@@ -1337,40 +1417,58 @@ namespace CAGA.Dialogue
             return dataField;
         }
 
-        private ArrayList BufferOp(ActionNode actionNode, DialogueAct currDlgAct)
+        private ArrayList BufferOp(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(indent + "Executor.BufferOp actionNode:" + actionNode.Name);
+
             ArrayList respList = new ArrayList();
-            // change its own state
-            actionNode.ActState = ActionState.Executing;
 
             // do something: calculate the buffer
-            ActionNode parentAct = (ActionNode)actionNode.Parent;
-            string inputLayer = parentAct.GetParamValue("input_layer")[0].ToString();
-            Hashtable distInfo = (Hashtable)(parentAct.GetParamValue("distance")[0]);
-            string distString = distInfo["value"].ToString();
-            if (distInfo.ContainsKey("unit"))
-            {
-                distString += " " + distInfo["unit"].ToString();
-            }
 
-            // todo: convert the unit if needed
-            
-            if (inputLayer != "" && distString != "")
+            if (actionNode.ActState == ActionState.Initiated)
             {
-                string outLayerFile = ((IGeoProcessor)this._mapMgr).Buffer(inputLayer, distString);
-                if (outLayerFile.Length > 0)
+                // change its own state
+                actionNode.ActState = ActionState.Executing;
+
+                // do something: generate the candiate list           
+                respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: BufferOp"));
+                respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "Please Tell me the Buffer details"));
+                return respList;
+            }
+            // if the action is executing, try to check whether the current input answers the question
+            else if (actionNode.ActState == ActionState.Executing)
+            {
+                ArrayList layernames = _mapMgr.GetLayerNames();
+                foreach (string item in layernames)
                 {
-                    respList.Add(new DialogueResponse(DialogueResponseType.mapLayerAdded, outLayerFile));
-                    // change its own state
-                    actionNode.ActState = ActionState.Complete;
-                    return respList;
+                    Console.WriteLine(indent + "inputname=" + item);
+                }
+                string inputLayer = "TreeInventory";
+                string distString = "100 meters";
+
+                // todo: convert the unit if needed
+
+                if (inputLayer != "" && distString != "")
+                {
+                    string outLayerFile = ((IGeoProcessor)this._mapMgr).Buffer(inputLayer, distString);
+                    if (outLayerFile.Length > 0)
+                    {
+                        Console.WriteLine(indent + "outLayerFile=" + outLayerFile);
+                        _mapMgr.AddLayer(outLayerFile);
+                        respList.Add(new DialogueResponse(DialogueResponseType.mapLayerAdded, outLayerFile));
+                        actionNode.ActState = ActionState.Complete;
+                        Console.WriteLine(indent + "Complete");
+                        return respList;
+                    }
                 }
             }
             // change its own state
             actionNode.ActState = ActionState.Failed;
-            
+
             // generate response 
+            Console.WriteLine(indent + "Failed");
             return respList;
+    
         }
 
         private string _generateQuestionString(ParamNode paramNode)
@@ -1508,8 +1606,9 @@ namespace CAGA.Dialogue
             return null;
         }
 
-        private void _addValueToParam(ParamNode paramNode, object newValue)
+        private void _addValueToParam(ParamNode paramNode, object newValue, string indent)
         {
+            Console.WriteLine(indent + "Executor._addValueToParam " + paramNode.Name);
             if (newValue != null)
             {
                 if (paramNode.Multiple == false)
@@ -1518,10 +1617,19 @@ namespace CAGA.Dialogue
                 }
                 else
                 {
+                    if (newValue is string) Console.WriteLine(indent + "flag");
+                    if(newValue is string)Console.WriteLine(indent + "newValue:" + newValue.ToString());
+                    else if (newValue is Hashtable) {
+                        foreach (DictionaryEntry item in (Hashtable)newValue)
+                        {
+                            Console.WriteLine(indent + "key=" + item.Key + ",value=" + item.Value);
+                        }
+                    }
                     foreach (object value in paramNode.Values)
                     {
                         // check whether the new value already exists
                         // only check string type at the moment
+                        Console.WriteLine(indent + "Value:" + value.ToString());
                         if (newValue is string)
                         {
                             if (newValue.ToString() == value.ToString())
@@ -1531,8 +1639,7 @@ namespace CAGA.Dialogue
                         }
                     }
                 }
-                paramNode.Values.Add(newValue);
-                
+                paramNode.Values.Add(newValue);              
             }
         }
 

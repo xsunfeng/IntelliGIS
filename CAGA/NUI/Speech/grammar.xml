@@ -35,7 +35,10 @@
       </item>
       <item>
         <ruleref uri="#summarize_data"/>
-      </item>      
+      </item>
+      <item>
+        <ruleref uri="#perform_bufferop"/>
+      </item>    
     </one-of>
   </rule>
 
@@ -386,7 +389,7 @@
       </item>
       <item>
         fully <tag> out = "whole"; </tag>
-      </item>
+      </item> 
       <item>
         partially inside <tag> out = "partial"; </tag>
       </item>
@@ -414,6 +417,18 @@
     </item>
     
     <tag> out.intention = "Specify Region By Drawing"; </tag>
+  </rule>
+
+  <rule id="perform_bufferop" scope="public">
+    <example> buffer operation </example>
+
+    <item>
+      <one-of>
+        <item> buffer operation </item>
+        <item> perform buffering </item>
+      </one-of>
+    </item>
+    <tag> out.intention = "Specify Region By Buffer"; </tag>
   </rule>
 
   <rule id="aff_or_neg" scope="public">

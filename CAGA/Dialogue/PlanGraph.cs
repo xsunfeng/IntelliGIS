@@ -155,11 +155,13 @@ namespace CAGA.Dialogue
                     {
                         if (phrase.ToLower() == ((ParamNode)actNode.Parent).Name.ToLower())
                         {
+                            Console.WriteLine(indent + "true");
                             return true;
                         }
                     }
                 }
             }
+            Console.WriteLine(indent + "false");
             return false;
         }
 
@@ -712,6 +714,25 @@ namespace CAGA.Dialogue
                         Console.WriteLine(indent + "ParamNode Parent notReady becasue of 0 value");
                         return;
                     }
+                    else {
+                        foreach (object obj in parent.Values)
+                        {
+                            if (obj is string)
+                            {
+                                Console.WriteLine(indent + "******hashtable******");
+                                Console.WriteLine(indent + "obj="+obj);
+                            }
+                            else if (obj is Hashtable)
+                            {
+                                Console.WriteLine(indent + "******hashtable******");
+                                foreach (DictionaryEntry item in (Hashtable)obj)
+                                {
+                                    Console.WriteLine(indent + "key=" + item.Key + ",value=" + item.Value);
+                                }
+                            }
+                        }
+                    }
+
                     // assume the parameter is ready as long as it has values
                     // it might be extended to consider the conditions on the parameter
                     parent.ParamState = ParamState.Ready;
