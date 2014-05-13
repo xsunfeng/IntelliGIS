@@ -68,11 +68,29 @@ namespace CAGA.Dialogue
                 // search the actions from knowledge base
                 // the simplest way: search based on name matching
                 ArrayList tempActions = new ArrayList();
-                foreach (string phrase in dlgAct.SpeechContext.Values){
-                    Hashtable tempAct = this._kbase.SearchAction(phrase);
-                    if (tempAct != null){
-                        tempActions.Add(tempAct);
+                SortedList tmpSortedList = new SortedList();
+                foreach (object phrase in dlgAct.SpeechContext.Values){                   
+                    if (phrase is string) {
+                        Console.WriteLine(indent + "string:" + phrase);
+                        Hashtable tempAct = this._kbase.SearchAction((string)phrase);
+                        if (tempAct != null)
+                        {
+                            tempActions.Add(tempAct);
+                        }
+
                     }
+                    else if (phrase is SortedList)
+                    {
+                        foreach (DictionaryEntry item in (SortedList)phrase)
+                        {
+                            tmpSortedList.Add(item.Key, item.Value);
+                            Console.WriteLine(indent + "key:" + item.Key+",value="+item.Value);
+                        }                      
+                    }
+                }
+                foreach (DictionaryEntry item in tmpSortedList)
+                {
+                    dlgAct.SpeechContext.Add(item.Key, item.Value);
                 }
                 // Explain the actions into the plangraph
                 ArrayList explainedActs = new ArrayList();

@@ -242,7 +242,7 @@ namespace CAGA.Dialogue
                     // fixed at the moment, future work will search the database to generat the list
                     PlainOptionListData respContent = new PlainOptionListData();
                     respContent.Opening = this._generateQuestionString(paramNode);
-                    respContent.AddOption(new PlainOptionItemData("City of Oleader", "Matched feature classes: LandUse"));
+                    respContent.AddOption(new PlainOptionItemData("City of Orlando", "Matched feature classes: LandUse"));
                     respContent.AddOption(new PlainOptionItemData("City of Rochester", "Matched feature classes: LandUse, Parcels"));
                     respContent.AddOption(new PlainOptionItemData("City of Baltimore", "Matched feature classes: Parcels, Dwelling units"));
                     respList.Add(new DialogueResponse(DialogueResponseType.listPlainOptions, respContent));
@@ -270,7 +270,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "data_source")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\GISLAB\Data\";
+                                string dataSourcePath = @"C:\GISLAB1\Data\";
                                 foreach (string value in paramNode.Values)
                                 {
                                     string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
@@ -403,9 +403,9 @@ namespace CAGA.Dialogue
                     MapLayerOptionListData respContent = new MapLayerOptionListData();
                     //respContent.Opening = this._generateQuestionString(paramNode);
                     respContent.Opening = "You may want to consider adding the following layers to the map as background:";
-                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB\Data\Oleader\Lot Boundaries.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Zoning", @"C:\GISLAB\Data\Oleader\Zoning.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB\Data\Oleader\Flood Areas.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Orlando\Lot Boundaries.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Zoning", @"C:\GISLAB1\Data\Orlando\BuildingFootprints.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Orlando\MajorRoads.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
                     return respList;
@@ -430,7 +430,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "feature_class")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\GISLAB\Data\Oleader\";
+                                string dataSourcePath = @"C:\GISLAB1\Data\Orlando\";
                                 string filePath = System.IO.Path.Combine(dataSourcePath + (string)newValue + ".lyr");
                                 if (System.IO.File.Exists(filePath))
                                 {
@@ -749,29 +749,38 @@ namespace CAGA.Dialogue
                     if (paramNode != null)
                     {
                         Console.WriteLine(indent + "paramNode=" + paramNode.Name);
-                        foreach (string phrase in currDlgAct.SpeechContext.Values)
+                        string source = "";
+                        foreach (string key in currDlgAct.SpeechContext.Keys)
                         {
-                            Console.WriteLine(indent + "phrase=" + phrase);
-                            if (phrase.ToLower() == actionNode.Name.ToLower())
-                            {
-                                //object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
-                                if (true)
+                            if (key == "source") {
+                                source = (string)currDlgAct.SpeechContext["source"];
+                                break;
+                            }
+                        }
+                        foreach (object phrase in currDlgAct.SpeechContext.Values) {
+                            if (phrase is string) {
+                                Console.WriteLine(indent + "phrase=" + phrase);
+                                if (((string)phrase).ToLower() == actionNode.Name.ToLower())
                                 {
-                                    BufferOp(actionNode, currDlgAct,indent);          
-                                    Hashtable v = new Hashtable();
-                                    v.Add("type", "buffer");
-                                    v.Add("in_layer", "TreeInventory_buffer");
-                                    this._addValueToParam(paramNode, v, indent);
-
-                                    // change its own state
-                                    actionNode.ActState = ActionState.Complete;
-
-                                    // generate response 
-                                    if (paramNode.ParamType == "geometry_polygon")
+                                    //object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                                    if (true)
                                     {
-                                        // fixed at the moment
-                                        respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "Thanks, you may refer to this region as " + "Region 2"));
-                                        return respList;
+                                        BufferOp(actionNode, currDlgAct, indent);
+                                        Hashtable v = new Hashtable();
+                                        v.Add("type", "buffer");
+                                        v.Add("source", source + "_buffer");
+                                        this._addValueToParam(paramNode, v, indent);
+
+                                        // change its own state
+                                        actionNode.ActState = ActionState.Complete;
+
+                                        // generate response 
+                                        if (paramNode.ParamType == "geometry_polygon")
+                                        {
+                                            // fixed at the moment
+                                            respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "Thanks, you may refer to this region as " + "Region 2"));
+                                            return respList;
+                                        }
                                     }
                                 }
                             }
@@ -1148,9 +1157,9 @@ namespace CAGA.Dialogue
                 else if (region["type"].ToString() == "buffer")
                 {
                     string select_feature = featureClass;
-                    string in_layer = region["in_layer"].ToString();
-                    Console.WriteLine(indent + "in_layer=" + in_layer + " select_feature=" + select_feature);
-                    this._mapMgr.SelectFeaturesByLocation(select_feature,in_layer);
+                    string source = region["source"].ToString();
+                    Console.WriteLine(indent + "source=" + source + " select_feature=" + select_feature);
+                    this._mapMgr.SelectFeaturesByLocation(select_feature, source);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + select_feature + "are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
@@ -1443,8 +1452,27 @@ namespace CAGA.Dialogue
                 {
                     Console.WriteLine(indent + "inputname=" + item);
                 }
-                string inputLayer = "TreeInventory";
-                string distString = "100 meters";
+                //string inputLayer = "Fire Stations";
+                string inputLayer = "";
+                string distString = "2 kilometers";
+                foreach (string key in currDlgAct.SpeechContext.Keys)
+                {
+                    if (key == "source")
+                    {
+                        inputLayer = (string)currDlgAct.SpeechContext["source"];
+                        Console.WriteLine(indent + "source=" + inputLayer);
+                        break;
+                    }
+                }
+                foreach (string key in currDlgAct.SpeechContext.Keys)
+                {
+                    if (key == "distance")
+                    {
+                        distString = (string)currDlgAct.SpeechContext["value"] + " " + (string)currDlgAct.SpeechContext["unit"];
+                        Console.WriteLine(indent + "distString=" + distString);
+                        break;
+                    }
+                }
 
                 // todo: convert the unit if needed
 
@@ -1455,6 +1483,7 @@ namespace CAGA.Dialogue
                     {
                         Console.WriteLine(indent + "outLayerFile=" + outLayerFile);
                         _mapMgr.AddLayer(outLayerFile);
+                        _mapMgr.MoveLayer(inputLayer + "_buffer", 2);
                         respList.Add(new DialogueResponse(DialogueResponseType.mapLayerAdded, outLayerFile));
                         actionNode.ActState = ActionState.Complete;
                         Console.WriteLine(indent + "Complete");

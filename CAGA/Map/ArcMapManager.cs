@@ -34,6 +34,7 @@ namespace CAGA.Map
         private string _mapFile;
         private string _polygonName;
         private IWorkspace _tempWorkspace;
+        private IMap _map = null;
 
         public event Action<string> PolygonDrawn;
 
@@ -53,6 +54,7 @@ namespace CAGA.Map
             this._axTOCCtrl = null;
             this._axMapCtrl = null;
             this._mapAndLayoutSync = null;
+            this._map = null;
         }
 
         public System.Windows.Controls.Panel MapContainer
@@ -175,6 +177,7 @@ namespace CAGA.Map
                 mapDoc.Open(filePath, string.Empty);
                 // set the first map as the active view
                 IMap map = mapDoc.get_Map(0);
+                this._map = map;
                 mapDoc.SetActiveView((IActiveView)map);
                 this._axLayoutCtrl.PageLayout = mapDoc.PageLayout;
                 this._mapAndLayoutSync.ReplaceMap(map);
@@ -257,18 +260,22 @@ namespace CAGA.Map
             return true;
         }
 
-        public override bool AddLayer(string filePath)
+        public override bool AddLayer(string filePath, Int32 index = 10)
         {
             string workDir = System.IO.Path.GetDirectoryName(filePath);
             string extension = System.IO.Path.GetExtension(filePath);
             if (extension.ToLower() == ".shp")
             {
                 this._axMapCtrl.AddShapeFile(workDir, System.IO.Path.GetFileName(filePath));
+                ILayer layer = _map.get_Layer(0);
+                _map.MoveLayer(layer, index);
                 return true;
             }
             else if (extension.ToLower() == ".lyr")
             {
                 this._axMapCtrl.AddLayerFromFile(filePath);
+                ILayer layer = _map.get_Layer(0);
+                _map.MoveLayer(layer, index);
                 return true;
             }
             return false;
@@ -291,6 +298,13 @@ namespace CAGA.Map
             {
                 this._axMapCtrl.Map.DeleteLayer(layer);
             }
+        }
+
+        public void MoveLayer (string LayerName, int toIndex)
+        {
+            Int32 index = GetIndexNumberFromLayerName(LayerName);
+            ILayer layer = GetLayeFromName(LayerName);
+            _map.MoveLayer(layer, toIndex);
         }
 
         public override System.Collections.Hashtable GetMapExtent()
@@ -894,6 +908,7 @@ namespace CAGA.Map
         {
             //get the layers from the map
             IEnumLayer layers = this._axMapCtrl.Map.get_Layers();
+
             layers.Reset();
 
             ILayer layer = null;
@@ -1081,5 +1096,46 @@ namespace CAGA.Map
             return "";
         }
 
+        public System.Int32 GetIndexNumberFromLayerName(string layerName)
+        {
+            if (layerName == null)return -1;
+            // Get the number of layers
+            int numberOfLayers = this._map.LayerCount;
+            // Loop through the layers and get the correct layer index
+            for (System.Int32 i = 0; i < numberOfLayers; i++)
+            {
+                if (layerName == this._map.get_Layer(i).Name)
+                {
+                    // Layer was found
+                    return i;
+                }
+            }
+            // No layer was found
+            return -1;
+        }
+
+        public ILayer GetLayeFromName(string layerName)
+        {
+            if (layerName == null) return null;
+            // Get the number of layers
+            int numberOfLayers = this._map.LayerCount;
+            // Loop through the layers and get the correct layer index
+            for (System.Int32 i = 0; i < numberOfLayers; i++)
+            {
+                if (layerName == this._map.get_Layer(i).Name)
+                {
+                    // Layer was found
+                    return this._map.get_Layer(i);
+                }
+            }
+            // No layer was found
+            return null;
+        }
+
+        //not implented yet
+        public void GetLayeNameFromPath(string path)
+        {
+            //
+        }
     }
 }

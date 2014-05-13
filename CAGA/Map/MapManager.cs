@@ -32,7 +32,7 @@ namespace CAGA.Map
         public abstract bool SaveMap(string filePath);
         public abstract string GetMapFile();
 
-        public abstract bool AddLayer(string filePath);
+        public abstract bool AddLayer(string filePath, System.Int32 index);
         public abstract void RemoveLayer();
 
         public abstract Hashtable GetMapExtent();

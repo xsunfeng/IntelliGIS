@@ -204,7 +204,15 @@
       <item>
         flood areas <tag> out = "flood areas"; </tag>
       </item>
-     
+      <item>
+        flood areas <tag> out = "flood areas"; </tag>
+      </item>
+      <item>
+        Building Footprints <tag> out = "BuildingFootprints"; </tag>
+      </item>
+      <item>
+        Major Roads <tag> out = "MajorRoads"; </tag>
+      </item>
     </one-of>
   </rule>
 
@@ -287,7 +295,7 @@
     <item repeat="0-1"> city of </item>
     <one-of>
       <item> Oleader <tag> out = "Oleader"; </tag> </item>
-      
+      <item> Orlando <tag> out = "Orlando"; </tag> </item>
       <item> Rochester <tag> out = "Rochester"; </tag> </item>
       <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
     </one-of>
@@ -426,6 +434,21 @@
       <one-of>
         <item> buffer operation </item>
         <item> perform buffering </item>
+        <item>
+          explore
+          <item repeat="0-1">
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <one-of>
+              <item> surrounding </item>
+              <item> around </item>
+            </one-of>
+          </item>
+          <item>fire stations</item><tag> out.source = "Fire Stations"; </tag>
+        </item>
+        
       </one-of>
     </item>
     <tag> out.intention = "Specify Region By Buffer"; </tag>
