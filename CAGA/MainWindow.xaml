@@ -14,10 +14,20 @@
         <r:Ribbon Title="CAGA" x:Name="ribbon" Grid.Row="0">
             <r:Ribbon.ApplicationMenu>
                 <r:RibbonApplicationMenu Label="File" IsMainMenu="True" SmallImageSource="Images\main_menu.png">
-                    <r:RibbonApplicationMenuItem Header="New..." ImageSource="Images\new_map.png"/>
+                    <r:RibbonApplicationMenuItem Header="About" ImageSource="Images\new_map.png" Click="About_Click"/>
                     <r:RibbonApplicationMenuItem Header="Open..." ImageSource="Images\open_map.png"/>
                 </r:RibbonApplicationMenu>
             </r:Ribbon.ApplicationMenu>
+
+            <r:RibbonTab Header="Dialogue">
+                <r:RibbonGroup Name="RibbonDlgMgrGrp" Header="Manager">
+                    <r:RibbonButton Name="ToggleDlgBtn" LargeImageSource="Images\start_dlg.png" Label="Start Dialogue" ToolTip="Start a new dialogue" Click="ToggleDlgBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+                <r:RibbonGroup Name="RibbonSpeechRecGrp" Header="Speech">
+                    <r:RibbonButton Name="ToggleSpeechBtn" LargeImageSource="Images\stop_speech.png" Label="Stop Recognition" ToolTip="Stop the speech recognition" Click="ToggleSpeechBtn_Click"></r:RibbonButton>
+                    <r:RibbonButton Name="SimSpeechBtn" LargeImageSource="Images\simulate_speech.png" Label="Simulate" ToolTip="Simulate speech" Click="SimSpeechBtn_Click"></r:RibbonButton>
+                </r:RibbonGroup>
+            </r:RibbonTab>
 
             <r:RibbonTab Header="Map">
                 <r:RibbonGroup Name="RibbonMapGrp" Header="Map">
@@ -59,17 +69,8 @@
                 <r:RibbonGroup Name="RibbonDrawingGrp" Header="Drawing">
                     <r:RibbonToggleButton Name="DrawPolygonBtn" LargeImageSource="Images\draw_polygon.png" Label="Polygon" ToolTip="Draw a polygon" Checked="DrawPolygonBtn_Checked" Unchecked="DrawPolygonBtn_Unchecked"></r:RibbonToggleButton>
                 </r:RibbonGroup>
-
             </r:RibbonTab>
-            <r:RibbonTab Header="Dialogue">
-                <r:RibbonGroup Name="RibbonDlgMgrGrp" Header="Manager">
-                    <r:RibbonButton Name="ToggleDlgBtn" LargeImageSource="Images\start_dlg.png" Label="Start Dialogue" ToolTip="Start a new dialogue" Click="ToggleDlgBtn_Click"></r:RibbonButton>
-                </r:RibbonGroup>
-                <r:RibbonGroup Name="RibbonSpeechRecGrp" Header="Speech">
-                    <r:RibbonButton Name="ToggleSpeechBtn" LargeImageSource="Images\stop_speech.png" Label="Stop Recognition" ToolTip="Stop the speech recognition" Click="ToggleSpeechBtn_Click"></r:RibbonButton>
-                    <r:RibbonButton Name="SimSpeechBtn" LargeImageSource="Images\simulate_speech.png" Label="Simulate" ToolTip="Simulate speech" Click="SimSpeechBtn_Click"></r:RibbonButton>
-                </r:RibbonGroup>
-            </r:RibbonTab>
+            
             <r:RibbonTab Header="Window">
             </r:RibbonTab>
         </r:Ribbon>

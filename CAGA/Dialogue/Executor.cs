@@ -4,15 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using CAGA.Map;
+using System.Speech.Synthesis;
+using System.Globalization;
 
 namespace CAGA.Dialogue
 {
     class Executor
     {
         private ArcMapManager _mapMgr;
+        private SpeechSynthesizer reader;
         public Executor(ArcMapManager mapMgr)
         {
             this._mapMgr = mapMgr;
+            reader = new SpeechSynthesizer();
         }
 
         public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct, string indent)
@@ -1572,6 +1576,7 @@ namespace CAGA.Dialogue
             {
                 question = "What is the " + String.Join(" ", paramNode.Name.Split('_')) + "?";
             }
+            reader.SpeakAsync(question);
             return question;
         }
 

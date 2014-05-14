@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Windows.Controls.Ribbon;
-using Microsoft.Speech.Synthesis;
+using System.Speech.Synthesis;
 using Newtonsoft.Json.Linq;
 
 using CAGA.NUI;
@@ -32,8 +32,7 @@ namespace CAGA
 
         // output
         private ArcMapManager mapMgr;
-        private SpeechSynthesizer speechSyn;
-       
+        private SpeechSynthesizer speechSyn;      
         
         // dialogue manager
         private DialogueManager dlgMgr;
@@ -59,7 +58,7 @@ namespace CAGA
 
         private void Log(string content, string type)
         {
-            Run newLine = new Run(System.DateTime.Now.ToShortDateString() + " " + System.DateTime.Now.ToShortTimeString() + ": " + content);
+            Run newLine = new Run("["+System.DateTime.Now.ToShortDateString() + " " + System.DateTime.Now.ToLongTimeString() + "] " + content);
             switch (type)
             {
                 case "error":
@@ -74,9 +73,7 @@ namespace CAGA
                 default:
                     newLine.Foreground = Brushes.Black;
                     break;
-
-            }
-            
+            }            
             InlineCollection inlines = statusTB.Inlines;
             if (inlines.Count == 0)
             {
@@ -96,10 +93,7 @@ namespace CAGA
         private void Initialize()
         {
             // Load the map control
-            mapMgr = new ArcMapManager(this.mapGrid, this.layoutGrid, this.tocGrid);
-            //mapMgr = new DSMapManager(this.mapGrid);
-            //mapMgr.AddTOC(this.tocGrid);
-            
+            mapMgr = new ArcMapManager(this.mapGrid, this.layoutGrid, this.tocGrid);           
             mapMgr.Initialize();
             MapPanel.Activate();
             
@@ -108,13 +102,6 @@ namespace CAGA
             //inputLayers.Add("parcels");
             //inputLayers.Add("FloodAreas");
             //string outputFile = mapMgr.Overlay(inputLayers);
-
-            //mapMgr.LoadMap(@"C:\Work\Data\GISLAB\Maps\test.mxd");
-            //mapMgr.AddLayer(@"C:\Work\Data\World\country.shp");
-            //mapMgr.AddLayer(@"C:\Work\Data\World\cities.shp");
-            
-            
-            
 
             /*
             Hashtable result = mapMgr.GetFieldStatistics("parcels", "Acreage", true);
@@ -129,21 +116,19 @@ namespace CAGA
             this.sumResultsWindow.Owner = this;
             this.sumResultsWindow.Show();
             */
-            mapMgr.PolygonDrawn += Polygon_Drawn;
-            
+            mapMgr.PolygonDrawn += Polygon_Drawn;         
             
             // Load the Kinect sensor
             kinectMgr = new KinectManager();
             kinectMgr.KinectStatusChanged += Kinects_StatusChanged;
             if (kinectMgr.LoadKinectSensor() == false)
             {
-                Log("Kinect sensor is not ready!", "error");
+                Log("Kinect sensor is not ready.", "error");
                 return;
             }
             else
-            {
-                
-                Log("Kinect sensor is ready!", "info");
+            {               
+                Log("Kinect sensor is ready.", "info");
             }
 
             // Load the managers to display respective images
@@ -156,25 +141,24 @@ namespace CAGA
             kinectMgr.LoadSpeechRecognizer(grammarPath);
             kinectMgr.SpeechRecognized += Speech_Recognized;
             kinectMgr.StartSpeechRecognition();
-            Log("Speech recognition is started!", "info");
+            Log("Speech recognition is started.", "info");
 
             // Load and start the gesture recognition (not functing yet)
             kinectMgr.LoadGestureRecognizer();
             kinectMgr.GestureRecognzied += Gesture_Recognized;
             kinectMgr.StartGestureRecognition();
-            Log("Gesture recognition is started!", "info");
+            Log("Gesture recognition is started.", "info");
 
             // Load the speech synthesizer
             speechSyn = new SpeechSynthesizer();
-            speechSyn.SetOutputToDefaultAudioDevice();
+            //speechSyn.SetOutputToDefaultAudioDevice();
             //speechSyn.SpeakStarted += new EventHandler<SpeakStartedEventArgs>(speechSyn_SpeakStarted);
             
             // Start the dialogue manager
             dlgMgr = new DialogueManager("CAGA", mapMgr, @"Dialogue\kb_caga.db");
             // use machine name + user name as id, user name as name
             dlgMgr.NewParticipant(Environment.MachineName + "-" + Environment.UserName, Environment.UserName);
-
-            
+            Log("New Participant " + Environment.UserName + " is involved", "info");
         }
 
         public ArcMapManager MapManager
@@ -194,23 +178,59 @@ namespace CAGA
         {
             Console.WriteLine("--------------------------------------------------------------");
             Console.WriteLine("MainWindow: Speech_Recognized");
+            speechSyn.SpeakAsync("Sppech is recognized");
             Dispatcher.Invoke(new Action(() =>
             {
                 if (dlgMgr.IsRunning == true && speechSyn.State != SynthesizerState.Speaking)
                 {
-
                     Log("Speech is recognized and sent to the dialogue manager", "info");
-                    
+                    //Update
                     ArrayList respList = dlgMgr.Update(result);
+                    //Response
                     Process_Response(respList);
                 }
             }));
-
         }
 
         void Gesture_Recognized(SortedList result)
         {
- 
+            switch (e.GestureType)
+            {
+                case GestureType.Menu:
+                    Debug.WriteLine("Menu");
+                    Gesture = "Menu";
+                    break;
+                case GestureType.WaveRight:
+                    Debug.WriteLine("Wave Right");
+                    Gesture = "Wave Right";
+                    break;
+                case GestureType.WaveLeft:
+                    Debug.WriteLine("Wave Left");
+                    Gesture = "Wave Left";
+                    break;
+                case GestureType.JoinedHands:
+                    Debug.WriteLine("Joined Hands");
+                    Gesture = "Joined Hands";
+                    break;
+                case GestureType.SwipeLeft:
+                    Debug.WriteLine("Swipe Left");
+                    Gesture = "Swipe Left";
+                    break;
+                case GestureType.SwipeRight:
+                    Debug.WriteLine("Swipe Right");
+                    Gesture = "Swipe Right";
+                    break;
+                case GestureType.ZoomIn:
+                    Debug.WriteLine("Zoom In");
+                    Gesture = "Zoom In";
+                    break;
+                case GestureType.ZoomOut:
+                    Debug.WriteLine("Zoom Out");
+                    Gesture = "Zoom Out";
+                    break;
+                default:
+                    break;
+            }
         }
 
         void Polygon_Drawn(string name)
@@ -283,6 +303,7 @@ namespace CAGA
                     mapMgr.LoadMap(resp.RespContent.ToString());
                     Log("A new map document is opened: " + resp.RespContent.ToString(), "info");
                 }
+                //Mapping Inside/Nearby
                 else if (resp.DlgRespType == DialogueResponseType.listPlainOptions)
                 {
                     PlainOptionListData optionListData = resp.RespContent as PlainOptionListData;
@@ -744,6 +765,14 @@ namespace CAGA
             }
         }
 
+        private void ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("CAGA is a Collaborative Agent for GIS Analysis.", "About");
+        }
     }
 }

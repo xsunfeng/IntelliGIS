@@ -21,7 +21,6 @@ namespace CAGA.Dialogue
         private SimpleParser _parser;
         private DialogueAct _currDlgAct;
             
-
         public string DlgID
         {
             get { return _dlgID; }
@@ -62,18 +61,17 @@ namespace CAGA.Dialogue
         {
             this._context = context;
             this._dlgID = Utility.GetUniqueKey();
-
             this._exec = new Executor(mapMgr);
             this._kbase = new SQLiteKBase(kbase); ;
-            this._participants = new ArrayList();
-            
+            this._participants = new ArrayList();            
             this._initiator = null;
             this._parser = new SimpleParser();
         }
 
         public ArrayList Start()
         {
-            Console.WriteLine("Map/DialogueManager: Start");
+            Console.WriteLine("Map.DialogueManager: Start");
+            Console.WriteLine("contex=" + this._context);
             ArrayList respList = new ArrayList();
             this._planGraph = new PlanGraph(this._kbase, this._exec);
             this._isRunning = true;
@@ -97,7 +95,7 @@ namespace CAGA.Dialogue
 
         public bool Stop()
         {
-            Console.WriteLine("Map/DialogueManager: Stop");
+            Console.WriteLine("Map.DialogueManager: Stop");
             if (this._planGraph != null)
             {
                 this._planGraph.Close();

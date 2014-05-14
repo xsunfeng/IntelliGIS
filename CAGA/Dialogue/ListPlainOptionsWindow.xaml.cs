@@ -68,6 +68,7 @@ namespace CAGA.Dialogue
 
         //string of words spoken with dialogue window opening
         public string Opening {get; set;}
+
         public ObservableCollection<PlainOptionItemData> Options
         {
             get
