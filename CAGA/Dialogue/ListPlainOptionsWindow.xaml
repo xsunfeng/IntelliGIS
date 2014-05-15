@@ -30,18 +30,17 @@
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                     <Setter TargetName="TheBorder" Property="Background" Value="{StaticResource HoveredItemBrush}" />
                 </DataTrigger>
-            </DataTemplate.Triggers>
-            
+            </DataTemplate.Triggers>           
         </DataTemplate>
     </Window.Resources>
+    
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="15" FontWeight="Bold"></TextBlock>
-        <ListBox Grid.Row="1" Name="OptionLB" ItemTemplate="{StaticResource OptionListTemplate}" BorderBrush="Transparent"
-                Background="Transparent">
+        <ListBox Grid.Row="1" Name="OptionLB" ItemTemplate="{StaticResource OptionListTemplate}" BorderBrush="Transparent" Background="Transparent">
             <ListBox.Resources>
                 <!-- Style used if item is selected and listbox has keyboard focus -->
                 <Style x:Key="NoFocusVisualStyle"  TargetType="Control">

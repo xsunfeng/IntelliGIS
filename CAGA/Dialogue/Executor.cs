@@ -1142,7 +1142,7 @@ namespace CAGA.Dialogue
                     string graphicsName = region["value"].ToString();
                     Console.WriteLine(indent + "graphicsName=" + graphicsName);
                     this._mapMgr.SelectFeaturesByGraphics(graphicsName);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + graphicsName + "are highlighted in the map!"));
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + graphicsName + " are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by drawing"));
@@ -1576,7 +1576,6 @@ namespace CAGA.Dialogue
             {
                 question = "What is the " + String.Join(" ", paramNode.Name.Split('_')) + "?";
             }
-            reader.SpeakAsync(question);
             return question;
         }
 

@@ -82,7 +82,7 @@ namespace CAGA.Dialogue
             if (actionList.Count > 0)
             {
                 PlainOptionListData respContent = new PlainOptionListData();
-                respContent.Opening = "What can I do for you?";
+                respContent.Opening = "What can I do for you?";               
                 foreach (Hashtable actionInfo in actionList)
                 {
                     respContent.AddOption(new PlainOptionItemData(actionInfo["act_name"].ToString(), actionInfo["description"].ToString()));

@@ -205,10 +205,10 @@
         flood areas <tag> out = "flood areas"; </tag>
       </item>
       <item>
-        flood areas <tag> out = "flood areas"; </tag>
+        Building Footprints <tag> out = "BuildingFootprints"; </tag>
       </item>
       <item>
-        Building Footprints <tag> out = "BuildingFootprints"; </tag>
+        Fire Stations <tag> out = "Fire Stations"; </tag>
       </item>
       <item>
         Major Roads <tag> out = "MajorRoads"; </tag>

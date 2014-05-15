@@ -268,14 +268,14 @@ namespace CAGA.Map
             {
                 this._axMapCtrl.AddShapeFile(workDir, System.IO.Path.GetFileName(filePath));
                 ILayer layer = _map.get_Layer(0);
-                _map.MoveLayer(layer, index);
+                //_map.MoveLayer(layer, index);
                 return true;
             }
             else if (extension.ToLower() == ".lyr")
             {
                 this._axMapCtrl.AddLayerFromFile(filePath);
                 ILayer layer = _map.get_Layer(0);
-                _map.MoveLayer(layer, index);
+                //_map.MoveLayer(layer, index);
                 return true;
             }
             return false;
@@ -388,6 +388,7 @@ namespace CAGA.Map
                 IElementProperties elementProp = element as IElementProperties;
                 if (elementProp != null && elementProp.Name.ToLower() == graphicsName.ToLower())
                 {
+                    Console.WriteLine("OOOOO elementProp.Name.ToLower()=" + elementProp.Name.ToLower() + ",graphicsName.ToLower()=" + graphicsName.ToLower());
                     this.ClearMapSelection();
                     this._selectFeaturesByShape(element.Geometry);
                     return;

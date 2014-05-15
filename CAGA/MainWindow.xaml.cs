@@ -178,7 +178,6 @@ namespace CAGA
         {
             Console.WriteLine("--------------------------------------------------------------");
             Console.WriteLine("MainWindow: Speech_Recognized");
-            speechSyn.SpeakAsync("Sppech is recognized");
             Dispatcher.Invoke(new Action(() =>
             {
                 if (dlgMgr.IsRunning == true && speechSyn.State != SynthesizerState.Speaking)
@@ -194,43 +193,7 @@ namespace CAGA
 
         void Gesture_Recognized(SortedList result)
         {
-            switch (e.GestureType)
-            {
-                case GestureType.Menu:
-                    Debug.WriteLine("Menu");
-                    Gesture = "Menu";
-                    break;
-                case GestureType.WaveRight:
-                    Debug.WriteLine("Wave Right");
-                    Gesture = "Wave Right";
-                    break;
-                case GestureType.WaveLeft:
-                    Debug.WriteLine("Wave Left");
-                    Gesture = "Wave Left";
-                    break;
-                case GestureType.JoinedHands:
-                    Debug.WriteLine("Joined Hands");
-                    Gesture = "Joined Hands";
-                    break;
-                case GestureType.SwipeLeft:
-                    Debug.WriteLine("Swipe Left");
-                    Gesture = "Swipe Left";
-                    break;
-                case GestureType.SwipeRight:
-                    Debug.WriteLine("Swipe Right");
-                    Gesture = "Swipe Right";
-                    break;
-                case GestureType.ZoomIn:
-                    Debug.WriteLine("Zoom In");
-                    Gesture = "Zoom In";
-                    break;
-                case GestureType.ZoomOut:
-                    Debug.WriteLine("Zoom Out");
-                    Gesture = "Zoom Out";
-                    break;
-                default:
-                    break;
-            }
+
         }
 
         void Polygon_Drawn(string name)
@@ -251,142 +214,115 @@ namespace CAGA
 
         void Process_Response(ArrayList respList)
         {
-            if (this.listPlainOptionWindow != null)
-            {
-                this.listPlainOptionWindow.Close();
-            }
-            if (this.listMapLayerOptionWindow != null)
-            {
-                this.listMapLayerOptionWindow.Close();
-            }
-            if (this.listOptionsWithExampleWindow != null)
-            {
-                this.listOptionsWithExampleWindow.Close();
-            }
-            if (this.statResultsWindow != null)
-            {
-                this.statResultsWindow.Close();
-            }
-            if (this.sumResultsWindow != null)
-            {
-                this.sumResultsWindow.Close();
-            }
+            //Options: Mapping Inside, Nearby and Density
+            if (this.listPlainOptionWindow != null)this.listPlainOptionWindow.Close();
+            if (this.listMapLayerOptionWindow != null)this.listMapLayerOptionWindow.Close();
+            if (this.listOptionsWithExampleWindow != null)this.listOptionsWithExampleWindow.Close();
+            if (this.statResultsWindow != null)this.statResultsWindow.Close();
+            if (this.sumResultsWindow != null)this.sumResultsWindow.Close();
+
             foreach (DialogueResponse resp in respList)
             {
-                if (resp.DlgRespType == DialogueResponseType.speechError)
-                {
-                    speechSyn.SpeakAsync(resp.RespContent.ToString());
-                    Log(resp.RespContent.ToString(), "error");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.speechInfo)
-                {
-                    speechSyn.SpeakAsync(resp.RespContent.ToString());
-                    Log(resp.RespContent.ToString(), "info");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.speechQuestion)
-                {
-                    speechSyn.SpeakAsync(resp.RespContent.ToString());
-                    Log("Question: " + resp.RespContent.ToString(), "info");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.mapLayerAdded)
-                {
-                    mapMgr.AddLayer(resp.RespContent.ToString());
-                    Log("A new map layer is added: " + resp.RespContent.ToString(), "info");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.mapLayerRemoved)
-                {
-                    mapMgr.HideLayer(resp.RespContent.ToString());
-                    Log("A new map layer is hidden: " + resp.RespContent.ToString(), "info");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.mapDocumentOpened)
-                {
-                    mapMgr.LoadMap(resp.RespContent.ToString());
-                    Log("A new map document is opened: " + resp.RespContent.ToString(), "info");
-                }
-                //Mapping Inside/Nearby
-                else if (resp.DlgRespType == DialogueResponseType.listPlainOptions)
-                {
-                    PlainOptionListData optionListData = resp.RespContent as PlainOptionListData;
-                    if (optionListData != null)
-                    {
-                        this.listPlainOptionWindow = new ListPlainOptionsWindow(optionListData);
-                        this.speechSyn.SpeakAsync(optionListData.Opening);
-                        this.listPlainOptionWindow.Owner = this;
-                        this.listPlainOptionWindow.Show();
-                        this.listPlainOptionWindow.Closed += this.OnlistPlainOptionWindowClosed;
-                    }
-                }
-
-                else if (resp.DlgRespType == DialogueResponseType.listMapLayerOptions)
-                {
-                    MapLayerOptionListData optionListData = resp.RespContent as MapLayerOptionListData;
-                    if (optionListData != null)
-                    {
-                        this.listMapLayerOptionWindow = new ListMapLayerOptionsWindow(optionListData);
-                        this.speechSyn.SpeakAsync(optionListData.Opening);
-                        this.listMapLayerOptionWindow.Show();
-                        this.listMapLayerOptionWindow.Owner = this;
-                        this.listMapLayerOptionWindow.Closed += this.OnlistMapLayerOptionWindowClosed;
-                        this.listMapLayerOptionWindow.LoadMap(mapMgr.GetMapFile());
-                    }
-                }
-                else if (resp.DlgRespType == DialogueResponseType.listOptionsWithExamples)
-                {
-                    OptionWithExampleListData optionListData = resp.RespContent as OptionWithExampleListData;
-                    if (optionListData != null)
-                    {
-                        this.listOptionsWithExampleWindow = new ListOptionsWithExamplesWindow(optionListData);
-                        this.speechSyn.SpeakAsync(optionListData.Opening);
-                        this.listOptionsWithExampleWindow.Owner = this;
-                        this.listOptionsWithExampleWindow.Show();
-                        this.listOptionsWithExampleWindow.Closed += this.OnlistOptionsWithExampleWindowClosed;
-                    }
-                }
-                else if (resp.DlgRespType == DialogueResponseType.drawPolygonStarted)
-                {
-                    mapMgr.DrawPolygon(resp.RespContent.ToString());
-                }
-                else if (resp.DlgRespType == DialogueResponseType.selectByAttributes)
-                {
-                    if (mapMgr != null)
-                    {
-                        SelectByAttributeWindow selectWindow = new SelectByAttributeWindow(mapMgr);
-                        selectWindow.Show();
-                        selectWindow.Owner = this;
-                        selectWindow.Closed += this.OnSelectByAttributeWindowClosed;
-                    }
-                }
-                else if (resp.DlgRespType == DialogueResponseType.statisticResults)
-                {
-                    Hashtable statResults = resp.RespContent as Hashtable;
-                    if (statResults != null)
-                    {
-                        this.statResultsWindow = new StatResultsWindow(statResults);
-                        this.statResultsWindow.Owner = this;
-                        this.statResultsWindow.Show();
-                    }
-                }
-                else if (resp.DlgRespType == DialogueResponseType.summaryResults)
-                {
-                    Hashtable sumResults = resp.RespContent as Hashtable;
-                    if (sumResults != null)
-                    {
-                        this.sumResultsWindow = new SummaryResultsWindow(sumResults);
-                        this.sumResultsWindow.Owner = this;
-                        this.sumResultsWindow.Show();
-                    }
-                }
-                else if (resp.DlgRespType == DialogueResponseType.debugError)
-                {
-                    Log(resp.RespContent.ToString(), "error");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.debugInfo)
-                {
-                    Log(resp.RespContent.ToString(), "info");
-                }
-                else if (resp.DlgRespType == DialogueResponseType.debugWarning)
-                {
-                    Log(resp.RespContent.ToString(), "warning");
+                switch (resp.DlgRespType) { 
+                    case DialogueResponseType.speechError:
+                        speechSyn.SpeakAsync(resp.RespContent.ToString());
+                        Log(resp.RespContent.ToString(), "error");
+                        break;
+                    case DialogueResponseType.speechInfo:
+                        speechSyn.SpeakAsync(resp.RespContent.ToString());
+                        Log(resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.speechQuestion:
+                        speechSyn.SpeakAsync(resp.RespContent.ToString());
+                        Log("Question: " + resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.mapLayerAdded:
+                        mapMgr.AddLayer(resp.RespContent.ToString());
+                        Log("A new map layer is added: " + resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.mapLayerRemoved:
+                        mapMgr.HideLayer(resp.RespContent.ToString());
+                        Log("A new map layer is hidden: " + resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.mapDocumentOpened:
+                        mapMgr.LoadMap(resp.RespContent.ToString());
+                        Log("A new map document is opened: " + resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.listPlainOptions:
+                        PlainOptionListData optionListData = resp.RespContent as PlainOptionListData;
+                        if (optionListData != null)
+                        {
+                            this.listPlainOptionWindow = new ListPlainOptionsWindow(optionListData);
+                            this.speechSyn.SpeakAsync(optionListData.Opening);
+                            this.listPlainOptionWindow.Owner = this;
+                            this.listPlainOptionWindow.Show();
+                            this.listPlainOptionWindow.Closed += this.OnlistPlainOptionWindowClosed;
+                        }
+                        break;
+                    case DialogueResponseType.listMapLayerOptions:
+                        MapLayerOptionListData optionListData2 = resp.RespContent as MapLayerOptionListData;
+                        if (optionListData2 != null)
+                        {
+                            this.listMapLayerOptionWindow = new ListMapLayerOptionsWindow(optionListData2);
+                            this.speechSyn.SpeakAsync(optionListData2.Opening);
+                            this.listMapLayerOptionWindow.Show();
+                            this.listMapLayerOptionWindow.Owner = this;
+                            this.listMapLayerOptionWindow.Closed += this.OnlistMapLayerOptionWindowClosed;
+                            this.listMapLayerOptionWindow.LoadMap(mapMgr.GetMapFile());                          
+                        }
+                        break;
+                    case DialogueResponseType.listOptionsWithExamples:
+                        OptionWithExampleListData optionListData3 = resp.RespContent as OptionWithExampleListData;
+                        if (optionListData3 != null)
+                        {
+                            this.listOptionsWithExampleWindow = new ListOptionsWithExamplesWindow(optionListData3);
+                            this.speechSyn.SpeakAsync(optionListData3.Opening);
+                            this.listOptionsWithExampleWindow.Owner = this;
+                            this.listOptionsWithExampleWindow.Show();
+                            this.listOptionsWithExampleWindow.Closed += this.OnlistOptionsWithExampleWindowClosed;
+                        }
+                        break;
+                    case DialogueResponseType.drawPolygonStarted:
+                        mapMgr.DrawPolygon(resp.RespContent.ToString());
+                        break;
+                    case DialogueResponseType.selectByAttributes:
+                        if (mapMgr != null)
+                        {
+                            SelectByAttributeWindow selectWindow = new SelectByAttributeWindow(mapMgr);
+                            selectWindow.Show();
+                            selectWindow.Owner = this;
+                            selectWindow.Closed += this.OnSelectByAttributeWindowClosed;
+                        }
+                        break;
+                    case DialogueResponseType.statisticResults:
+                        Hashtable statResults = resp.RespContent as Hashtable;
+                        if (statResults != null)
+                        {
+                            this.statResultsWindow = new StatResultsWindow(statResults);
+                            this.statResultsWindow.Owner = this;
+                            this.statResultsWindow.Show();
+                        }
+                        break;
+                    case DialogueResponseType.summaryResults:
+                        Hashtable sumResults = resp.RespContent as Hashtable;
+                        if (sumResults != null)
+                        {
+                            this.sumResultsWindow = new SummaryResultsWindow(sumResults);
+                            this.sumResultsWindow.Owner = this;
+                            this.sumResultsWindow.Show();
+                        }
+                        break;
+                    case DialogueResponseType.debugError:
+                        Log(resp.RespContent.ToString(), "error");
+                        break;
+                    case DialogueResponseType.debugInfo:
+                        Log(resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.debugWarning:
+                        Log(resp.RespContent.ToString(), "warning");
+                        break;
+                    default: 
+                        break;
                 }
             }
         }
@@ -569,6 +505,7 @@ namespace CAGA
             this.mapMgr.SetFunctionMode(MapFunctionMode.None);
         }
 
+        //Dialogue Manager Toggle
         private void ToggleDlgBtn_Click(object sender, RoutedEventArgs e)
         {
             if (dlgMgr.IsRunning == false)

@@ -170,7 +170,6 @@ C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.baml
 C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.g.cs
 C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.baml
 C:\Work\Projects\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.g.cs
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.baml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.baml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\SummaryResultsWindow.baml
@@ -195,8 +194,6 @@ C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\App.g.cs
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA_MarkupCompile.cache
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.g.resources
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.Properties.Resources.resources
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\GenerateResource.read.1.tlog
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\GenerateResource.write.1.tlog
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\Dialogue\kb_caga.db
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\NUI\Speech\grammar.xml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\CAGA.exe
@@ -209,3 +206,4 @@ C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\Microsoft.Windows.Shell.pd
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\Microsoft.Windows.Shell.xml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.exe
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.pdb
+C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.csproj.GenerateResource.Cache
