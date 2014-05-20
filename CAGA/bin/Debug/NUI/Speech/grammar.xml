@@ -38,7 +38,14 @@
       </item>
       <item>
         <ruleref uri="#perform_bufferop"/>
-      </item>    
+      </item>
+      <item>
+        <ruleref uri="#distance_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#modify_distance_answer"/>
+      </item>
+      
     </one-of>
   </rule>
 
@@ -241,6 +248,19 @@
     </one-of>
   </rule>
 
+
+  <rule id="modify_distance_answer">
+    <example> They are parcels </example>
+    <item>
+      no, the distance should be
+      <item repeat="0-1">
+        <ruleref uri="#distance"/>
+        <tag> out.distance = rules.distance; </tag>
+      </item>
+    </item>
+    <tag> out.correction = "true"; </tag>
+  </rule>
+  
   <rule id="feature_class_answer">
     <example> They are parcels </example>
     <example> It is dwelling units </example>
@@ -263,7 +283,8 @@
 
     <item>
       <ruleref uri="#feature_class"/>
-      <tag> out.feature_class = rules.feature_class; </tag>
+      <tag> out.source_layer = rules.feature_class; </tag>
+      <tag> out.feature_class = rules.feature_class; </tag>      
     </item>
   </rule>
   
@@ -446,9 +467,8 @@
               <item> around </item>
             </one-of>
           </item>
-          <item>fire stations</item><tag> out.source = "Fire Stations"; </tag>
-        </item>
-        
+          <item>fire stations</item><tag> out.source_layer = "Fire Stations"; </tag>
+        </item>        
       </one-of>
     </item>
     <tag> out.intention = "Specify Region By Buffer"; </tag>
@@ -680,21 +700,17 @@
     </one-of>
   </rule>
   
-  <rule id="Say2" scope="public">
+  <rule id="distance_answer" scope="public">
     <example> it is 10 kilometers </example>
     <example> I think it should be about 10 miles </example>
-
     <item repeat="0-1">
       <ruleref uri="#assertion"/>
       <tag> out.assertion = "distance"; </tag>
     </item>
-
     <item>
       <ruleref uri="#distance"/>
       <tag> out.distance = rules.distance; </tag>
     </item>
-    <tag> out.intention = rules.operation; </tag>
-
   </rule>
   
   <rule id="assertion">

@@ -285,7 +285,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram2.cd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Dialogue\kb_caga.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

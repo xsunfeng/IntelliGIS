@@ -30,6 +30,11 @@ namespace CAGA.Dialogue
                 dlgAct = new DialogueAct(agent, speech, gesture, DialogueActType.Intend);
                 return dlgAct;
             }
+            if (speech.ContainsKey("correction"))
+            {
+                dlgAct = new DialogueAct(agent, speech, gesture, DialogueActType.Correct);
+                return dlgAct;
+            }
             if (this._prevDlgResp != null && this._prevDlgResp.Count > 0)
             {
                 // Test for answer to previous questions

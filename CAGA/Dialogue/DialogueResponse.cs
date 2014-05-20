@@ -19,6 +19,7 @@ namespace CAGA.Dialogue
         mapLayerRemoved,
         mapLayerAdded,
         mapLayerModified,
+        bufferZoneAdded,
         mapExtentChanged,
 
         drawPolygonStarted,

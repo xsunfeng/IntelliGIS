@@ -262,20 +262,21 @@ namespace CAGA.Map
 
         public override bool AddLayer(string filePath, Int32 index = 10)
         {
+            Console.WriteLine("add layer " + filePath);
             string workDir = System.IO.Path.GetDirectoryName(filePath);
             string extension = System.IO.Path.GetExtension(filePath);
             if (extension.ToLower() == ".shp")
             {
                 this._axMapCtrl.AddShapeFile(workDir, System.IO.Path.GetFileName(filePath));
                 ILayer layer = _map.get_Layer(0);
-                //_map.MoveLayer(layer, index);
+                _map.MoveLayer(layer, index);
                 return true;
             }
             else if (extension.ToLower() == ".lyr")
             {
                 this._axMapCtrl.AddLayerFromFile(filePath);
                 ILayer layer = _map.get_Layer(0);
-                //_map.MoveLayer(layer, index);
+                _map.MoveLayer(layer, index);
                 return true;
             }
             return false;
@@ -302,7 +303,7 @@ namespace CAGA.Map
 
         public void MoveLayer (string LayerName, int toIndex)
         {
-            Int32 index = GetIndexNumberFromLayerName(LayerName);
+            int index = GetIndexNumberFromLayerName(LayerName);
             ILayer layer = GetLayeFromName(LayerName);
             _map.MoveLayer(layer, toIndex);
         }
@@ -507,7 +508,6 @@ namespace CAGA.Map
             }
             return fieldNames;
         }
-
 
         public int GetTotalSelectedFeaturesInLayer(string layerName)
         {
@@ -1067,7 +1067,9 @@ namespace CAGA.Map
 
         public string Buffer(string inLayerName, string distString, string outLayerName = "")
         {
-            ILayer inLayer = this._getLayerByName(inLayerName);
+            
+            IFeatureLayer inLayer = this._getLayerByName(inLayerName) as IFeatureLayer;
+
             if (inLayer == null)
             {
                 return "";
@@ -1082,6 +1084,10 @@ namespace CAGA.Map
             else
             {
                 outLayerFile = System.IO.Path.Combine(tempDir, outLayerName + ".shp");
+            }
+            if (this.GetLayeFromName(outLayerFile) != null)
+            {
+                this._axMapCtrl.Map.DeleteLayer(this.GetLayeFromName(outLayerFile));
             }
 
             //create a new instance of a buffer tool
@@ -1133,10 +1139,10 @@ namespace CAGA.Map
             return null;
         }
 
-        //not implented yet
-        public void GetLayeNameFromPath(string path)
+        public string GetLayeNameFromPath(string path)
         {
-            //
+            return (path.Substring(path.LastIndexOf("\\") + 1, path.IndexOf(".") - path.LastIndexOf("\\") - 1));
         }
+
     }
 }

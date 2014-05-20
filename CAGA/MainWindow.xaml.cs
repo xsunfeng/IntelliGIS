@@ -180,7 +180,7 @@ namespace CAGA
             Console.WriteLine("MainWindow: Speech_Recognized");
             Dispatcher.Invoke(new Action(() =>
             {
-                if (dlgMgr.IsRunning == true && speechSyn.State != SynthesizerState.Speaking)
+                if ((dlgMgr.IsRunning == true && speechSyn.State != SynthesizerState.Speaking) || (isSimulated))
                 {
                     Log("Speech is recognized and sent to the dialogue manager", "info");
                     //Update
@@ -237,8 +237,14 @@ namespace CAGA
                         Log("Question: " + resp.RespContent.ToString(), "info");
                         break;
                     case DialogueResponseType.mapLayerAdded:
-                        mapMgr.AddLayer(resp.RespContent.ToString());
+                        mapMgr.AddLayer(resp.RespContent.ToString(),2);
                         Log("A new map layer is added: " + resp.RespContent.ToString(), "info");
+                        break;
+                    case DialogueResponseType.bufferZoneAdded:
+                        
+                        mapMgr.AddLayer(resp.RespContent.ToString());
+                        string layername = mapMgr.GetLayeNameFromPath(resp.RespContent.ToString());
+                        Log("A buffer zone is added: " + resp.RespContent.ToString(), "info");
                         break;
                     case DialogueResponseType.mapLayerRemoved:
                         mapMgr.HideLayer(resp.RespContent.ToString());
@@ -417,8 +423,7 @@ namespace CAGA
         private void ZoomToNextBtn_Click(object sender, RoutedEventArgs e)
         {
             mapMgr.ZoomToNext();
-        }
-        
+        }        
         
         
         private void ZoomToLayerBtn_Click(object sender, RoutedEventArgs e)
@@ -454,21 +459,19 @@ namespace CAGA
 
         private void _selectFeature()
         {
-            if (SelectFeatureGallery.SelectedValue.ToString() == "By Rectangle")
-            {
-                mapMgr.SetFunctionMode(MapFunctionMode.SelectByRectangle);
-            }
-            else if (SelectFeatureGallery.SelectedValue.ToString() == "By Polygon")
-            {
-                mapMgr.SetFunctionMode(MapFunctionMode.SelectByPolygon);
-            }
-            else if (SelectFeatureGallery.SelectedValue.ToString() == "By Circle")
-            {
-                mapMgr.SetFunctionMode(MapFunctionMode.SelectByCircle);
-            }
-            else if (SelectFeatureGallery.SelectedValue.ToString() == "By Line")
-            {
-                mapMgr.SetFunctionMode(MapFunctionMode.SelectByLine);
+            switch(SelectFeatureGallery.SelectedValue.ToString()){
+                case "By Rectangle":
+                    mapMgr.SetFunctionMode(MapFunctionMode.SelectByRectangle);
+                    break;
+                case "By Polygon":
+                    mapMgr.SetFunctionMode(MapFunctionMode.SelectByPolygon);
+                    break;
+                case "By Circle":
+                    mapMgr.SetFunctionMode(MapFunctionMode.SelectByCircle);
+                    break;
+                case "By Line":
+                    mapMgr.SetFunctionMode(MapFunctionMode.SelectByLine);
+                    break;
             }
         }
 
@@ -552,11 +555,14 @@ namespace CAGA
             }
         }
 
+        private bool isSimulated = false;
+
         private void SimSpeechBtn_Click(object sender, RoutedEventArgs e)
         {
+            //peechSimWindow simWindow = new SpeechSimWindow(this.kinectMgr);
+            isSimulated = true;
             SpeechSimWindow simWindow = new SpeechSimWindow(this.kinectMgr);
             simWindow.Show();
-            //kinectMgr.speechRecognizer.Simulate("add the buffer on the cities");
         }
 
         private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

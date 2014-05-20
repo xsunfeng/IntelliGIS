@@ -16,6 +16,7 @@ namespace CAGA.Dialogue
         private ArrayList _agenda;  // store the current agenda
         private DialogueAct _currDlgAct;
         private ArrayList _respList;
+        private Stack<ActionNode> _actionNodeStack;
 
         public ArrayList Agenda
         {
@@ -30,9 +31,16 @@ namespace CAGA.Dialogue
             this._exec = exec;
             this._root = null;
             this._currDlgAct = null;
+            this._actionNodeStack = new Stack<ActionNode>();
             this._agenda = new ArrayList();
             this._history = new ArrayList();
             this._respList = new ArrayList();
+        }
+
+        public Stack<ActionNode> ActionNodeStack
+        {
+            get { return _actionNodeStack; }
+            set { _actionNodeStack = value; }
         }
 
         public SQLiteKBase Kbase
@@ -77,7 +85,6 @@ namespace CAGA.Dialogue
                         {
                             tempActions.Add(tempAct);
                         }
-
                     }
                     else if (phrase is SortedList)
                     {
@@ -147,6 +154,48 @@ namespace CAGA.Dialogue
                     }
                 }
             }
+            else if (dlgAct.DlgActType == DialogueActType.Correct)
+            {
+                Console.WriteLine("DialogueActType.Correct");
+
+                if (this._actionNodeStack.Count > 0) {
+                    ActionNode tmpAction = _actionNodeStack.Peek();
+                    Console.WriteLine("preAction=" + tmpAction.Name);
+                    foreach (ParamNode param in tmpAction.Params)
+                    {
+                        Console.WriteLine("param=" + param.Name);
+                        Console.WriteLine("DialogueActType.Correct");
+                        if ((param.ParamState == ParamState.Ready) && (dlgAct.SpeechContext.ContainsKey(param.Name)))
+                        {
+                            object newValue = _exec._parseValueFromSpeech(param, dlgAct.SpeechContext[param.Name]);
+                            if (newValue != null)
+                            {
+                                _exec._addValueToParam(param, newValue, indent);
+                                isExplained = true;
+                            }
+                        }
+                    }
+                    if (isExplained == true)
+                    {
+                        foreach (ActionNode subAct in tmpAction.SubActions)
+                        {
+                            Console.WriteLine("subAct=" + subAct.Name);
+                            subAct.ActState = ActionState.Executing;
+                            AddToAgenda(subAct, 0, indent + "  ");
+                        }
+                        foreach (PlanNode planNode in this._agenda.ToArray())
+                        {
+                            if (planNode is ActionNode){
+                                ((ActionNode)planNode).ActState = ActionState.Initiated;
+                            }
+                            if (planNode is ParamNode)
+                            {
+                                ((ParamNode)planNode).ParamState = ParamState.InPreparation;
+                            }
+                        }
+                    }
+                }
+            }
             if (isExplained == true)
             {
                 this._currDlgAct = dlgAct;
@@ -171,6 +220,10 @@ namespace CAGA.Dialogue
                 {
                     foreach (string phrase in dlgAct.SpeechContext.Keys)
                     {
+                        Console.WriteLine("phrase=" + phrase);
+                        Console.WriteLine("(ParamNode)actNode=" + actNode.Name);
+                        Console.WriteLine("(ParamNode)actNode.Parent=" + ((ParamNode)actNode.Parent).Name);
+
                         if (phrase.ToLower() == ((ParamNode)actNode.Parent).Name.ToLower())
                         {
                             Console.WriteLine(indent + "true");
@@ -415,8 +468,11 @@ namespace CAGA.Dialogue
                 if (actionNode.ActState == ActionState.Initiated || actionNode.ActState == ActionState.Executing)
                 {
                     Console.WriteLine(indent + "actionNode.ActState before: " + actionNode.ActState);
+
                     //// perform the task
                     ArrayList execResp = this._exec.Execute(actionNode, this._currDlgAct, indent + "  ");
+                    if ((actionNode.Parent != null)&&(actionNode.Parent is ActionNode))_actionNodeStack.Push((ActionNode)actionNode.Parent);
+
                     // add the execution response to the response list
                     ArrayList newAgendaItems = new ArrayList();
                     foreach (DialogueResponse resp in execResp)
@@ -477,7 +533,18 @@ namespace CAGA.Dialogue
 
             if (actionNode.Complexity == "complex")
             {
+                if (_actionNodeStack.Count != 0) {
+                    Console.WriteLine(indent + "!!!!!!!!!!!!_prevActionNode is " + _actionNodeStack.Peek().Name);
+                    ActionNode tmpAction = _actionNodeStack.Peek();
+                    foreach (ParamNode param in tmpAction.Params)
+                    {
+                        if (param.ParamState==ParamState.Ready)
+                        Console.WriteLine(indent + "param " + param.Name+" is "+ param.Values[0].ToString());
+                    }
+                }              
                 Console.WriteLine(indent + actionNode.Name + " is Complex");
+               
+
                 // check the state of the action
                 if (actionNode.ActState == ActionState.Initiated)
                 {
@@ -568,6 +635,7 @@ namespace CAGA.Dialogue
         {
             Console.WriteLine(indent + "Dialogue/PlanGraph _loadRecipe " + actionNode.Name);
             ArrayList recipeList = this._kbase.SearchRecipe(actionNode.Name);
+            Console.WriteLine("Howmany="+recipeList.Count);
             if (recipeList.Count == 0)
             {
                 this._respList.Add(new DialogueResponse(DialogueResponseType.speechError, "There is no recipe for action " + actionNode.Name + " in the knowledge base!"));
@@ -615,6 +683,10 @@ namespace CAGA.Dialogue
                             if (subAct.Name == "ID_PARA")
                             {
                                 Hashtable tempAct = this._kbase.SearchAction(subAct.Attributes["Name"].Value);
+                                Console.WriteLine("name=" + (string)tempAct["name"]);
+                                Console.WriteLine("act_type=" + (string)tempAct["act_type"]);
+                                Console.WriteLine("complexity=" + (string)tempAct["complexity"]);
+                                Console.WriteLine("description=" + (string)tempAct["description"]);
                                 ActionNode subActNode = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"], paramNode);
                                 if (subAct.Attributes["Optional"] != null && subAct.Attributes["Optional"].Value.ToString().ToLower() == "true")
                                 {

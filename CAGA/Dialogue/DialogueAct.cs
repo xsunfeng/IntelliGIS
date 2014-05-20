@@ -18,7 +18,8 @@ namespace CAGA.Dialogue
         WhatQuestion = 7,
         IfQuestion = 8,
         Answer = 9,
-        Feedback = 10
+        Feedback = 10,
+        Correct = 11
     }
 
     class DialogueAct

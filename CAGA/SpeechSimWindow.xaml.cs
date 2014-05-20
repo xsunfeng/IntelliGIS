@@ -51,12 +51,17 @@ namespace CAGA
         {
             ArrayList itemsList = new ArrayList();
             itemsList.Add("I want to generate a map of parcels within a region");
-            itemsList.Add("it is city of Oleader");
-            itemsList.Add("add the flood areas");
-            itemsList.Add("it is a set of features filtered by attributes");
+            itemsList.Add("it is city of Orlando");
+            itemsList.Add("They are Building Footprints");
+            itemsList.Add("add the lot boundaries");
+            //itemsList.Add("it is a set of features filtered by attributes");
             itemsList.Add("it is drawn manually");
             itemsList.Add("it is a buffer zone");
             itemsList.Add("I am ready to draw");
+            itemsList.Add("explore two miles around fire stations");
+            itemsList.Add("yes");
+            itemsList.Add("fully inside");
+            itemsList.Add("no, the distance is 2 kilometers");
             return itemsList;
         }
 

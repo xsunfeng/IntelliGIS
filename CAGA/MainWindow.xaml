@@ -52,8 +52,8 @@
                     <r:RibbonSplitButton Name="SelectFeatureBtn" Label="Select Feature" LargeImageSource="Images\select_feature.png" IsCheckable="True" Click="SelectFeatureBtn_Click">
                         <r:RibbonGallery Name="SelectFeatureGallery" SelectedValue="By Rectangle" SelectedValuePath="Content"  MaxColumnCount="1">
                             <r:RibbonGalleryCategory>
-                                <r:RibbonGalleryItem Content="By Rectangle" Name="SelByRectItem" Selected="SelectFeatureItem_Selected" />
                                 <r:RibbonGalleryItem Content="By Polygon" Name="SelByPolyItem" Selected="SelectFeatureItem_Selected" />
+                                <r:RibbonGalleryItem Content="By Rectangle" Name="SelByRectItem" Selected="SelectFeatureItem_Selected" />                               
                                 <r:RibbonGalleryItem Content="By Circle" Name="SelByCircleItem" Selected="SelectFeatureItem_Selected" />
                                 <r:RibbonGalleryItem Content="By Line" Name="SelByLineItem" Selected="SelectFeatureItem_Selected" />
                             </r:RibbonGalleryCategory>
