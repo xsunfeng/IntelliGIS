@@ -58,31 +58,43 @@ namespace CAGA
 
         private void Log(string content, string type)
         {
-            Run newLine = new Run("["+System.DateTime.Now.ToShortDateString() + " " + System.DateTime.Now.ToLongTimeString() + "] " + content);
+            Run newTimeLine = new Run("[" + System.DateTime.Now.ToShortDateString() + " " + System.DateTime.Now.ToLongTimeString() + "]");
+            newTimeLine.FontSize = 10;           
+
+            Run newContentLine = new Run(content);
+            newContentLine.FontSize = 15;
+
+            Run newBlankLine = new Run(" ");
+            newBlankLine.FontSize = 8;
+
             switch (type)
             {
                 case "error":
-                    newLine.Foreground = Brushes.Red;
+                    newContentLine.Foreground = Brushes.Red;
                     break;
                 case "info":
-                    newLine.Foreground = Brushes.Green;
+                    newContentLine.Foreground = Brushes.Green;
                     break;
                 case "warning":
-                    newLine.Foreground = Brushes.Yellow;
+                    newContentLine.Foreground = Brushes.Yellow;
                     break;
                 default:
-                    newLine.Foreground = Brushes.Black;
+                    newContentLine.Foreground = Brushes.Black;
                     break;
-            }            
+            }  
             InlineCollection inlines = statusTB.Inlines;
             if (inlines.Count == 0)
             {
-                inlines.Add(newLine);
+                inlines.Add(newContentLine);
                 inlines.Add(new LineBreak());
                 return;
             }
             inlines.InsertBefore(inlines.FirstInline, new LineBreak());
-            inlines.InsertBefore(inlines.FirstInline, newLine);
+            inlines.InsertBefore(inlines.FirstInline, newTimeLine);
+            inlines.InsertBefore(inlines.FirstInline, new LineBreak());
+            inlines.InsertBefore(inlines.FirstInline, newContentLine);
+            inlines.InsertBefore(inlines.FirstInline, new LineBreak());
+            inlines.InsertBefore(inlines.FirstInline, newBlankLine);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -253,6 +265,18 @@ namespace CAGA
                     case DialogueResponseType.mapDocumentOpened:
                         mapMgr.LoadMap(resp.RespContent.ToString());
                         Log("A new map document is opened: " + resp.RespContent.ToString(), "info");
+                        Console.WriteLine("地图已载入");
+                        break;
+                    case DialogueResponseType.featureLayerInfo:
+                        string feature_layer = resp.RespContent.ToString();
+                        MapManager.SelectFeaturesByAttributes(feature_layer, @"""StationNum"" = 552");
+                        Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + MapManager.GetTotalSelectedFeaturesInLayer(feature_layer));
+                        MapManager.SelectFeaturesByAttributes(feature_layer, "");
+                        int count = this.MapManager.GetTotalSelectedFeaturesInLayer(feature_layer);
+                        MapManager.ClearMapSelection();
+                        Log("There are total of " + count + " " + feature_layer + " selected.", "info");
+                        speechSyn.SpeakAsync("There are total of " + count + " " + feature_layer + " selected.");
+                        Console.WriteLine("图层数量信息");
                         break;
                     case DialogueResponseType.listPlainOptions:
                         PlainOptionListData optionListData = resp.RespContent as PlainOptionListData;
@@ -716,6 +740,26 @@ namespace CAGA
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("CAGA is a Collaborative Agent for GIS Analysis.", "About");
+        }
+
+        private void depthDisplay_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+
+        }
+
+        private void KinectCtrlPanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void DockablePane_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void DevCtrlPanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

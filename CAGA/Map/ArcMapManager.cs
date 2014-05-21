@@ -540,6 +540,10 @@ namespace CAGA.Map
                     cursor = (ICursor)featureLayer.FeatureClass.Search(null, false);
                 }
 
+                Console.WriteLine("数据统计");
+                Console.WriteLine("layerName=" + layerName);
+                Console.WriteLine("fieldName=" + fieldName);
+
                 result.Add("layer_name", layerName);
                 result.Add("field_name", fieldName);
 

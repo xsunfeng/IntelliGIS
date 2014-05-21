@@ -8,7 +8,6 @@ C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\RibbonControlsLibrary.pdb
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\RibbonControlsLibrary.xml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\Microsoft.Windows.Shell.pdb
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\bin\Debug\Microsoft.Windows.Shell.xml
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.csprojResolveAssemblyReference.cache
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\ListOptionsWithExamplesWindow.baml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\SelectByAttributeWindow.baml
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\Dialogue\SummaryResultsWindow.baml

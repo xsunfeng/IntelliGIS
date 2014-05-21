@@ -42,6 +42,11 @@ namespace CAGA.Dialogue
             this._selectedItem = ((ListBoxItem)(e.Source)).Content as OptionWithExampleItemData;
             this.Close();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 

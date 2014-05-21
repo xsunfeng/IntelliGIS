@@ -61,7 +61,12 @@ namespace CAGA
             itemsList.Add("explore two miles around fire stations");
             itemsList.Add("yes");
             itemsList.Add("fully inside");
-            itemsList.Add("no, the distance is 2 kilometers");
+            itemsList.Add("no, the distance is 1 kilometer");
+
+            itemsList.Add("Show me the fire stations in Orlando");
+            itemsList.Add("add the parcels");
+            itemsList.Add("I would like to explore the Parcels within 2 kilometers from fire stations");
+            itemsList.Add("please show me the statistics of dwelling units");
             return itemsList;
         }
 

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:r="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-        Title="CAGA" Height="800" Width="1267" Loaded="Window_Loaded" Closing="RibbonWindow_Closing">
+        Title="CAGA" Height="800" Width="1600" Loaded="Window_Loaded" Closing="RibbonWindow_Closing">
     
     
     <Grid Name="mainGrid">
@@ -77,12 +77,13 @@
 
         <ad:DockingManager x:Name="dockManager" Grid.Row="1">
             <ad:ResizingPanel Orientation="Horizontal">
-                <ad:DockablePane ad:ResizingPanel.ResizeWidth="300" >
+                <ad:DockablePane SelectionChanged="DockablePane_SelectionChanged" ad:ResizingPanel.ResizeWidth="300">
                     <ad:DockableContent Title="Layers" Name="LayersPanel">
                         <Grid Name="tocGrid"/>
                     </ad:DockableContent>
                 </ad:DockablePane>
-                <ad:DocumentPane SelectionChanged="DocumentPane_SelectionChanged">
+                
+                <ad:DocumentPane SelectionChanged="DocumentPane_SelectionChanged" ad:ResizingPanel.ResizeWidth="*">
                     <ad:DocumentContent Title="Map" Name="MapPanel">
                         <Grid Name="mapGrid"/>
                     </ad:DocumentContent>
@@ -90,8 +91,10 @@
                         <Grid Name="layoutGrid"/>
                     </ad:DocumentContent>
                 </ad:DocumentPane>
-                <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="500">
-                    <ad:DockablePane ad:ResizingPanel.ResizeHeight="400" Name="KinectCtrlPanel">
+                
+                <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="400">
+
+                    <ad:DockablePane ad:ResizingPanel.ResizeHeight="320" Name="KinectCtrlPanel" SelectionChanged="KinectCtrlPanel_SelectionChanged">
                         <ad:DockableContent Title="Color and Skeleton" Name="ColorDisplayPanel">
                             <Grid>
                                 <Image Name="colorDisplay" Source="{Binding Bitmap}"></Image>
@@ -100,12 +103,12 @@
                         </ad:DockableContent>
                         <ad:DockableContent Title="Depth" Name="DepthDisplayPanel">
                             <Grid>
-                                <Image x:Name="depthDisplay" Source="{Binding Bitmap}"></Image>
+                                <Image x:Name="depthDisplay" Source="{Binding Bitmap}" ImageFailed="depthDisplay_ImageFailed"></Image>
                             </Grid>
                         </ad:DockableContent>
-
                     </ad:DockablePane>
-                    <ad:DockablePane Name="DevCtrlPanel">
+                    
+                    <ad:DockablePane Name="DevCtrlPanel" SelectionChanged="DevCtrlPanel_SelectionChanged">
                         <ad:DockableContent Title="Logs">
                             <TextBlock HorizontalAlignment="Left" Name="statusTB" Text="" TextWrapping="Wrap" Padding="10" FontSize="14" />
                         </ad:DockableContent>

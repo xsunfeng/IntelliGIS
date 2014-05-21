@@ -30,6 +30,7 @@ namespace CAGA.Dialogue
 
         statisticResults,
         summaryResults,
+        featureLayerInfo,
 
         debugInfo,
         debugError,

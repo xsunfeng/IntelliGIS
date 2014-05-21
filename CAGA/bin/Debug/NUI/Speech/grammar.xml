@@ -51,20 +51,20 @@
 
   <rule id="mapping_nearby" scope="public">
     <example> mapping nearby </example>
-    <example> find houses near fire stations </example>
+    <example> Show me the fire stations in Orlando </example>
     <item>
-      find
-    </item>
-    <item>
-      houses
-      <tag> out.inlayer = "houses"; </tag>
-    </item>
-    <item>
-      near
+      Show me the
     </item>
     <item>
       fire stations
-      <tag> out.outlayer = "fire stations"; </tag>
+      <tag> out.feature_class = "Fire Stations"; </tag>
+    </item>
+    <item>
+      in
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
     </item>
     <tag> out.intention = "Mapping Nearby"; </tag>
   </rule>
@@ -197,7 +197,7 @@
     </item>
     <one-of>
       <item>
-        parcels <tag> out = "parcels"; </tag>
+        parcels <tag> out = "Parcels"; </tag>
       </item>
       <item>
         lot boundaries <tag> out = "lot boundaries"; </tag>
@@ -324,8 +324,8 @@
 
   <rule id="add_feature_class">
     <example> Please add lot boundaries </example>
+    <example> I would like to understand how the residents are served by these fire stations.</example>
     <item repeat="0-1"> Please </item>
-
     <item repeat="0-1">
       <one-of>
         <item> add </item>
@@ -450,11 +450,32 @@
 
   <rule id="perform_bufferop" scope="public">
     <example> buffer operation </example>
-
+    <example> I would like to explore the Parcels within 2 kilometers from fire stations </example>
     <item>
       <one-of>
         <item> buffer operation </item>
         <item> perform buffering </item>
+        <item>
+          <item repeat ="0-1">
+            I would like to
+          </item>
+          explore the
+          <item>
+            <ruleref uri="#feature_class"/>
+            <tag> out.feature_class = rules.feature_class;</tag>
+          </item>
+          within
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          from
+          <item>
+            <ruleref uri="#feature_class"/>
+            <tag> out.source_layer = rules.feature_class; </tag>
+          </item>
+        </item>
+        
         <item>
           explore
           <item repeat="0-1">

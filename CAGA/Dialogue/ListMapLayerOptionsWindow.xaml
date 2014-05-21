@@ -41,7 +41,7 @@
             <ColumnDefinition Width="200" />
             <ColumnDefinition Width="480" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="15" FontWeight="Bold"></TextBlock>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="30" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
         <ListBox Grid.Row="1" Grid.Column="0" Name="OptionLB" ItemTemplate="{StaticResource OptionListTemplate}" BorderBrush="Transparent"
                 Background="Transparent">
             <ListBox.Resources>

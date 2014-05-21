@@ -148,6 +148,52 @@ namespace CAGA.Dialogue
                     }
                 }
             }
+
+            paramNode = (ParamNode)actionNode.Parent;
+            foreach (string phrase in currDlgAct.SpeechContext.Keys)
+            {
+                if (phrase.ToLower() == paramNode.Name.ToLower())
+                {
+                    object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                    if (newValue != null)
+                    {
+                        // generate response 
+                        if (paramNode.ParamType == "data_source")
+                        {
+                            // fixed at the moment
+                            string dataSourcePath = @"C:\GISLAB1\Data\";
+                            foreach (string value in paramNode.Values)
+                            {
+                                string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
+                                if (System.IO.File.Exists(filePath))
+                                {
+                                    respList.Add(new DialogueResponse(DialogueResponseType.mapDocumentOpened, filePath));
+                                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The map of " + value + " is loaded!"));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            paramNode = (ParamNode)actionNode.Parent;
+            foreach (string phrase in currDlgAct.SpeechContext.Keys)
+            {
+                if (phrase.ToLower() == paramNode.Name.ToLower())
+                {
+                    object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                    if (newValue != null)
+                    {
+                        // generate response 
+                        if (paramNode.ParamType == "feature_class")
+                        {
+                            respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, newValue.ToString()));
+                        }
+                    }
+                }
+            }   
+
             // change its own state
             actionNode.ActState = ActionState.Complete;
             // generate response 
@@ -357,9 +403,78 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        //Add this func 5/21/2014
+        private void _updateValueOfAncestor(PlanNode planNode, string paramName, string value)
+        {
+            Console.WriteLine("更新父辈" + planNode);
+            ArrayList matchedValues = new ArrayList();
+            if (planNode == null)return;
+            PlanNode parent = planNode.Parent;
+            while (parent != null)
+            {
+                if (parent is ParamNode)
+                {
+                    ParamNode ancestorParam = parent as ParamNode;
+                    if (parent.Name.ToLower() == paramName.ToLower() && ancestorParam.ParamState == ParamState.Ready)
+                    {
+                        Console.WriteLine("parent is ParamNode: " + parent.Name);
+                        Console.WriteLine("paramName=" + paramName + ", ancestorParam=" + ancestorParam.Values[0]);
+                        ((ParamNode)parent).Values[0] = value;
+                        break;
+                    }
+                }
+                else if (parent is ActionNode)
+                {
+                    ActionNode ancestorAction = parent as ActionNode;
+                    foreach (ParamNode param in ancestorAction.Params)
+                    {
+                        if (param.Name.ToLower() == paramName.ToLower() && param.ParamState == ParamState.Ready)
+                        {
+                            Console.WriteLine("parent is ActionNode: " + parent.Name);
+                            Console.WriteLine("paramName=" + paramName + ", param=" + param.Values[0]);
+                            ((ParamNode)param).Values[0] = value;
+                            break;
+                        }
+                    }
+                }
+                parent = parent.Parent;
+            }
+
+            parent = planNode.Parent;
+            Console.WriteLine("更新之后");
+            while (parent != null)
+            {
+                if (parent is ParamNode)
+                {
+                    ParamNode ancestorParam = parent as ParamNode;
+                    if (parent.Name.ToLower() == paramName.ToLower() && ancestorParam.ParamState == ParamState.Ready)
+                    {
+                        Console.WriteLine("parent is ParamNode: " + parent.Name);
+                        Console.WriteLine("paramName=" + paramName + ", ancestorParam=" + ancestorParam.Values[0]);
+                        break;
+                    }
+                }
+                else if (parent is ActionNode)
+                {
+                    ActionNode ancestorAction = parent as ActionNode;
+                    foreach (ParamNode param in ancestorAction.Params)
+                    {
+                        if (param.Name.ToLower() == paramName.ToLower() && param.ParamState == ParamState.Ready)
+                        {
+                            Console.WriteLine("parent is ActionNode: " + parent.Name);
+                            Console.WriteLine("paramName=" + paramName + ", param=" + param.Values[0]);
+                            break;
+                        }
+                    }
+                }
+                parent = parent.Parent;
+            }
+            return;
+        }
+
         private ArrayList _searchValueFromAncestor(PlanNode planNode, string paramName)
         {
-            //Console.WriteLine(indent + "Executor._searchValueFromAncestor PlanNode:" + planNode);
+            Console.WriteLine("从先辈那里找" + planNode);
             ArrayList matchedValues = new ArrayList();
             if (planNode == null)
                 return matchedValues;
@@ -371,6 +486,8 @@ namespace CAGA.Dialogue
                     ParamNode ancestorParam = parent as ParamNode;
                     if (parent.Name.ToLower() == paramName.ToLower() && ancestorParam.ParamState == ParamState.Ready)
                     {
+                        Console.WriteLine("parent is ParamNode: " + parent.Name);
+                        Console.WriteLine("paramName="+paramName+", ancestorParam=" + ancestorParam.Values[0]);
                         matchedValues.AddRange(ancestorParam.Values);
                         break;
                     }
@@ -382,6 +499,8 @@ namespace CAGA.Dialogue
                     {
                         if (param.Name.ToLower() == paramName.ToLower() && param.ParamState == ParamState.Ready)
                         {
+                            Console.WriteLine("parent is ActionNode: " + parent.Name);
+                            Console.WriteLine("paramName=" + paramName + ", param=" + param.Values[0]);
                             matchedValues.AddRange(param.Values);
                             break;
                         }
@@ -414,7 +533,7 @@ namespace CAGA.Dialogue
                     //respContent.Opening = this._generateQuestionString(paramNode);
                     respContent.Opening = "You may want to consider adding the following layers to the map as background:";
                     respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Orlando\Lot Boundaries.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Zoning", @"C:\GISLAB1\Data\Orlando\BuildingFootprints.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Parcels", @"C:\GISLAB1\Data\Orlando\Parcels.lyr"));
                     respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Orlando\MajorRoads.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
@@ -756,6 +875,35 @@ namespace CAGA.Dialogue
                 //string source_layer = "Fire Stations";
                 string source_layer = "";
                 string distString = "";
+                string feature_class = "";
+
+                foreach (ParamNode param in ((ActionNode)parent).Params)
+                {
+                    Console.WriteLine(indent + "param.name:" + param.Name);
+                    Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
+                    if (param.Name == "source_layer")
+                    {
+                        source_layer = (string)param.Values[0];
+                        Console.WriteLine(indent + "source=" + source_layer);
+                    }
+                    //if (source_layer_found && distance_found) break;
+                    if (param.Name == "distance")
+                    {
+                        distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
+                        Console.WriteLine(indent + "distString=" + distString);
+                    }
+                    //if (source_layer_found && distance_found) break;
+                }
+
+                foreach (string key in currDlgAct.SpeechContext.Keys)
+                {
+                    if (key == "feature_class")
+                    {
+                        _updateValueOfAncestor(actionNode, key, (string)currDlgAct.SpeechContext[key]);
+                        feature_class = (string)currDlgAct.SpeechContext[key];
+                    }
+                }
+
 
                 foreach (ParamNode param in ((ActionNode)parent).Params)
                 {
@@ -777,13 +925,14 @@ namespace CAGA.Dialogue
 
                 if (source_layer != "" && distString != "")
                 {
-                    Console.WriteLine(indent + "source=" + source_layer);
+                    Console.WriteLine(indent + "source_layer=" + source_layer);
                     Console.WriteLine(indent + "distString=" + distString);
-
-                    _mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = 552");
-                    Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + _mapMgr.GetTotalSelectedFeaturesInLayer(source_layer));
+                    Console.WriteLine(indent + "feature_class=" + feature_class);
+                    Console.WriteLine("加进来么？");
+                    //_mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = 552");
+                    //Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + _mapMgr.GetTotalSelectedFeaturesInLayer(source_layer));
+                    //_mapMgr.ClearMapSelection();
                     string outLayerFile = ((IGeoProcessor)this._mapMgr).Buffer(source_layer, distString);
-                    
 
                     if (outLayerFile.Length > 0)
                     {
@@ -797,8 +946,9 @@ namespace CAGA.Dialogue
                         Hashtable v = new Hashtable();
                         v.Add("type", "buffer");
                         v.Add("source_layer", source_layer + "_buffer");
+                        if (feature_class != "") v.Add("feature_class", feature_class);
                         this._addValueToParam(paramNode, v, indent);
-                        
+
                         // change its own state
                         actionNode.ActState = ActionState.Complete;
 
@@ -823,6 +973,7 @@ namespace CAGA.Dialogue
             Console.WriteLine(indent + "Failed");
             return respList;
         }
+
 
 
         private ArrayList AskForPartiality(ActionNode actionNode, DialogueAct currDlgAct, string indent)
@@ -1186,13 +1337,18 @@ namespace CAGA.Dialogue
                 }
                 else if (region["type"].ToString() == "buffer")
                 {
-                    string select_feature = featureClass;
+                    string feature_class = featureClass;
+                    if (region.ContainsKey("feature_class"))
+                    {
+                        feature_class = region["feature_class"].ToString();
+                        Console.WriteLine("到达这里了么?");
+                    }
                     string source_layer = region["source_layer"].ToString();
-                    Console.WriteLine(indent + "source_layer=" + source_layer + " select_feature=" + select_feature);
-                    this._mapMgr.SelectFeaturesByLocation(select_feature, source_layer);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + select_feature + "are highlighted in the map!"));
-                    int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
+                    Console.WriteLine(indent + "source_layer=" + source_layer + " feature_class=" + feature_class);
+                    this._mapMgr.SelectFeaturesByLocation(feature_class, source_layer);
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + feature_class + " within " + feature_class + "are highlighted in the map!"));
+                    int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(feature_class);
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + feature_class + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by buffer"));
                 }
 
@@ -1460,6 +1616,19 @@ namespace CAGA.Dialogue
         {
             string question = "";
             if (paramNode.ParamType == "feature_class")
+            {
+                question = "What ";
+                if (paramNode.Description != "")
+                {
+                    question += paramNode.Description;
+                }
+                else
+                {
+                    question += String.Join(" ", paramNode.Name.Split('_'));
+                }
+                question += " are you working on?";
+            }
+            if (paramNode.ParamType == "source_layer")
             {
                 question = "What ";
                 if (paramNode.Description != "")

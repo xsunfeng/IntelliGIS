@@ -39,7 +39,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="15" FontWeight="Bold"></TextBlock>
+        <TextBlock Grid.Row="0" Text="Heading" Name="HeadingTB" Margin="5" Padding="5" FontSize="30" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
         <ListBox Grid.Row="1" Name="OptionLB" ItemTemplate="{StaticResource OptionListTemplate}" BorderBrush="Transparent" Background="Transparent">
             <ListBox.Resources>
                 <!-- Style used if item is selected and listbox has keyboard focus -->
