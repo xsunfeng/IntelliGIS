@@ -43,7 +43,7 @@
         <ruleref uri="#distance_answer"/>
       </item>
       <item>
-        <ruleref uri="#modify_distance_answer"/>
+        <ruleref uri="#modify_previous_answer"/>
       </item>
       
     </one-of>
@@ -51,13 +51,13 @@
 
   <rule id="mapping_nearby" scope="public">
     <example> mapping nearby </example>
-    <example> Show me the fire stations in Orlando </example>
+    <example> Show me the fire stations in Oleander </example>
     <item>
       Show me the
     </item>
     <item>
       fire stations
-      <tag> out.feature_class = "Fire Stations"; </tag>
+      <tag> out.source_layer = "Fire Stations"; </tag>
     </item>
     <item>
       in
@@ -187,6 +187,7 @@
     </one-of>
   </rule>
   
+  
   <rule id="feature_class">
     <example> the parcels </example>
     <example> zoning </example>
@@ -215,13 +216,36 @@
         Building Footprints <tag> out = "BuildingFootprints"; </tag>
       </item>
       <item>
-        Fire Stations <tag> out = "Fire Stations"; </tag>
-      </item>
-      <item>
         Major Roads <tag> out = "MajorRoads"; </tag>
       </item>
     </one-of>
   </rule>
+
+
+  <rule id="source_layer">
+    <example> the parcels </example>
+    <example> zoning </example>
+    <example> lot boundaries </example>
+    <example> Flood areas </example>
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <one-of>
+      <item>
+        Fire Stations <tag> out = "Fire Stations"; </tag>
+      </item>
+      <item>
+        Blue Fire Station<tag> out = "Blue Fire Stations"; </tag>
+      </item>
+      <item>
+        Red Fire Station <tag> out = "Red Fire Stations"; </tag>
+      </item>
+      <item>
+        Green Fire Station <tag> out = "Green Fire Stations"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
 
   <rule id="article">
     <one-of>
@@ -249,18 +273,67 @@
   </rule>
 
 
-  <rule id="modify_distance_answer">
+  <rule id="modify_previous_answer">
     <example> They are parcels </example>
-    <item>
-      no, the distance should be
-      <item repeat="0-1">
-        <ruleref uri="#distance"/>
-        <tag> out.distance = rules.distance; </tag>
+    <one-of>
+      <item>
+        <item>
+          <ruleref uri="#negative"></ruleref>
+        </item>
+        <item repeat="0-1">
+          <ruleref uri="#article"></ruleref>
+        </item>
+        <one-of>
+          <item>
+            distance 
+          </item>
+          <item>
+            speed limit
+          </item>
+          <item>
+            time limit
+          </item>
+        </one-of>
+        should be
+        <one-of>
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <ruleref uri="#speed_limit"/>
+            <tag> out.speed_limit = rules.speed_limit; </tag>
+          </item>
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit; </tag>
+          </item>
+        </one-of>
       </item>
-    </item>
+      
+      <item>
+        How about
+        <one-of>
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <ruleref uri="#speed_limit"/>
+            <tag> out.speed_limit = rules.speed_limit; </tag>
+          </item>
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit; </tag>
+          </item>
+        </one-of>
+      </item>
+    </one-of>
     <tag> out.correction = "true"; </tag>
+      
   </rule>
   
+
   <rule id="feature_class_answer">
     <example> They are parcels </example>
     <example> It is dwelling units </example>
@@ -273,20 +346,25 @@
         <item> it must be </item>
         <item> it could be </item>
         <item> they are </item>
-
       </one-of>
     </item>
-
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
-
     <item>
-      <ruleref uri="#feature_class"/>
-      <tag> out.source_layer = rules.feature_class; </tag>
-      <tag> out.feature_class = rules.feature_class; </tag>      
+      <one-of>
+        <item>
+          <ruleref uri="#feature_class"/>
+          <tag> out.feature_class = rules.feature_class; </tag>
+        </item>
+        <item>
+          <ruleref uri="#source_layer"/>
+          <tag> out.source_layer = rules.source_layer; </tag>
+        </item>
+      </one-of>
     </item>
   </rule>
+
   
   <rule id="admin_area_answer">
     <example> I think it should be the city of Oleader </example>
@@ -315,7 +393,8 @@
   <rule id="admin_area_name">
     <item repeat="0-1"> city of </item>
     <one-of>
-      <item> Oleader <tag> out = "Oleader"; </tag> </item>
+      <item>
+        Oleander <tag> out = "Oleander"; </tag> </item>
       <item> Orlando <tag> out = "Orlando"; </tag> </item>
       <item> Rochester <tag> out = "Rochester"; </tag> </item>
       <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
@@ -465,14 +544,36 @@
             <tag> out.feature_class = rules.feature_class;</tag>
           </item>
           within
-          <item>
-            <ruleref uri="#distance"/>
-            <tag> out.distance = rules.distance; </tag>
-          </item>
+          <one-of>
+            <item>
+              <ruleref uri="#distance"/>
+              <tag> out.distance = rules.distance; </tag>
+            </item>
+            <item>
+              <ruleref uri="#time_limit"/>
+              <tag> out.time_limit = rules.time_limit; </tag>
+            </item>
+          </one-of>
           from
           <item>
-            <ruleref uri="#feature_class"/>
-            <tag> out.source_layer = rules.feature_class; </tag>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
+          </item>
+        </item>
+
+        <item>
+          <item repeat ="0-1">
+            I would like to
+          </item>
+          explore
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit;</tag>
+          </item>
+          around
+          <item>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
           </item>
         </item>
         
@@ -488,7 +589,14 @@
               <item> around </item>
             </one-of>
           </item>
-          <item>fire stations</item><tag> out.source_layer = "Fire Stations"; </tag>
+          <item> around </item>
+          <item repeat="0-1">
+            <ruleref uri="#article"/>
+          </item>
+          <item>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
+          </item>
         </item>        
       </one-of>
     </item>
@@ -728,12 +836,23 @@
       <ruleref uri="#assertion"/>
       <tag> out.assertion = "distance"; </tag>
     </item>
-    <item>
-      <ruleref uri="#distance"/>
-      <tag> out.distance = rules.distance; </tag>
-    </item>
+    <one-of>
+      <item>
+        <ruleref uri="#distance"/>
+        <tag> out.distance = rules.distance; </tag>
+      </item>
+      <item>
+        <ruleref uri="#speed_limit"/>
+        <tag> out.speed_limit = rules.speed_limit; </tag>
+      </item>
+      <item>
+        <ruleref uri="#time_limit"/>
+        <tag> out.time_limit = rules.time_limit; </tag>
+      </item>
+    </one-of>
   </rule>
-  
+
+
   <rule id="assertion">
     <example> I think it should be  </example>
     <example> It is about  </example>
@@ -753,6 +872,7 @@
     </item>
 
   </rule>
+
   
   <rule id="distance">
     <example> two miles </example>
@@ -763,9 +883,32 @@
 
     <ruleref uri="#Unit"/>
     <tag> out.unit = rules.Unit; </tag>
-
   </rule>
-  
+
+
+  <rule id="speed_limit">
+    <example> two miles </example>
+    <example> three kilometers </example>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.value = rules.Quantity; </tag>
+
+    <ruleref uri="#SpeedUnit"/>
+    <tag> out.unit = rules.SpeedUnit; </tag>
+  </rule>
+
+
+  <rule id="time_limit">
+    <example> two miles </example>
+    <example> three kilometers </example>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.value = rules.Quantity; </tag>
+
+    <ruleref uri="#TimeUnit"/>
+    <tag> out.unit = rules.TimeUnit; </tag>
+  </rule>
+ 
   
   <rule id="operation">
     <example> add the buffer </example>
@@ -851,12 +994,40 @@
     </one-of>
   </rule>
 
+
+  <rule id="SpeedUnit">
+    <one-of>
+      <item>
+        mile per hour <tag> out = "mile per hour"; </tag>
+      </item>
+      <item>
+        kilometers per hour <tag> out = "kilometers per hour"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="TimeUnit">
+    <one-of>
+      <item>
+        minutes <tag> out = "minutes"; </tag>
+      </item>
+      <item>
+        seconds <tag> out = "seconds"; </tag>
+      </item>
+      <item>
+        hours <tag> out = "hours"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+
   <rule id="Quantity">
     <example> one </example>
     <example> two </example>
     <example> three </example>
     <example> four </example>
-
     <one-of>
       <item>
         one <tag> out = 1; </tag>
@@ -887,6 +1058,24 @@
       </item>
       <item>
         ten <tag> out = 10; </tag>
+      </item>
+      <item>
+        twenty <tag> out = 20; </tag>
+      </item>
+      <item>
+        thirty <tag> out = 30; </tag>
+      </item>
+      <item>
+        forty <tag> out = 40; </tag>
+      </item>
+      <item>
+        fifty <tag> out = 50; </tag>
+      </item>
+      <item>
+        sixty <tag> out = 60; </tag>
+      </item>
+      <item>
+        seventy <tag> out = 70; </tag>
       </item>
     </one-of>
   </rule>

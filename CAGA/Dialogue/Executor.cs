@@ -17,6 +17,7 @@ namespace CAGA.Dialogue
         {
             this._mapMgr = mapMgr;
             reader = new SpeechSynthesizer();
+            this.LoadKnowledgeBase();
         }
 
         public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct, string indent)
@@ -84,6 +85,9 @@ namespace CAGA.Dialogue
                 case "draw buffer": //32
                     result = this.DrawBuffer(actionNode, currDlgAct, indent);
                     break;
+                case "get value from knowledge base": //32
+                    result = this.GetValueFromKnowledgeBase(actionNode, currDlgAct, indent);
+                    break;
                 default:
                     break;
             }
@@ -106,6 +110,40 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        private ArrayList GetValueFromKnowledgeBase(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+            ArrayList respList = new ArrayList();
+            // change its own state
+            actionNode.ActState = ActionState.Executing;
+            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetValueFromKnowledgeBase"));
+            ParamNode paramNode = (ParamNode)actionNode.Parent;
+            if(_knowledgeBase.ContainsKey(paramNode.Name.ToLower()))
+            {
+                this._addValueToParam(paramNode, _knowledgeBase[paramNode.Name.ToLower()], indent);
+                string name = "";
+                name += String.Join(" ", paramNode.Name.Split('_'));
+                if (_knowledgeBase[paramNode.Name.ToLower()] is string)
+                {
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The default value of " + name + " is " + _knowledgeBase[paramNode.Name.ToLower()]));
+                }
+                else if (_knowledgeBase[paramNode.Name.ToLower()] is Hashtable)
+                {
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The default value of " + name + " is " + ((Hashtable)_knowledgeBase[paramNode.Name.ToLower()])["value"] + " " + ((Hashtable)_knowledgeBase[paramNode.Name.ToLower()])["unit"]));
+                }              
+            }
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
+        }
+        private Hashtable _knowledgeBase = new Hashtable();
+        private void LoadKnowledgeBase()
+        {
+            Hashtable newValue = new Hashtable();
+            newValue.Add("value","30");
+            newValue.Add("unit", "miles per hour");
+            _knowledgeBase.Add("speed_limit", newValue);
+        }
 
         private ArrayList BasicActionTemplate(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
@@ -115,7 +153,6 @@ namespace CAGA.Dialogue
 
             // do something:
             respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: "));
-
             // change its own state
             actionNode.ActState = ActionState.Complete;
             // generate response 
@@ -169,6 +206,10 @@ namespace CAGA.Dialogue
                                 {
                                     respList.Add(new DialogueResponse(DialogueResponseType.mapDocumentOpened, filePath));
                                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The map of " + value + " is loaded!"));
+                                    if (currDlgAct.SpeechContext.ContainsKey("source_layer")) {
+                                        //Console.WriteLine(currDlgAct.SpeechContext["source_layer"]);
+                                        respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, currDlgAct.SpeechContext["source_layer"]));
+                                    }
                                     break;
                                 }
                             }
@@ -186,7 +227,7 @@ namespace CAGA.Dialogue
                     if (newValue != null)
                     {
                         // generate response 
-                        if (paramNode.ParamType == "feature_class")
+                        if (paramNode.Name == "feature_class")
                         {
                             respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, newValue.ToString()));
                         }
@@ -298,7 +339,7 @@ namespace CAGA.Dialogue
                     // fixed at the moment, future work will search the database to generat the list
                     PlainOptionListData respContent = new PlainOptionListData();
                     respContent.Opening = this._generateQuestionString(paramNode);
-                    respContent.AddOption(new PlainOptionItemData("City of Orlando", "Matched feature classes: LandUse"));
+                    respContent.AddOption(new PlainOptionItemData("City of Oleander", "Matched feature classes: LandUse"));
                     respContent.AddOption(new PlainOptionItemData("City of Rochester", "Matched feature classes: LandUse, Parcels"));
                     respContent.AddOption(new PlainOptionItemData("City of Baltimore", "Matched feature classes: Parcels, Dwelling units"));
                     respList.Add(new DialogueResponse(DialogueResponseType.listPlainOptions, respContent));
@@ -532,9 +573,9 @@ namespace CAGA.Dialogue
                     MapLayerOptionListData respContent = new MapLayerOptionListData();
                     //respContent.Opening = this._generateQuestionString(paramNode);
                     respContent.Opening = "You may want to consider adding the following layers to the map as background:";
-                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Orlando\Lot Boundaries.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Parcels", @"C:\GISLAB1\Data\Orlando\Parcels.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Orlando\MajorRoads.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Oleander\Lot Boundaries.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Parcels", @"C:\GISLAB1\Data\Oleander\Parcels.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Oleander\MajorRoads.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
                     return respList;
@@ -559,7 +600,7 @@ namespace CAGA.Dialogue
                             if (paramNode.Name == "feature_class")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\GISLAB1\Data\Orlando\";
+                                string dataSourcePath = @"C:\GISLAB1\Data\Oleander\";
                                 string filePath = System.IO.Path.Combine(dataSourcePath + (string)newValue + ".lyr");
                                 if (System.IO.File.Exists(filePath))
                                 {
@@ -876,6 +917,11 @@ namespace CAGA.Dialogue
                 string source_layer = "";
                 string distString = "";
                 string feature_class = "";
+                string source_layer_filter = "";
+                string speed_limit = "";
+                string time_limit = "";
+                bool isDistance = false;
+                bool isTimeXSpeed = false;
 
                 foreach (ParamNode param in ((ActionNode)parent).Params)
                 {
@@ -883,16 +929,57 @@ namespace CAGA.Dialogue
                     Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
                     if (param.Name == "source_layer")
                     {
-                        source_layer = (string)param.Values[0];
-                        Console.WriteLine(indent + "source=" + source_layer);
+                        string str = (string)param.Values[0];
+                        if (str.StartsWith("Blue")){
+                            string[] tmp = str.Split(' ');
+                            int len = tmp[0].Length;                            
+                            source_layer = str.Substring(len + 1);
+                            source_layer_filter = "551";
+                        }
+                        else if (str.StartsWith("Red")){
+                            string[] tmp = str.Split(' ');
+                            int len = tmp[0].Length;
+                            source_layer = str.Substring(len + 1);
+                            source_layer_filter = "552";
+                        }
+                        else if (str.StartsWith("Green"))
+                        {
+                            string[] tmp = str.Split(' ');
+                            int len = tmp[0].Length;
+                            source_layer = str.Substring(len + 1);
+                            source_layer_filter = "553";
+                        }
+                        else {
+                            source_layer = str;
+                        }
+
+                        Console.WriteLine(indent + "source_layer=" + source_layer);
                     }
                     //if (source_layer_found && distance_found) break;
                     if (param.Name == "distance")
                     {
                         distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
                         Console.WriteLine(indent + "distString=" + distString);
+                        isDistance = true;
                     }
-                    //if (source_layer_found && distance_found) break;
+                    if (param.ParamType == "speed")
+                    {
+                        speed_limit = (string)((Hashtable)param.Values[0])["value"];
+                        Console.WriteLine(indent + "speed_limit=" + speed_limit);
+                        isTimeXSpeed = true;
+                    }
+                    if (param.ParamType == "time")
+                    {
+                        time_limit = (string)((Hashtable)param.Values[0])["value"];
+                        Console.WriteLine(indent + "time_limit=" + time_limit);
+                        isTimeXSpeed = true;
+                    }
+                }
+                if (isTimeXSpeed) {;
+                    double a = double.Parse(speed_limit); //mph
+                    double b = double.Parse(time_limit); //min
+                    double c = a * b / 60;
+                    distString = c + " miles";
                 }
 
                 foreach (string key in currDlgAct.SpeechContext.Keys)
@@ -904,31 +991,16 @@ namespace CAGA.Dialogue
                     }
                 }
 
-
-                foreach (ParamNode param in ((ActionNode)parent).Params)
-                {
-                    Console.WriteLine(indent + "param.name:" + param.Name);
-                    Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
-                    if (param.Name == "source_layer")
-                    {
-                        source_layer = (string)param.Values[0];
-                        Console.WriteLine(indent + "source=" + source_layer);
-                    }
-                    //if (source_layer_found && distance_found) break;
-                    if (param.Name == "distance")
-                    {
-                        distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
-                        Console.WriteLine(indent + "distString=" + distString);
-                    }
-                    //if (source_layer_found && distance_found) break;
-                }
-
                 if (source_layer != "" && distString != "")
                 {
                     Console.WriteLine(indent + "source_layer=" + source_layer);
                     Console.WriteLine(indent + "distString=" + distString);
                     Console.WriteLine(indent + "feature_class=" + feature_class);
-                    Console.WriteLine("加进来么？");
+
+                    if (source_layer_filter!="") {
+                        _mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = " + source_layer_filter);
+                    }
+                    Console.WriteLine(indent + "source_layer_filter=" + source_layer_filter);
                     //_mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = 552");
                     //Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + _mapMgr.GetTotalSelectedFeaturesInLayer(source_layer));
                     //_mapMgr.ClearMapSelection();
@@ -956,7 +1028,7 @@ namespace CAGA.Dialogue
                         if (paramNode.ParamType == "geometry_polygon")
                         {
                             // fixed at the moment
-                            respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "Thanks, you may refer to this region as " + "Region 2"));
+                            respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "You may refer to this region as " + source_layer + " buffer"));
                             return respList;
                         }
 
@@ -1321,7 +1393,7 @@ namespace CAGA.Dialogue
                     this._mapMgr.SelectFeaturesByGraphics(graphicsName);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + graphicsName + " are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are " + count + " " + featureClass + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by drawing"));
                 }
                 else if (region["type"].ToString() == "features")
@@ -1332,7 +1404,7 @@ namespace CAGA.Dialogue
                     this._mapMgr.SelectFeaturesByLocation(in_layer, select_features);
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + featureClass + " within " + select_features + "are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(featureClass);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + featureClass + " selected."));
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are " + count + " " + featureClass + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by attributes"));
                 }
                 else if (region["type"].ToString() == "buffer")
@@ -1346,9 +1418,10 @@ namespace CAGA.Dialogue
                     string source_layer = region["source_layer"].ToString();
                     Console.WriteLine(indent + "source_layer=" + source_layer + " feature_class=" + feature_class);
                     this._mapMgr.SelectFeaturesByLocation(feature_class, source_layer);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + feature_class + " within " + feature_class + "are highlighted in the map!"));
+                    string[] tmp = source_layer.Split('_');
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + feature_class + " within " + tmp[0]+" "+tmp[1] + " are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(feature_class);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are total of " + count + " " + feature_class + " selected."));
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are " + count + " " + feature_class + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by buffer"));
                 }
 
@@ -1693,7 +1766,7 @@ namespace CAGA.Dialogue
                 }
                 question += "?";
             }
-            else if (paramNode.ParamType == "length")
+            else if (paramNode.ParamType == "length" || paramNode.ParamType == "speed" || paramNode.ParamType == "time")
             {
                 question = "What is the " + String.Join(" ", paramNode.Name.Split('_')) + "?";
             }
@@ -1732,6 +1805,40 @@ namespace CAGA.Dialogue
                 {
                     Hashtable lengthInfo = new Hashtable();
                 
+                    if (((SortedList)speech).ContainsKey("value"))
+                    {
+                        lengthInfo.Add("value", ((SortedList)speech)["value"]);
+                    }
+                    if (((SortedList)speech).ContainsKey("unit"))
+                    {
+                        lengthInfo.Add("unit", ((SortedList)speech)["unit"]);
+                    }
+                    return lengthInfo;
+                }
+            }
+            else if (paramNode.ParamType == "time")
+            {
+                if (speech is SortedList)
+                {
+                    Hashtable lengthInfo = new Hashtable();
+
+                    if (((SortedList)speech).ContainsKey("value"))
+                    {
+                        lengthInfo.Add("value", ((SortedList)speech)["value"]);
+                    }
+                    if (((SortedList)speech).ContainsKey("unit"))
+                    {
+                        lengthInfo.Add("unit", ((SortedList)speech)["unit"]);
+                    }
+                    return lengthInfo;
+                }
+            }
+            else if (paramNode.ParamType == "speed")
+            {
+                if (speech is SortedList)
+                {
+                    Hashtable lengthInfo = new Hashtable();
+
                     if (((SortedList)speech).ContainsKey("value"))
                     {
                         lengthInfo.Add("value", ((SortedList)speech)["value"]);

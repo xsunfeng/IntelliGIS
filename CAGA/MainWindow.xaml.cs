@@ -249,13 +249,14 @@ namespace CAGA
                         Log("Question: " + resp.RespContent.ToString(), "info");
                         break;
                     case DialogueResponseType.mapLayerAdded:
-                        mapMgr.AddLayer(resp.RespContent.ToString(),2);
+                        mapMgr.AddLayer(resp.RespContent.ToString(),4);
                         Log("A new map layer is added: " + resp.RespContent.ToString(), "info");
                         break;
                     case DialogueResponseType.bufferZoneAdded:
                         
-                        mapMgr.AddLayer(resp.RespContent.ToString());
+                        mapMgr.AddLayer(resp.RespContent.ToString(),3);
                         string layername = mapMgr.GetLayeNameFromPath(resp.RespContent.ToString());
+                        speechSyn.SpeakAsync("A buffer zone is added");
                         Log("A buffer zone is added: " + resp.RespContent.ToString(), "info");
                         break;
                     case DialogueResponseType.mapLayerRemoved:
@@ -269,13 +270,13 @@ namespace CAGA
                         break;
                     case DialogueResponseType.featureLayerInfo:
                         string feature_layer = resp.RespContent.ToString();
-                        MapManager.SelectFeaturesByAttributes(feature_layer, @"""StationNum"" = 552");
+                        //MapManager.SelectFeaturesByAttributes(feature_layer, @"""StationNum"" = 552");
                         Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + MapManager.GetTotalSelectedFeaturesInLayer(feature_layer));
                         MapManager.SelectFeaturesByAttributes(feature_layer, "");
                         int count = this.MapManager.GetTotalSelectedFeaturesInLayer(feature_layer);
                         MapManager.ClearMapSelection();
-                        Log("There are total of " + count + " " + feature_layer + " selected.", "info");
-                        speechSyn.SpeakAsync("There are total of " + count + " " + feature_layer + " selected.");
+                        Log("There are total of " + count + " " + feature_layer + ".", "info");
+                        speechSyn.SpeakAsync("There are total of " + count + " " + feature_layer + ".");
                         Console.WriteLine("图层数量信息");
                         break;
                     case DialogueResponseType.listPlainOptions:

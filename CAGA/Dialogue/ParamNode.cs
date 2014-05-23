@@ -52,6 +52,13 @@ namespace CAGA.Dialogue
             set { _values = value; }
         }
 
+        private bool _flag;
+        public bool Flag
+        {
+            get { return _flag; }
+            set { _flag = value; }
+        }
+
         
         public ParamNode(string name, string paramType, bool multiple, string description="", PlanNode parent=null) : base(name, description, parent)
         {

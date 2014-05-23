@@ -34,7 +34,7 @@
 
         </DataTemplate>
     </Window.Resources>
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="700">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="480">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />

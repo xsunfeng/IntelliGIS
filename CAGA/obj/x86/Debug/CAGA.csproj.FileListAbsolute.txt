@@ -35,3 +35,4 @@ C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.Properties.Resour
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.csproj.GenerateResource.Cache
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.exe
 C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.pdb
+C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\CAGA.csprojResolveAssemblyReference.cache

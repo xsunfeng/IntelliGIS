@@ -61,6 +61,15 @@ namespace CAGA.Dialogue
             set { _recipeId = value; }
         }
 
+
+        private ArrayList _recipeList;
+
+        public ArrayList RecipeList
+        {
+            get { return _recipeList; }
+            set { _recipeList = value; }
+        }
+
         private bool _optional;
 
         public bool Optional

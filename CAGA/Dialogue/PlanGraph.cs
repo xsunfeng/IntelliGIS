@@ -201,6 +201,56 @@ namespace CAGA.Dialogue
                 this._currDlgAct = dlgAct;
             }
 
+
+            /*
+            if (this._agenda.ToArray() != null) {
+                foreach (PlanNode planNode in this._agenda.ToArray())
+                {
+                    PlanNode parent = planNode.Parent;
+                    if (parent == null) break;
+                    while ((parent!=null) && !(parent is ActionNode))
+                    {
+                        parent = parent.Parent;
+                    }
+                    Console.WriteLine("前一个recipe:" + parent.Name);
+                    foreach (ParamNode param in ((ActionNode)parent).Params)
+                    {
+                        if (param.ParamState == ParamState.Ready)
+                        {
+                            Console.WriteLine("param name:" + param.Name + ", param value:" + param.Values[0] + ", param state:" + param.ParamState);
+                        }
+                        else
+                        {
+                            Console.WriteLine("param name:" + param.Name + ", param state:" + param.ParamState);
+                        }
+                    }
+                    foreach (ActionNode subAct in ((ActionNode)parent).SubActions)
+                    {
+                        Console.WriteLine("subAct name:" + subAct.Name + ", subAct state:" + subAct.ActState);
+                    }
+                    Console.WriteLine("下一个recipe");
+
+                    this._loadNextRecipe((ActionNode)parent);
+                    foreach (ParamNode param in ((ActionNode)parent).Params)
+                    {
+                        if (param.ParamState == ParamState.Ready)
+                        {
+                            Console.WriteLine("param name:" + param.Name + ", param value:" + param.Values[0] + ", param state:" + param.ParamState);
+                        }
+                        else
+                        {
+                            Console.WriteLine("param name:" + param.Name + ", param state:" + param.ParamState);
+                        }
+                    }
+                    foreach (ActionNode subAct in ((ActionNode)parent).SubActions)
+                    {
+                        Console.WriteLine("subAct name:" + subAct.Name + ", subAct state:" + subAct.ActState);
+                    }
+                    Console.WriteLine("结束");
+                }
+            }
+            */
+
             Console.WriteLine(indent + "Agenda:");
             foreach (PlanNode planNode in this._agenda.ToArray())
             {
@@ -212,9 +262,11 @@ namespace CAGA.Dialogue
 
         private bool _explainAnswer(PlanNode planNode, DialogueAct dlgAct, string indent)
         {
-            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAnswer  " + planNode.Name);
+            Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAnswer  " + planNode.Name);           
+
             if (planNode is ActionNode)
             {
+
                 ActionNode actNode = (ActionNode)planNode;
                 if (actNode.ActType == "ID")
                 {
@@ -226,12 +278,12 @@ namespace CAGA.Dialogue
 
                         if (phrase.ToLower() == ((ParamNode)actNode.Parent).Name.ToLower())
                         {
-                            Console.WriteLine(indent + "true");
                             return true;
                         }
                     }
                 }
             }
+
             Console.WriteLine(indent + "false");
             return false;
         }
@@ -582,6 +634,7 @@ namespace CAGA.Dialogue
                     {
                         if (subAct.Optional == false)
                         {
+                            
                             subAct.ActState = ActionState.Initiated;
                             this._elaborateFromActionNode(subAct, indent + "  ");
                         }
@@ -636,6 +689,7 @@ namespace CAGA.Dialogue
             Console.WriteLine(indent + "Dialogue/PlanGraph _loadRecipe " + actionNode.Name);
             ArrayList recipeList = this._kbase.SearchRecipe(actionNode.Name);
             Console.WriteLine("Howmany="+recipeList.Count);
+
             if (recipeList.Count == 0)
             {
                 this._respList.Add(new DialogueResponse(DialogueResponseType.speechError, "There is no recipe for action " + actionNode.Name + " in the knowledge base!"));
@@ -643,6 +697,9 @@ namespace CAGA.Dialogue
             }
             // todo: select from multiple recipes?
             // load the first one atm
+            actionNode.RecipeId = 0;
+            actionNode.RecipeList = recipeList;
+
             Hashtable recipeInfo = (Hashtable)recipeList[0];
             string recipeXMl = recipeInfo["content"].ToString();
             bool parsed = this._parseRecipeXML(recipeXMl, actionNode, indent + "  ");
@@ -651,6 +708,40 @@ namespace CAGA.Dialogue
             {
                 actionNode.ActState = ActionState.Planned;
             }
+        }
+
+        private void _loadNextRecipe(ActionNode actNode)
+        {
+            int currentRecipeId = actNode.RecipeId;
+            Console.WriteLine("currentRecipeId=" + currentRecipeId + ",actNode.RecipeList.Count=" + actNode.RecipeList.Count);
+            int newRecipeId = (currentRecipeId + 1) % (actNode.RecipeList.Count);
+            Hashtable recipeInfo = (Hashtable)actNode.RecipeList[newRecipeId];
+            string recipeXMl = recipeInfo["content"].ToString();
+            bool parsed = this._parseRecipeXML(recipeXMl, actNode, "  ");
+            /*if (parsed == true)
+            {
+                actNode.ActState = ActionState.Planned;
+            }
+            foreach(ParamNode tmpParam in tmpActNode.Params){
+                if (tmpParam.ParamState == ParamState.Ready)
+                {
+                    foreach (ParamNode param in actNode.Params) {
+                        if (param.Name == tmpParam.Name) {
+                            _exec._addValueToParam(param,tmpParam.Values[0],"");
+                        }
+                    }
+                }
+            }
+            foreach (ActionNode tmpSubAct in tmpActNode.SubActions)
+            {
+                foreach (ActionNode subAct in actNode.SubActions)
+                {
+                    if (subAct.Name == tmpSubAct.Name)
+                    {
+                        subAct.ActState = tmpSubAct.ActState;
+                    }
+                }
+            }*/
         }
 
         private bool _parseRecipeXML(string recipeXML, ActionNode actionNode, string indent)
@@ -674,31 +765,60 @@ namespace CAGA.Dialogue
                     description = param.Attributes["Description"].Value;
                 }
                 ParamNode paramNode = new ParamNode(name, paramType, multiple, description, actionNode);
-                foreach (XmlNode node in param.ChildNodes)
+
+                bool hasParam = false;
+                foreach (ParamNode tmpParam in actionNode.Params)
                 {
-                    if (node.Name == "ID_PARAS")
+                    //Console.WriteLine(indent + "tmpParam= " + tmpParam.Name + ",paramNode=" + paramNode.Name);
+                    if (paramNode.Name == tmpParam.Name)
                     {
-                        foreach (XmlNode subAct in node.ChildNodes)
+                        hasParam = true;
+                        paramNode.Flag = true;
+                    }
+                }
+                if (!hasParam) {
+                    foreach (XmlNode node in param.ChildNodes)
+                    {
+                        if (node.Name == "ID_PARAS")
                         {
-                            if (subAct.Name == "ID_PARA")
+                            foreach (XmlNode subAct in node.ChildNodes)
                             {
-                                Hashtable tempAct = this._kbase.SearchAction(subAct.Attributes["Name"].Value);
-                                Console.WriteLine("name=" + (string)tempAct["name"]);
-                                Console.WriteLine("act_type=" + (string)tempAct["act_type"]);
-                                Console.WriteLine("complexity=" + (string)tempAct["complexity"]);
-                                Console.WriteLine("description=" + (string)tempAct["description"]);
-                                ActionNode subActNode = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"], paramNode);
-                                if (subAct.Attributes["Optional"] != null && subAct.Attributes["Optional"].Value.ToString().ToLower() == "true")
+                                if (subAct.Name == "ID_PARA")
                                 {
-                                    subActNode.Optional = true;
+                                    Hashtable tempAct = this._kbase.SearchAction(subAct.Attributes["Name"].Value);
+                                    //Console.WriteLine("name=" + (string)tempAct["name"]);
+                                    //Console.WriteLine("act_type=" + (string)tempAct["act_type"]);
+                                    //Console.WriteLine("complexity=" + (string)tempAct["complexity"]);
+                                    //Console.WriteLine("description=" + (string)tempAct["description"]);
+                                    ActionNode subActNode = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"], paramNode);
+                                    if (subAct.Attributes["Optional"] != null && subAct.Attributes["Optional"].Value.ToString().ToLower() == "true")
+                                    {
+                                        subActNode.Optional = true;
+                                    }
+                                    paramNode.Flag = true;
+                                    paramNode.SubActions.Add(subActNode);
                                 }
-                                paramNode.SubActions.Add(subActNode);
                             }
                         }
                     }
+                    actionNode.Params.Add(paramNode);
                 }
-                actionNode.Params.Add(paramNode);
             }
+
+            for (int index = actionNode.Params.Count - 1; index >= 0; index--)
+            {
+                // Get the item.
+                ParamNode tmpParam = (ParamNode)actionNode.Params[index];
+
+                // Check to remove.
+                if (tmpParam.Flag == false)
+                {
+                    Console.WriteLine("删除的是" + tmpParam.Name);
+                    // Remove.
+                    actionNode.Params.RemoveAt(index);
+                }
+            }
+
             XmlNodeList actionList = doc.GetElementsByTagName("SUBACT");
             foreach (XmlNode action in actionList)
             {
@@ -708,7 +828,17 @@ namespace CAGA.Dialogue
                 {
                     subActNode.Optional = true;
                 }
-                actionNode.SubActions.Add(subActNode);
+
+                bool hasAction = false;
+                foreach (ActionNode tmpActNode in actionNode.SubActions)
+                {
+                    //Console.WriteLine("tmpActNode.Name=" + tmpActNode.Name + ",subActNode.Name" + subActNode.Name);
+                    if (tmpActNode.Name == subActNode.Name)
+                    {
+                        hasAction = true;
+                    }
+                }
+                if (!hasAction)actionNode.SubActions.Add(subActNode);
             }
             return true;
         }
