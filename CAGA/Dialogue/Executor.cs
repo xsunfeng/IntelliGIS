@@ -22,6 +22,7 @@ namespace CAGA.Dialogue
 
         public ArrayList Execute(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
+            Console.WriteLine(actionNode.Name.ToLower());
             ArrayList result = new ArrayList();
             switch (actionNode.Name.ToLower())
             {
@@ -67,15 +68,19 @@ namespace CAGA.Dialogue
                 case "choose specification method": //27
                     result = this.ChooseSpecificationMethod(actionNode, currDlgAct, indent);
                     break;
+                case "choose classification schema": //27
+                    result = this.ChooseClassificationSchema(actionNode, currDlgAct, indent);
+                    break;
                 case "specify region by attributes": //28
                     result = this.SpecifyRegionByAttributes(actionNode, currDlgAct, indent);
                     break;
                 case "specify region by drawing": //29
                     result = this.SpecifyRegionByDrawing(actionNode, currDlgAct, indent);
                     break;
-                /*case "specify region by buffer": //30
-                    result = this.SpecifyRegionByBuffer(actionNode, currDlgAct, indent);
-                    break;*/
+                case "perform symbolization": //30
+                    result = this.PerformSymbolization(actionNode, currDlgAct, indent);
+                    Console.WriteLine("haha");
+                    break;
                 case "ask for partiality": //31
                     result = this.AskForPartiality(actionNode, currDlgAct, indent);
                     break;
@@ -143,6 +148,8 @@ namespace CAGA.Dialogue
             newValue.Add("value","30");
             newValue.Add("unit", "miles per hour");
             _knowledgeBase.Add("speed_limit", newValue);
+
+            _knowledgeBase.Add("symbol_size", "12");
         }
 
         private ArrayList BasicActionTemplate(ActionNode actionNode, DialogueAct currDlgAct, string indent)
@@ -163,12 +170,8 @@ namespace CAGA.Dialogue
         {
             Console.WriteLine(indent + "Executor.GetValueFromInput actionNode: " + actionNode.Name);
             ArrayList respList = new ArrayList();
-            // change its own state
             actionNode.ActState = ActionState.Executing;
-
-            // do something: parse the value
-            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetValueFromInput"));
-            
+            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetValueFromInput"));            
             ParamNode paramNode = (ParamNode)actionNode.Parent;
             Console.WriteLine(indent + "currDlgAct.SpeechContext.Keys");
             foreach (string phrase in currDlgAct.SpeechContext.Keys)
@@ -206,9 +209,9 @@ namespace CAGA.Dialogue
                                 {
                                     respList.Add(new DialogueResponse(DialogueResponseType.mapDocumentOpened, filePath));
                                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The map of " + value + " is loaded!"));
-                                    if (currDlgAct.SpeechContext.ContainsKey("source_layer")) {
-                                        //Console.WriteLine(currDlgAct.SpeechContext["source_layer"]);
-                                        respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, currDlgAct.SpeechContext["source_layer"]));
+                                    if (currDlgAct.SpeechContext.ContainsKey("feature_class"))
+                                    {
+                                        //respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, currDlgAct.SpeechContext["feature_class"]));
                                     }
                                     break;
                                 }
@@ -227,10 +230,10 @@ namespace CAGA.Dialogue
                     if (newValue != null)
                     {
                         // generate response 
-                        if (paramNode.Name == "feature_class")
-                        {
-                            respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, newValue.ToString()));
-                        }
+                        //if (paramNode.Name == "feature_class")
+                        //{
+                        //    respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, newValue.ToString()));
+                        //}
                     }
                 }
             }   
@@ -282,10 +285,10 @@ namespace CAGA.Dialogue
                         Console.WriteLine("actionNode=" + actionNode.Name);
                         Console.WriteLine("(ParamNode)actionNode.Parent=" + ((ParamNode)actionNode.Parent).Name);
                         Console.WriteLine("(ParamNode)actionNode.Parent.paramtype=" + ((ParamNode)actionNode.Parent).ParamType);
-                        if (phrase.ToLower() == paramNode.Name.ToLower())
+                        if (phrase.ToLower() == paramNode.Name.ToLower() || phrase.ToLower() == paramNode.ParamType.ToLower())
                         {
                             object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
-                            Console.WriteLine(indent + "currDlgAct.SpeechContext[phrase]:" + currDlgAct.SpeechContext[phrase]);
+                            Console.WriteLine(indent + "currDlgAct.SpeechContext["+phrase+"]:" + currDlgAct.SpeechContext[phrase]);
                             if (newValue != null)
                             {
                                 this._addValueToParam(paramNode, newValue, indent);
@@ -293,7 +296,7 @@ namespace CAGA.Dialogue
                                 actionNode.ActState = ActionState.Complete;
                                 // generate response 
                                 return respList;
-                            }                     
+                            }                
                         }
                     }
                 }
@@ -397,12 +400,8 @@ namespace CAGA.Dialogue
         {
             Console.WriteLine(indent + "Executor.GetExistingValueFromAncestor actionNode:" + actionNode.Name);
             ArrayList respList = new ArrayList();
-            // change its own state
             actionNode.ActState = ActionState.Executing;
-
-            // do something:
-            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetExistingValueFromAncestor"));
-            
+            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: GetExistingValueFromAncestor"));         
             ParamNode paramNode = (ParamNode)actionNode.Parent;
             PlanNode parent = paramNode;
             while (parent != null)
@@ -652,6 +651,61 @@ namespace CAGA.Dialogue
                 ParamNode paramNode = (ParamNode)actionNode.Parent;
                 foreach (string phrase in currDlgAct.SpeechContext.Keys)
                 {
+                    if (phrase.ToLower() == paramNode.Name.ToLower())
+                    {
+                        object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                        if (newValue != null)
+                        {
+                            this._addValueToParam(paramNode, newValue, indent);
+
+                            // change its own state
+                            actionNode.ActState = ActionState.Complete;
+                            return respList;
+                        }
+                    }
+                }
+            }
+
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
+        }
+
+        private ArrayList ChooseClassificationSchema(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+            Console.WriteLine(indent + "Executor.IdentifyRegionType actionNode:" + actionNode.Name);
+            ArrayList respList = new ArrayList();
+            if (actionNode.ActState == ActionState.Initiated)
+            {
+                // change its own state
+                actionNode.ActState = ActionState.Executing;
+
+                // do something: generate the candiate list           
+                respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: ChooseClassificationSchema"));
+
+                ParamNode paramNode = (ParamNode)actionNode.Parent;
+
+                if (paramNode.Name == "classification_schema")
+                {
+                    // fixed at the moment
+                    OptionWithExampleListData respContent = new OptionWithExampleListData();
+                    respContent.Opening = this._generateQuestionString(paramNode);
+                    respContent.Opening = "Please choose the classification Schema you would like to use:";
+                    respContent.AddOption(new OptionWithExampleItemData("Quantile", "The Quantile is drawn manually", "/CAGA;component/Images/region_drawing.png"));
+                    respContent.AddOption(new OptionWithExampleItemData("Equal Interval", "The Equal Interval is a set of areal features", "/CAGA;component/Images/region_attributes.png"));
+                    respContent.AddOption(new OptionWithExampleItemData("Natural Breaks", "The Natual Break is a buffer zone around some feature", "/CAGA;component/Images/region_buffer.png"));
+                    respList.Add(new DialogueResponse(DialogueResponseType.listOptionsWithExamples, respContent));
+                    return respList;
+                }
+            }
+            // if the action is executing, try to check whether the current input answers the question
+            else if (actionNode.ActState == ActionState.Executing)
+            {
+                ParamNode paramNode = (ParamNode)actionNode.Parent;
+                foreach (string phrase in currDlgAct.SpeechContext.Keys)
+                {
+                    Console.WriteLine(phrase + " --- " + currDlgAct.SpeechContext[phrase]);
                     if (phrase.ToLower() == paramNode.Name.ToLower())
                     {
                         object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
@@ -930,13 +984,15 @@ namespace CAGA.Dialogue
                     if (param.Name == "source_layer")
                     {
                         string str = (string)param.Values[0];
-                        if (str.StartsWith("Blue")){
+                        if (str.StartsWith("Blue"))
+                        {
                             string[] tmp = str.Split(' ');
-                            int len = tmp[0].Length;                            
+                            int len = tmp[0].Length;
                             source_layer = str.Substring(len + 1);
                             source_layer_filter = "551";
                         }
-                        else if (str.StartsWith("Red")){
+                        else if (str.StartsWith("Red"))
+                        {
                             string[] tmp = str.Split(' ');
                             int len = tmp[0].Length;
                             source_layer = str.Substring(len + 1);
@@ -949,7 +1005,8 @@ namespace CAGA.Dialogue
                             source_layer = str.Substring(len + 1);
                             source_layer_filter = "553";
                         }
-                        else {
+                        else
+                        {
                             source_layer = str;
                         }
 
@@ -975,7 +1032,9 @@ namespace CAGA.Dialogue
                         isTimeXSpeed = true;
                     }
                 }
-                if (isTimeXSpeed) {;
+                if (isTimeXSpeed)
+                {
+                    ;
                     double a = double.Parse(speed_limit); //mph
                     double b = double.Parse(time_limit); //min
                     double c = a * b / 60;
@@ -997,7 +1056,8 @@ namespace CAGA.Dialogue
                     Console.WriteLine(indent + "distString=" + distString);
                     Console.WriteLine(indent + "feature_class=" + feature_class);
 
-                    if (source_layer_filter!="") {
+                    if (source_layer_filter != "")
+                    {
                         _mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = " + source_layer_filter);
                     }
                     Console.WriteLine(indent + "source_layer_filter=" + source_layer_filter);
@@ -1037,6 +1097,63 @@ namespace CAGA.Dialogue
                     }
 
                 }
+            }
+            // change its own state
+            actionNode.ActState = ActionState.Failed;
+
+            // generate response 
+            Console.WriteLine(indent + "Failed");
+            return respList;
+        }
+
+
+        private ArrayList PerformSymbolization(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+
+            Console.WriteLine(indent + "Executor.DrawBuffer actionNode:" + actionNode.Name);
+            Console.WriteLine(indent + "actionNode.ActState:" + actionNode.ActState);
+            ArrayList respList = new ArrayList();
+
+            if (actionNode.ActState == ActionState.Initiated || actionNode.ActState == ActionState.Executing)
+            {
+                actionNode.ActState = ActionState.Executing;
+                PlanNode parent = actionNode.Parent;
+                Console.WriteLine(indent + "parent:" + parent.Name);
+
+                string number_of_class = "";
+                string data_field = "";
+                string calssification_schema = "";
+                string feature_class = "";
+                string isLarger = "12";
+
+                foreach (ParamNode param in ((ActionNode)parent).Params)
+                {
+                    Console.WriteLine(indent + "param.name:" + param.Name);
+                    Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
+                    switch (param.Name) { 
+                        case "number_of_class":
+                            number_of_class = (string)param.Values[0];
+                            Console.WriteLine(indent + "number_of_class:" + number_of_class);
+                            break;
+                        case "data_field":
+                            data_field = (string)param.Values[0];
+                            Console.WriteLine(indent + "data_field:" + data_field);
+                            break;
+                        case "classification_schema":
+                            calssification_schema = (string)param.Values[0];
+                            Console.WriteLine(indent + "calssification_schema:" + calssification_schema);
+                            break;
+                        case "feature_class":
+                            feature_class = (string)param.Values[0];
+                            Console.WriteLine(indent + "feature_class:" + feature_class);
+                            break;
+                        case "symbol_size":
+                            isLarger = (string)param.Values[0];
+                            Console.WriteLine(indent + "larger:" + isLarger);
+                            break;
+                    }
+                }
+                _mapMgr.DefineClassBreaksRenderer(feature_class, data_field, Int32.Parse(number_of_class), "none", calssification_schema, isLarger);
             }
             // change its own state
             actionNode.ActState = ActionState.Failed;
@@ -1770,33 +1887,38 @@ namespace CAGA.Dialogue
             {
                 question = "What is the " + String.Join(" ", paramNode.Name.Split('_')) + "?";
             }
+            else if (paramNode.ParamType == "classification_schema")
+            {
+                question = "Which classification schema would you like to choose?";
+            }
+            else if (paramNode.ParamType == "quantity")
+            {
+                question = "How many ";
+                if (paramNode.Description != "")
+                {
+                    question += paramNode.Description;
+                }
+                else
+                {
+                    question += String.Join(" ", paramNode.Name.Split('_'));
+                }
+                question += " would you like to specify?";
+            }
             return question;
         }
 
         public object _parseValueFromSpeech(ParamNode paramNode, object speech)
         {
-            if (paramNode.ParamType == "feature_class")
-            {
-                return speech.ToString();
-            }
-            else if (paramNode.ParamType == "data_source")
-            {
-                return speech.ToString();
-            }
-            else if (paramNode.ParamType == "region_type")
-            {
-                return speech.ToString();
-            }
-            else if (paramNode.ParamType == "geometry_polygon")
-            {
-                return speech.ToString();
-            }
-            else if (paramNode.ParamType == "data_field")
-            {
-                return speech.ToString();
-            }
-            else if (paramNode.ParamType == "statistics")
-            {
+            if (paramNode.ParamType == "feature_class"
+                || paramNode.ParamType == "data_source"
+                || paramNode.ParamType == "region_type"
+                || paramNode.ParamType == "geometry_polygon"
+                || paramNode.ParamType == "data_field"
+                || paramNode.ParamType == "statistics"
+                || paramNode.ParamType == "classification_schema"
+                || paramNode.ParamType == "quantity"
+                || paramNode.ParamType == "symbol_size"
+                ){
                 return speech.ToString();
             }
             else if (paramNode.ParamType == "length")
@@ -1892,6 +2014,7 @@ namespace CAGA.Dialogue
                         Console.WriteLine(indent + "Value:" + value.ToString());
                         if (newValue is string)
                         {
+
                             if (newValue.ToString() == value.ToString())
                             {
                                 return;

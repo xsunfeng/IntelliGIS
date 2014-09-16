@@ -4,16 +4,16 @@
 exe
 C#
 .cs
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\
+C:\Users\fzs122\Documents\GitHub\CAGA\CAGA\obj\x86\Debug\
 CAGA
 none
 false
 DEBUG;TRACE
-C:\Users\xvl5190\Documents\GitHub\CAGA\CAGA\App.xaml
+C:\Users\fzs122\Documents\GitHub\CAGA\CAGA\App.xaml
 10-221402896
 
-39-577459238
-41212379445
+39-9241668
+41-1594995626
 Dialogue\ListOptionsWithExamplesWindow.xaml;Dialogue\SelectByAttributeWindow.xaml;Dialogue\SummaryResultsWindow.xaml;Dialogue\ListMapLayerOptionsWindow.xaml;Dialogue\ListPlainOptionsWindow.xaml;Dialogue\StatResultsWindow.xaml;Map\AttrTableWindow.xaml;MainWindow.xaml;Map\SymbologyWindow.xaml;SpeechSimWindow.xaml;
 
 False

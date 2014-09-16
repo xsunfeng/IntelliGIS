@@ -38,6 +38,9 @@ namespace CAGA.Map
 
         public event Action<string> PolygonDrawn;
 
+        double minSymbolSize;
+        double symbolSizeStep;
+
         public ArcMapManager(System.Windows.Controls.Panel mapContainer, System.Windows.Controls.Panel layoutContainer, System.Windows.Controls.Panel tocContainer)
         {
             this._mapContainer = mapContainer;
@@ -55,6 +58,9 @@ namespace CAGA.Map
             this._axMapCtrl = null;
             this._mapAndLayoutSync = null;
             this._map = null;
+
+            minSymbolSize = 12;
+            symbolSizeStep = 4;
         }
 
         public System.Windows.Controls.Panel MapContainer
@@ -1067,6 +1073,114 @@ namespace CAGA.Map
                 return outLayerFile;
             }
             return "";
+        }
+
+        public void DefineClassBreaksRenderer(string layerName, string fieldName, int numClasses, string normalizeField, string classifyMethod, string isLarger)
+        {
+            //numClasses = 3;
+            //normalizeField = "none";
+            //classifyMethod = "equal interval";
+
+            IFeatureLayer pFeatureLayer = null;
+            IFeatureClass pFeatureClass = null;
+
+            if (null != (pFeatureLayer = _getLayerByName(layerName) as IFeatureLayer))
+            {
+                pFeatureClass = pFeatureLayer.FeatureClass;
+            }
+
+            ITable pTable = (ITable)pFeatureClass;
+            ITableHistogram pTableHistogram = new BasicTableHistogramClass();
+            IBasicHistogram pHistogram = (IBasicHistogram)pTableHistogram;
+            pTableHistogram.Field = fieldName;
+            if (normalizeField.ToLower() != "none") pTableHistogram.NormField = normalizeField;
+            pTableHistogram.Table = pTable;
+            object dataFrequency;
+            object dataValues;
+            pHistogram.GetHistogram(out dataValues, out dataFrequency);
+
+            IClassifyGEN pClassify = new NaturalBreaksClass();
+            Console.WriteLine("classifyMethod = "+classifyMethod);
+            switch (classifyMethod.ToLower())
+            {
+                case "equal interval":
+                    pClassify = new EqualIntervalClass();
+                    Console.WriteLine("f^URFVHTHTGMC^UC%R&GG&^TI" + classifyMethod);
+                    break;
+                case "quantile":
+                    pClassify = new QuantileClass();
+                    Console.WriteLine("f^URFVHTHTGMC^UC%R&GG&^TI" + classifyMethod);
+                    break;
+                case "natural breaks":
+                    pClassify = new NaturalBreaksClass();
+                    Console.WriteLine("f^URFVHTHTGMC^UC%R&GG&^TI" + classifyMethod);
+                    break;
+                case "geometrical interval":
+                    pClassify = new GeometricalIntervalClass();
+                    Console.WriteLine("f^URFVHTHTGMC^UC%R&GG&^TI" + classifyMethod);
+                    break;
+                default:
+                    break;
+            }
+
+            pClassify.Classify(dataValues, dataFrequency, ref numClasses);
+
+            double[] gClassbreaks = null;
+            gClassbreaks = (double[])pClassify.ClassBreaks;
+
+            ClassBreaksRenderer pClassBreaksRenderer = new ClassBreaksRenderer();
+            pClassBreaksRenderer.Field = fieldName;
+            pClassBreaksRenderer.BreakCount = numClasses;
+            pClassBreaksRenderer.MinimumBreak = gClassbreaks[0];
+
+            ISimpleMarkerSymbol pMarkerSymbol;
+
+            double minSymbolSize;
+            double symbolSizeStep;
+            if (isLarger == "true")
+            {
+                this.minSymbolSize *= 1.2;
+                this.symbolSizeStep *= 1.2;
+            }
+            else if (isLarger == "false")
+            {
+                this.minSymbolSize /= 1.2;
+                this.symbolSizeStep /= 1.2;
+            }
+            for (int i = 0; i < numClasses; i++)
+            {
+                pMarkerSymbol = new SimpleMarkerSymbol();
+                pMarkerSymbol.Color = GetRGBColor(255, 255, 0);
+                pMarkerSymbol.Outline = true;
+                pMarkerSymbol.OutlineColor = GetRGBColor(0, 0, 0);
+                pMarkerSymbol.Size = this.minSymbolSize + this.symbolSizeStep * i;
+                pMarkerSymbol.Style = ESRI.ArcGIS.Display.esriSimpleMarkerStyle.esriSMSCircle;
+
+                pClassBreaksRenderer.set_Symbol(i, pMarkerSymbol as ISymbol);
+                pClassBreaksRenderer.set_Break(i, gClassbreaks[i + 1]);
+                pClassBreaksRenderer.set_Label(i, string.Format("{0} - {1}", gClassbreaks[i], gClassbreaks[i + 1]));
+            }
+
+            ILayer pLayer = _getLayerByName(layerName);
+            IGeoFeatureLayer pGeoFeatureLayer = pLayer as IGeoFeatureLayer;
+            pGeoFeatureLayer.Renderer = pClassBreaksRenderer as IFeatureRenderer;
+            //pGeoFeatureLayer.DisplayField = "hahaha";
+            //pGeoFeatureLayer.DisplayAnnotation = true;
+
+            //this._axMapCtrl.ActiveView.Refresh();
+
+            this._axMapCtrl.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeography, pLayer, null);
+            this._axMapCtrl.Update();
+            _axTOCCtrl.SetBuddyControl(_axMapCtrl);
+        }
+
+        static private IRgbColor GetRGBColor(int R, int G, int B)
+        {
+            IRgbColor pColor = new RgbColor();
+            pColor.Red = R;
+            pColor.Green = G;
+            pColor.Blue = B;
+            return pColor;
         }
 
         public string Buffer(string inLayerName, string distString, string outLayerName = "")

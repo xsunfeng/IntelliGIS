@@ -201,56 +201,6 @@ namespace CAGA.Dialogue
                 this._currDlgAct = dlgAct;
             }
 
-
-            /*
-            if (this._agenda.ToArray() != null) {
-                foreach (PlanNode planNode in this._agenda.ToArray())
-                {
-                    PlanNode parent = planNode.Parent;
-                    if (parent == null) break;
-                    while ((parent!=null) && !(parent is ActionNode))
-                    {
-                        parent = parent.Parent;
-                    }
-                    Console.WriteLine("前一个recipe:" + parent.Name);
-                    foreach (ParamNode param in ((ActionNode)parent).Params)
-                    {
-                        if (param.ParamState == ParamState.Ready)
-                        {
-                            Console.WriteLine("param name:" + param.Name + ", param value:" + param.Values[0] + ", param state:" + param.ParamState);
-                        }
-                        else
-                        {
-                            Console.WriteLine("param name:" + param.Name + ", param state:" + param.ParamState);
-                        }
-                    }
-                    foreach (ActionNode subAct in ((ActionNode)parent).SubActions)
-                    {
-                        Console.WriteLine("subAct name:" + subAct.Name + ", subAct state:" + subAct.ActState);
-                    }
-                    Console.WriteLine("下一个recipe");
-
-                    this._loadNextRecipe((ActionNode)parent);
-                    foreach (ParamNode param in ((ActionNode)parent).Params)
-                    {
-                        if (param.ParamState == ParamState.Ready)
-                        {
-                            Console.WriteLine("param name:" + param.Name + ", param value:" + param.Values[0] + ", param state:" + param.ParamState);
-                        }
-                        else
-                        {
-                            Console.WriteLine("param name:" + param.Name + ", param state:" + param.ParamState);
-                        }
-                    }
-                    foreach (ActionNode subAct in ((ActionNode)parent).SubActions)
-                    {
-                        Console.WriteLine("subAct name:" + subAct.Name + ", subAct state:" + subAct.ActState);
-                    }
-                    Console.WriteLine("结束");
-                }
-            }
-            */
-
             Console.WriteLine(indent + "Agenda:");
             foreach (PlanNode planNode in this._agenda.ToArray())
             {
@@ -263,10 +213,8 @@ namespace CAGA.Dialogue
         private bool _explainAnswer(PlanNode planNode, DialogueAct dlgAct, string indent)
         {
             Console.WriteLine(indent + "Dialogue.PlanGraph  _explainAnswer  " + planNode.Name);           
-
             if (planNode is ActionNode)
             {
-
                 ActionNode actNode = (ActionNode)planNode;
                 if (actNode.ActType == "ID")
                 {
@@ -277,6 +225,10 @@ namespace CAGA.Dialogue
                         Console.WriteLine("(ParamNode)actNode.Parent=" + ((ParamNode)actNode.Parent).Name);
 
                         if (phrase.ToLower() == ((ParamNode)actNode.Parent).Name.ToLower())
+                        {
+                            return true;
+                        }
+                        if (phrase.ToLower() == ((ParamNode)actNode.Parent).ParamType.ToLower())
                         {
                             return true;
                         }
@@ -523,6 +475,7 @@ namespace CAGA.Dialogue
 
                     //// perform the task
                     ArrayList execResp = this._exec.Execute(actionNode, this._currDlgAct, indent + "  ");
+                    Console.WriteLine(indent + "");
                     if ((actionNode.Parent != null)&&(actionNode.Parent is ActionNode))_actionNodeStack.Push((ActionNode)actionNode.Parent);
 
                     // add the execution response to the response list
@@ -538,7 +491,6 @@ namespace CAGA.Dialogue
                             this._respList.Add(resp);
                         }
                     }
-
                     Console.WriteLine(indent + "actionNode.ActState after: " + actionNode.ActState);
                     // remove the running/complete action from the agenda;
                     if (actionNode.ActState == ActionState.Complete)

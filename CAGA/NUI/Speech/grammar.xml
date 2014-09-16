@@ -13,8 +13,7 @@
       </item>
       <item>
         <ruleref uri="#admin_area_answer"/>
-      </item>
-      
+      </item>    
       <item>
         <ruleref uri="#add_feature_class"/>
       </item>
@@ -25,14 +24,17 @@
         <ruleref uri="#partiality_answer"/>
       </item>
       <item>
+        <ruleref uri="#data_field_answer"/>
+      </item>
+      <item>
         <ruleref uri="#rdy_to_draw"/>
       </item>
       <item>
         <ruleref uri="#aff_or_neg"/>
       </item>
-      <item>
+      <!--item>
         <ruleref uri="#show_statistics"/>
-      </item>
+      </item-->
       <item>
         <ruleref uri="#summarize_data"/>
       </item>
@@ -45,7 +47,15 @@
       <item>
         <ruleref uri="#modify_previous_answer"/>
       </item>
-      
+      <item>
+        <ruleref uri="#openning_store"/>
+      </item>
+      <item>
+        <ruleref uri="#classification_schema_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#quantity_answer"/>
+      </item>     
     </one-of>
   </rule>
 
@@ -67,6 +77,40 @@
       <tag> out.admin_area = rules.admin_area_name; </tag>
     </item>
     <tag> out.intention = "Mapping Nearby"; </tag>
+  </rule>
+
+  <rule id="openning_store" scope="public">
+    <example> I am interested in opening up a Hispanic food stores in Tarrant County</example>
+    <example> Show me the fire stations in Oleander </example>
+    <item repeat="0-1">
+      <one-of>
+        <item><ruleref uri="#imperative"/></item>
+        <item><ruleref uri="#intend"/></item>
+        <item>I am interested in</item>
+      </one-of>
+    </item>
+    <item repeat="0-1">
+      <one-of>
+        <item>opening</item>
+        <item>opening up</item>
+        <item>setting up</item>
+      </one-of>
+    </item>
+    <item>
+      <ruleref uri="#article"/>
+    </item>
+    <item>
+      <ruleref uri="#feature_class"/>
+      <tag> out.feature_class = rules.feature_class; </tag>
+    </item>
+    <item>
+      <ruleref uri="#prep_inside"/>
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+    <tag> out.intention = "openning store"; </tag>
   </rule>
 
   <rule id="mapping_inside" scope="public">
@@ -218,6 +262,9 @@
       <item>
         Major Roads <tag> out = "MajorRoads"; </tag>
       </item>
+      <item>
+        Hispanic food stores <tag> out = "Hispanic Themed Food Stores"; </tag>
+      </item>
     </one-of>
   </rule>
 
@@ -246,6 +293,21 @@
     </one-of>
   </rule>
 
+  <rule id="classification_schema">
+    <one-of>
+      <item> quantile </item>
+      <item> equal interval </item>
+      <item> natural breaks </item>
+      <item> geometrical interval </item>
+    </one-of>
+  </rule>
+
+  <rule id="classification_schema_answer">
+    <item>
+      <ruleref uri="#classification_schema"/>
+    </item>
+    <tag> out.classification_schema = rules.classification_schema; </tag>
+  </rule>
 
   <rule id="article">
     <one-of>
@@ -275,40 +337,40 @@
 
   <rule id="modify_previous_answer">
     <example> They are parcels </example>
-    <one-of>
-      <item>
+      <one-of>
         <item>
-          <ruleref uri="#negative"></ruleref>
-        </item>
-        <item repeat="0-1">
-          <ruleref uri="#article"></ruleref>
-        </item>
-        <one-of>
           <item>
-            distance 
+            <ruleref uri="#negative"></ruleref>
           </item>
-          <item>
-            speed limit
+          <item repeat="0-1">
+            <ruleref uri="#article"></ruleref>
           </item>
-          <item>
-            time limit
-          </item>
-        </one-of>
-        should be
-        <one-of>
-          <item>
-            <ruleref uri="#distance"/>
-            <tag> out.distance = rules.distance; </tag>
-          </item>
-          <item>
-            <ruleref uri="#speed_limit"/>
-            <tag> out.speed_limit = rules.speed_limit; </tag>
-          </item>
-          <item>
-            <ruleref uri="#time_limit"/>
-            <tag> out.time_limit = rules.time_limit; </tag>
-          </item>
-        </one-of>
+            <one-of>
+              <item>
+                distance 
+              </item>
+              <item>
+                speed limit
+              </item>
+              <item>
+                time limit
+              </item>
+            </one-of>
+            should be
+            <one-of>
+            <item>
+              <ruleref uri="#distance"/>
+              <tag> out.distance = rules.distance; </tag>
+            </item>
+            <item>
+              <ruleref uri="#speed_limit"/>
+              <tag> out.speed_limit = rules.speed_limit; </tag>
+            </item>
+            <item>
+              <ruleref uri="#time_limit"/>
+              <tag> out.time_limit = rules.time_limit; </tag>
+            </item>
+          </one-of>
       </item>
       
       <item>
@@ -328,9 +390,18 @@
           </item>
         </one-of>
       </item>
+
+        <item>
+          Can you make them larger        
+          <tag> out.symbol_size = "true"; </tag>
+        </item>
+        <item>
+          Can you make them smaller
+          <tag> out.symbol_size = "false"; </tag>
+        </item>
+        
     </one-of>
-    <tag> out.correction = "true"; </tag>
-      
+    <tag> out.correction = "true"; </tag>      
   </rule>
   
 
@@ -393,11 +464,11 @@
   <rule id="admin_area_name">
     <item repeat="0-1"> city of </item>
     <one-of>
-      <item>
-        Oleander <tag> out = "Oleander"; </tag> </item>
+      <item>Oleander <tag> out = "Oleander"; </tag> </item>
       <item> Orlando <tag> out = "Orlando"; </tag> </item>
       <item> Rochester <tag> out = "Rochester"; </tag> </item>
       <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
+      <item>Tarrant County <tag> out = "Tarrant County"; </tag></item>
     </one-of>
   </rule>
 
@@ -760,8 +831,23 @@
       <item>
         land use <tag> out = "land use"; </tag>
       </item>
-
+      <item>
+        <one-of>
+          <item>sales</item>
+          <item>Monthly Sales</item>
+        </one-of>
+        <tag> out = "MonthlySales"; </tag>
+      </item>       
     </one-of>
+  </rule>
+
+  <rule id="data_field_answer">
+    <example> The region is a set of features filtered by attributes </example>
+    <example> a set of features filtered by attributes </example>
+      <item>
+        <ruleref uri="#data_field"/>
+        <tag> out.data_field = rules.data_field; </tag>
+      </item>
   </rule>
 
   <rule id="summarize_data" scope="public">
@@ -1021,7 +1107,12 @@
     </one-of>
   </rule>
 
-
+  <rule id="quantity_answer">
+      <item>
+        <ruleref uri = "#Quantity"/>
+      </item>
+    <tag> out.quantity = rules.Quantity</tag>
+  </rule>
 
   <rule id="Quantity">
     <example> one </example>

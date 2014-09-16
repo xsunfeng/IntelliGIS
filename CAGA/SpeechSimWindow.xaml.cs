@@ -50,30 +50,34 @@ namespace CAGA
         private ArrayList LoadListBoxData()
         {
             ArrayList itemsList = new ArrayList();
-            itemsList.Add("I want to generate a map of parcels within a region");
-            itemsList.Add("it is city of Oleander");
-            itemsList.Add("They are Building Footprints");
-            itemsList.Add("They are parcels");
-            itemsList.Add("add the lot boundaries");
-            itemsList.Add("it is a set of features filtered by attributes");
-            itemsList.Add("it is drawn manually");
-            itemsList.Add("it is a buffer zone");
-            itemsList.Add("I am ready to draw");
-            itemsList.Add("explore two miles around fire stations");
-            itemsList.Add("yes");
-            itemsList.Add("fully inside");
-            itemsList.Add("no, the distance is 1 kilometer");
-            itemsList.Add("It is three minutes");
-            itemsList.Add("It is 40 miles per hour");
-            itemsList.Add("no, the speed limit should be forty miles per hour");
-            itemsList.Add("they are fire stations");
-            itemsList.Add("Show me the fire stations in Oleander");
-            itemsList.Add("add the parcels");
-            itemsList.Add("I would like to explore the Parcels within 2 kilometers from fire stations");
-            itemsList.Add("please show me the statistics of dwelling units");
-            itemsList.Add("please show me the statistics of dwelling units");
-            itemsList.Add("please show me the statistics of dwelling units");
-            itemsList.Add("please show me the statistics of dwelling units");
+            itemsList.Add("I am interested in opening up a Hispanic food stores in Tarrant County");
+            itemsList.Add("Monthly Sales");
+            itemsList.Add("Quantile");
+            itemsList.Add("Three");
+            //itemsList.Add("I want to generate a map of parcels within a region");
+            //itemsList.Add("it is city of Oleander");
+            //itemsList.Add("They are Building Footprints");
+            //itemsList.Add("They are parcels");
+            //itemsList.Add("add the lot boundaries");
+            //itemsList.Add("it is a set of features filtered by attributes");
+            //itemsList.Add("it is drawn manually");
+            //itemsList.Add("it is a buffer zone");
+            //itemsList.Add("I am ready to draw");
+            //itemsList.Add("explore two miles around fire stations");
+            //itemsList.Add("yes");
+            //itemsList.Add("fully inside");
+            //itemsList.Add("no, the distance is 1 kilometer");
+            //itemsList.Add("It is three minutes");
+            //itemsList.Add("It is 40 miles per hour");
+            //itemsList.Add("no, the speed limit should be forty miles per hour");
+            //itemsList.Add("they are fire stations");
+            //itemsList.Add("Show me the fire stations in Oleander");
+            //itemsList.Add("add the parcels");
+            //itemsList.Add("I would like to explore the Parcels within 2 kilometers from fire stations");
+            //itemsList.Add("please show me the statistics of dwelling units");
+            //itemsList.Add("please show me the statistics of dwelling units");
+            //itemsList.Add("please show me the statistics of dwelling units");
+            //itemsList.Add("please show me the statistics of dwelling units");
             return itemsList;
         }
 

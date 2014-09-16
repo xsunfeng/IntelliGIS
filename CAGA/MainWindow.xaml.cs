@@ -269,14 +269,14 @@ namespace CAGA
                         Console.WriteLine("地图已载入");
                         break;
                     case DialogueResponseType.featureLayerInfo:
-                        string feature_layer = resp.RespContent.ToString();
-                        //MapManager.SelectFeaturesByAttributes(feature_layer, @"""StationNum"" = 552");
-                        Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + MapManager.GetTotalSelectedFeaturesInLayer(feature_layer));
-                        MapManager.SelectFeaturesByAttributes(feature_layer, "");
-                        int count = this.MapManager.GetTotalSelectedFeaturesInLayer(feature_layer);
+                        Console.WriteLine("****************************");
+                        string feature_class = resp.RespContent.ToString();
+                        Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + MapManager.GetTotalSelectedFeaturesInLayer(feature_class));
+                        MapManager.SelectFeaturesByAttributes(feature_class, "");
+                        int count = this.MapManager.GetTotalSelectedFeaturesInLayer(feature_class);
                         MapManager.ClearMapSelection();
-                        Log("There are total of " + count + " " + feature_layer + ".", "info");
-                        speechSyn.SpeakAsync("There are total of " + count + " " + feature_layer + ".");
+                        Log("There are total of " + count + " " + feature_class + ".", "info");
+                        speechSyn.SpeakAsync("There are total of " + count + " " + feature_class + ".");
                         Console.WriteLine("图层数量信息");
                         break;
                     case DialogueResponseType.listPlainOptions:
