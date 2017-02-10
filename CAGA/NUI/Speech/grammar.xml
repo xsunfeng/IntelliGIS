@@ -2,6 +2,9 @@
 <grammar version="1.0" xml:lang="en-US" mode="voice" root="toplevel" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0" xmlns:sapi="http://schemas.microsoft.com/Speech/2002/06/SRGSExtensions" sapi:alphabet="x-microsoft-ups">
   <rule id="toplevel" scope="public">
     <one-of>
+     <!-- <item>
+        <ruleref uri="#finding_museums_pitts"/>
+      </item> -->
       <item>
         <ruleref uri="#mapping_nearby"/>
       </item>
@@ -55,11 +58,12 @@
       </item>
       <item>
         <ruleref uri="#quantity_answer"/>
-      </item>     
+      </item>
     </one-of>
   </rule>
+  
 
-  <rule id="mapping_nearby" scope="public">
+  <!--<rule id="mapping_nearby" scope="public">
     <example> mapping nearby </example>
     <example> Show me the fire stations in Oleander </example>
     <item>
@@ -77,8 +81,30 @@
       <tag> out.admin_area = rules.admin_area_name; </tag>
     </item>
     <tag> out.intention = "Mapping Nearby"; </tag>
+  </rule>!-->
+
+
+  <rule id="mapping_nearby" scope="public">
+    <example> mapping nearby </example>
+    <example> Show me the fire stations in Oleander </example>
+    <item>
+      Show me the
+    </item>
+    <item>
+      museums
+      <tag> out.source_layer = "Museums"; </tag>
+    </item>
+    <item>
+      in
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+    <tag> out.intention = "Mapping Nearby"; </tag>
   </rule>
 
+  
   <rule id="openning_store" scope="public">
     <example> I am interested in opening up a Hispanic food stores in Tarrant County</example>
     <example> Show me the fire stations in Oleander </example>
@@ -112,6 +138,48 @@
     </item>
     <tag> out.intention = "openning store"; </tag>
   </rule>
+
+<!--
+  <rule id="finding_museums_pitts" scope="public">
+    <example>
+      I want to find museums in Pittsburgh"
+    </example>
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
+        <item>I am interested in</item>
+      </one-of>
+    </item>
+    <item repeat="0-1">
+      <one-of>
+        <item>finding</item>
+        <item>seeing</item>
+      </one-of>
+    </item>
+    <item>
+      <ruleref uri="#article"/>
+    </item>
+    <item>
+      <ruleref uri="#feature_class"/>
+      <tag> out.feature_class = rules.feature_class; </tag>
+    </item>
+    <item>
+      <ruleref uri="#prep_inside"/>
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+    <tag> out.intention = "finding museums"; </tag>
+  </rule>
+  
+  -->
+
 
   <rule id="mapping_inside" scope="public">
     <example> mapping inside </example>
@@ -264,6 +332,9 @@
       </item>
       <item>
         Hispanic food stores <tag> out = "Hispanic Themed Food Stores"; </tag>
+      </item>
+      <item>
+        Museums <tag> out = "Museums"; </tag>
       </item>
     </one-of>
   </rule>
@@ -469,10 +540,11 @@
       <item> Rochester <tag> out = "Rochester"; </tag> </item>
       <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
       <item>Tarrant County <tag> out = "Tarrant County"; </tag></item>
+      <item>Pittsburgh <tag> out = "Pittsburgh"; </tag></item> 
     </one-of>
   </rule>
 
-  <rule id="add_feature_class">
+  <rule id="add_feature_class" scope="public">
     <example> Please add lot boundaries </example>
     <example> I would like to understand how the residents are served by these fire stations.</example>
     <item repeat="0-1"> Please </item>
@@ -490,6 +562,7 @@
       <ruleref uri="#feature_class"/>
       <tag> out.feature_class = rules.feature_class; </tag>
     </item>
+    <tag> out.intention = "Get Value From Input"; </tag>
   </rule>
 
   <rule id="region_type_answer">
@@ -535,6 +608,7 @@
       </item>
     </one-of>
   </rule>
+  
 
   <rule id="partiality_answer">
     <example> the features as a whole </example>

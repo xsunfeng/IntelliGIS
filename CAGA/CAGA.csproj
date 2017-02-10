@@ -308,7 +308,9 @@
     <Resource Include="Images\region_attributes.PNG" />
     <Resource Include="Images\region_buffer.PNG" />
     <Resource Include="Images\region_drawing.PNG" />
-    <Resource Include="NUI\Speech\gccm_grm.xml" />
+    <Resource Include="NUI\Speech\gccm_grm.xml">
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\add_layer.png" />
