@@ -200,7 +200,7 @@ namespace CAGA.Dialogue
                         // generate response 
                         if (paramNode.ParamType == "data_source")
                         {
-                            // fixed at the moment
+                            // fixed at the moment // C:\GISLAB1\Data\
                             string dataSourcePath = @"C:\GISLAB1\Data\";
                             foreach (string value in paramNode.Values)
                             {
@@ -575,6 +575,7 @@ namespace CAGA.Dialogue
                     respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Oleander\Lot Boundaries.lyr"));
                     respContent.AddOption(new MapLayerOptionItemData("Parcels", @"C:\GISLAB1\Data\Oleander\Parcels.lyr"));
                     respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Oleander\MajorRoads.lyr"));
+                    respContent.AddOption(new MapLayerOptionItemData("Floodways", @"C:\GISLAB1\Data\floodways.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
                     return respList;

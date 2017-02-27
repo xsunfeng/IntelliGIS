@@ -54,6 +54,7 @@ namespace CAGA
             itemsList.Add("Monthly Sales");
             itemsList.Add("Quantile");
             itemsList.Add("Three");
+            itemsList.Add("I want to find museums in Pittsburgh");
             //itemsList.Add("I want to generate a map of parcels within a region");
             //itemsList.Add("it is city of Oleander");
             //itemsList.Add("They are Building Footprints");
