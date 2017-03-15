@@ -53,8 +53,12 @@ namespace CAGA
             itemsList.Add("I am interested in opening up a Hispanic food stores in Tarrant County");
             itemsList.Add("Monthly Sales");
             itemsList.Add("Quantile");
-            itemsList.Add("Three");
-            itemsList.Add("I want to find museums in Pittsburgh");
+            itemsList.Add("Graduated Colors");
+            itemsList.Add("one mile");
+            itemsList.Add("five");
+            itemsList.Add("population");
+            itemsList.Add("HISPANIC");
+            itemsList.Add("greater than seventy percent");
             //itemsList.Add("I want to generate a map of parcels within a region");
             //itemsList.Add("it is city of Oleander");
             //itemsList.Add("They are Building Footprints");

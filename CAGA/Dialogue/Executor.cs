@@ -65,11 +65,17 @@ namespace CAGA.Dialogue
                 case "identify region type": //26
                     result = this.IdentifyRegionType(actionNode, currDlgAct, indent);
                     break;
+                case "identify symbolization method": //26
+                    result = this.IdentifySymbolizationMethod(actionNode, currDlgAct, indent);
+                    break;
                 case "choose specification method": //27
                     result = this.ChooseSpecificationMethod(actionNode, currDlgAct, indent);
                     break;
                 case "choose classification schema": //27
                     result = this.ChooseClassificationSchema(actionNode, currDlgAct, indent);
+                    break;
+                case "choose symbolization method": //27
+                    result = this.ChooseSymbolizationMethod(actionNode, currDlgAct, indent);
                     break;
                 case "specify region by attributes": //28
                     result = this.SpecifyRegionByAttributes(actionNode, currDlgAct, indent);
@@ -77,9 +83,11 @@ namespace CAGA.Dialogue
                 case "specify region by drawing": //29
                     result = this.SpecifyRegionByDrawing(actionNode, currDlgAct, indent);
                     break;
-                case "perform symbolization": //30
-                    result = this.PerformSymbolization(actionNode, currDlgAct, indent);
-                    Console.WriteLine("haha");
+                case "perform symbolization using graduated symbols": //30
+                    result = this.PerformSymbolizationUsingGraduatedSymbols(actionNode, currDlgAct, indent);
+                    break;
+                case "perform symbolization using graduated colors": //30
+                    result = this.PerformSymbolizationUsingGraduatedColors(actionNode, currDlgAct, indent);
                     break;
                 case "ask for partiality": //31
                     result = this.AskForPartiality(actionNode, currDlgAct, indent);
@@ -93,6 +101,9 @@ namespace CAGA.Dialogue
                 case "get value from knowledge base": //32
                     result = this.GetValueFromKnowledgeBase(actionNode, currDlgAct, indent);
                     break;
+                case "select the potential hispanic food store costumers": //32
+                    result = this.SelectthePotentialHispanicFoodStoreCostumers(actionNode, currDlgAct, indent);
+                    break;   
                 default:
                     break;
             }
@@ -200,8 +211,8 @@ namespace CAGA.Dialogue
                         // generate response 
                         if (paramNode.ParamType == "data_source")
                         {
-                            // fixed at the moment // C:\GISLAB1\Data\
-                            string dataSourcePath = @"C:\GISLAB1\Data\";
+                            // fixed at the moment
+                            string dataSourcePath = @"C:\GISLAB1\Data";
                             foreach (string value in paramNode.Values)
                             {
                                 string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
@@ -211,7 +222,7 @@ namespace CAGA.Dialogue
                                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The map of " + value + " is loaded!"));
                                     if (currDlgAct.SpeechContext.ContainsKey("feature_class"))
                                     {
-                                        //respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, currDlgAct.SpeechContext["feature_class"]));
+                                        respList.Add(new DialogueResponse(DialogueResponseType.featureLayerInfo, currDlgAct.SpeechContext["feature_class"]));
                                     }
                                     break;
                                 }
@@ -247,6 +258,7 @@ namespace CAGA.Dialogue
         private ArrayList AskForValue(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
             Console.WriteLine(indent + "Executor.AskForValue actionNode: " + actionNode.Name);
+
             ArrayList respList = new ArrayList();
            
             // if the action has not been executed, set it to executing, raid the question and return
@@ -370,7 +382,7 @@ namespace CAGA.Dialogue
                             if (paramNode.ParamType == "data_source")
                             {
                                 // fixed at the moment
-                                string dataSourcePath = @"C:\GISLAB1\Data\";
+                                string dataSourcePath = @"C:\GISLAB1\Data";
                                 foreach (string value in paramNode.Values)
                                 {
                                     string filePath = System.IO.Path.Combine(dataSourcePath, value + ".mxd");
@@ -424,7 +436,7 @@ namespace CAGA.Dialogue
                     {
                         if (param != paramNode)
                         {
-                            if (param.ParamType == paramNode.ParamType && param.ParamState == ParamState.Ready)
+                            if (param.Name == paramNode.Name && param.ParamState == ParamState.Ready)
                             {
                                 foreach (object value in param.Values)
                                 {
@@ -575,7 +587,6 @@ namespace CAGA.Dialogue
                     respContent.AddOption(new MapLayerOptionItemData("Lot boundaries", @"C:\GISLAB1\Data\Oleander\Lot Boundaries.lyr"));
                     respContent.AddOption(new MapLayerOptionItemData("Parcels", @"C:\GISLAB1\Data\Oleander\Parcels.lyr"));
                     respContent.AddOption(new MapLayerOptionItemData("Flood areas", @"C:\GISLAB1\Data\Oleander\MajorRoads.lyr"));
-                    respContent.AddOption(new MapLayerOptionItemData("Floodways", @"C:\GISLAB1\Data\floodways.lyr"));
                     
                     respList.Add(new DialogueResponse(DialogueResponseType.listMapLayerOptions, respContent));
                     return respList;
@@ -673,6 +684,63 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        private ArrayList IdentifySymbolizationMethod(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+            Console.WriteLine(indent + "Executor.IdentifySymbolizationMethod actionNode:" + actionNode.Name);
+            ArrayList respList = new ArrayList();
+            if (actionNode.ActState == ActionState.Initiated)
+            {
+                // change its own state
+                actionNode.ActState = ActionState.Executing;
+
+                // do something: generate the candiate list           
+                respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: ChooseSymbolizationMethod"));
+
+                ParamNode paramNode = (ParamNode)actionNode.Parent;
+
+                if (paramNode.Name == "symbolization_method")
+                {
+                    // fixed at the moment
+                    OptionWithExampleListData respContent = new OptionWithExampleListData();
+                    respContent.Opening = this._generateQuestionString(paramNode);
+                    respContent.Opening = "How would you like to display the data:";
+                    respContent.AddOption(new OptionWithExampleItemData("Graduated Symbols", "The Quantile is drawn manually", "/CAGA;component/Images/graduated_symbols.PNG"));
+                    respContent.AddOption(new OptionWithExampleItemData("Graduated Colors", "The Equal Interval is a set of areal features", "C:\\Users\\fzs122\\Documents\\GitHub\\CAGA\\CAGA\\Images\\graduated_colors.PNG"));
+                    respContent.AddOption(new OptionWithExampleItemData("Natural Breaks", "The Natual Break is a buffer zone around some feature", "/CAGA;component/Images/graduated_colors.PNG"));
+                    respList.Add(new DialogueResponse(DialogueResponseType.listOptionsWithExamples, respContent));
+                    return respList;
+                }
+            }
+
+
+            // if the action is executing, try to check whether the current input answers the question
+            else if (actionNode.ActState == ActionState.Executing)
+            {
+                ParamNode paramNode = (ParamNode)actionNode.Parent;
+                foreach (string phrase in currDlgAct.SpeechContext.Keys)
+                {
+                    if (phrase.ToLower() == paramNode.Name.ToLower())
+                    {
+                        object newValue = this._parseValueFromSpeech(paramNode, currDlgAct.SpeechContext[phrase]);
+                        if (newValue != null)
+                        {
+                            Console.WriteLine((string)newValue);
+                            this._addValueToParam(paramNode, newValue, indent);
+
+                            // change its own state
+                            actionNode.ActState = ActionState.Complete;
+                            return respList;
+                        }
+                    }
+                }
+            }
+
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
+        }
+
         private ArrayList ChooseClassificationSchema(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
             Console.WriteLine(indent + "Executor.IdentifyRegionType actionNode:" + actionNode.Name);
@@ -718,6 +786,60 @@ namespace CAGA.Dialogue
                             actionNode.ActState = ActionState.Complete;
                             return respList;
                         }
+                    }
+                }
+            }
+
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
+        }
+
+        private ArrayList ChooseSymbolizationMethod(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+            Console.WriteLine(indent + "Executor.ChooseSymbolizationMethod actionNode:" + actionNode.Name);
+            ArrayList respList = new ArrayList();
+            // change its own state
+            actionNode.ActState = ActionState.Executing;
+
+            // do something:
+            respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: ChooseSymbolizationMethod"));
+
+            ActionNode parent = (ActionNode)actionNode.Parent;
+            if (parent != null)
+            {
+                foreach (ParamNode param in parent.Params)
+                {
+                    if (param.ParamType == "symbolization_method" && param.ParamState == ParamState.Ready)
+                    {
+                        string symbolization_method = param.Values[0].ToString();
+                        respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "symbolization_method:" + symbolization_method));
+                        
+                        string chosenActionName = "";
+                        if (symbolization_method == "graduated symbols")
+                        {
+                            // select features in the region
+                            chosenActionName = "Symbolize using Graduated Symbols";
+                        }
+                        else if (symbolization_method == "graduated colors")
+                        {
+                            // select features in the region
+                            chosenActionName = "Symbolize using Graduated Colors";
+                        }
+                        else if (symbolization_method == "charts")
+                        {
+                            // select features in the region
+                            chosenActionName = "Symbolize using Charts";
+                        }
+                        if (chosenActionName != "")
+                        {
+                            respList.Add(new DialogueResponse(DialogueResponseType.newAgendaItem, chosenActionName));
+                        }
+
+                        // change its own state
+                        actionNode.ActState = ActionState.Complete;
+                        return respList;
                     }
                 }
             }
@@ -941,6 +1063,7 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+
         private ArrayList DrawBuffer(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
 
@@ -972,82 +1095,22 @@ namespace CAGA.Dialogue
                 string source_layer = "";
                 string distString = "";
                 string feature_class = "";
-                string source_layer_filter = "";
-                string speed_limit = "";
-                string time_limit = "";
-                bool isDistance = false;
-                bool isTimeXSpeed = false;
 
                 foreach (ParamNode param in ((ActionNode)parent).Params)
                 {
                     Console.WriteLine(indent + "param.name:" + param.Name);
                     Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
-                    if (param.Name == "source_layer")
+                    if (param.Name == "feature_class")
                     {
                         string str = (string)param.Values[0];
-                        if (str.StartsWith("Blue"))
-                        {
-                            string[] tmp = str.Split(' ');
-                            int len = tmp[0].Length;
-                            source_layer = str.Substring(len + 1);
-                            source_layer_filter = "551";
-                        }
-                        else if (str.StartsWith("Red"))
-                        {
-                            string[] tmp = str.Split(' ');
-                            int len = tmp[0].Length;
-                            source_layer = str.Substring(len + 1);
-                            source_layer_filter = "552";
-                        }
-                        else if (str.StartsWith("Green"))
-                        {
-                            string[] tmp = str.Split(' ');
-                            int len = tmp[0].Length;
-                            source_layer = str.Substring(len + 1);
-                            source_layer_filter = "553";
-                        }
-                        else
-                        {
-                            source_layer = str;
-                        }
-
+                        source_layer = str;
                         Console.WriteLine(indent + "source_layer=" + source_layer);
                     }
                     //if (source_layer_found && distance_found) break;
-                    if (param.Name == "distance")
+                    if (param.ParamType == "length")
                     {
                         distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
                         Console.WriteLine(indent + "distString=" + distString);
-                        isDistance = true;
-                    }
-                    if (param.ParamType == "speed")
-                    {
-                        speed_limit = (string)((Hashtable)param.Values[0])["value"];
-                        Console.WriteLine(indent + "speed_limit=" + speed_limit);
-                        isTimeXSpeed = true;
-                    }
-                    if (param.ParamType == "time")
-                    {
-                        time_limit = (string)((Hashtable)param.Values[0])["value"];
-                        Console.WriteLine(indent + "time_limit=" + time_limit);
-                        isTimeXSpeed = true;
-                    }
-                }
-                if (isTimeXSpeed)
-                {
-                    ;
-                    double a = double.Parse(speed_limit); //mph
-                    double b = double.Parse(time_limit); //min
-                    double c = a * b / 60;
-                    distString = c + " miles";
-                }
-
-                foreach (string key in currDlgAct.SpeechContext.Keys)
-                {
-                    if (key == "feature_class")
-                    {
-                        _updateValueOfAncestor(actionNode, key, (string)currDlgAct.SpeechContext[key]);
-                        feature_class = (string)currDlgAct.SpeechContext[key];
                     }
                 }
 
@@ -1057,29 +1120,25 @@ namespace CAGA.Dialogue
                     Console.WriteLine(indent + "distString=" + distString);
                     Console.WriteLine(indent + "feature_class=" + feature_class);
 
-                    if (source_layer_filter != "")
-                    {
-                        _mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = " + source_layer_filter);
-                    }
-                    Console.WriteLine(indent + "source_layer_filter=" + source_layer_filter);
-                    //_mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = 552");
-                    //Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + _mapMgr.GetTotalSelectedFeaturesInLayer(source_layer));
-                    //_mapMgr.ClearMapSelection();
                     string outLayerFile = ((IGeoProcessor)this._mapMgr).Buffer(source_layer, distString);
 
                     if (outLayerFile.Length > 0)
                     {
                         Console.WriteLine(indent + "outLayerFile=" + outLayerFile);
+                        int index = _mapMgr.GetIndexNumberFromLayerName(source_layer);
+                        Console.WriteLine(indent + "index=" + index);
+                        _mapMgr.AddLayer(outLayerFile, index + 1);
                         //_mapMgr.AddLayer(outLayerFile);
-                        //_mapMgr.MoveLayer(source_layer+"_buffer", 2);
+                        //_mapMgr.MoveLayer(source_layer+"_buffer", 1);
                         respList.Add(new DialogueResponse(DialogueResponseType.bufferZoneAdded, outLayerFile));
                         actionNode.ActState = ActionState.Complete;
                         Console.WriteLine(indent + "Complete");
 
                         Hashtable v = new Hashtable();
-                        v.Add("type", "buffer");
-                        v.Add("source_layer", source_layer + "_buffer");
-                        if (feature_class != "") v.Add("feature_class", feature_class);
+                        //v.Add("type", "buffer");
+                        v.Add("service", source_layer + "_buffer");
+                        v.Add("service_filepath", outLayerFile);
+                        v.Add("paramNode name", paramNode.Name);
                         this._addValueToParam(paramNode, v, indent);
 
                         // change its own state
@@ -1107,11 +1166,177 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        //private ArrayList DrawBuffer(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        //{
 
-        private ArrayList PerformSymbolization(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        //    Console.WriteLine(indent + "Executor.DrawBuffer actionNode:" + actionNode.Name);
+        //    ArrayList respList = new ArrayList();
+
+        //    if (actionNode.ActState == ActionState.Initiated || actionNode.ActState == ActionState.Executing)
+        //    {
+        //        PlanNode parent = actionNode.Parent;
+        //        ParamNode paramNode = null;
+        //        while (parent != null)
+        //        {
+        //            if (parent.Parent is ParamNode)
+        //            {
+        //                paramNode = parent.Parent as ParamNode;
+        //                break;
+        //            }
+        //            else if (parent.Parent is ActionNode)
+        //            {
+        //                parent = parent.Parent;
+        //            }
+        //        }
+
+        //        actionNode.ActState = ActionState.Executing;
+        //        parent = actionNode.Parent;
+        //        Console.WriteLine(indent + "parent:" + parent.Name);
+
+        //        //string source_layer = "Fire Stations";
+        //        string source_layer = "";
+        //        string distString = "";
+        //        string feature_class = "";
+        //        string source_layer_filter = "";
+        //        string speed_limit = "";
+        //        string time_limit = "";
+        //        bool isDistance = false;
+        //        bool isTimeXSpeed = false;
+
+        //        foreach (ParamNode param in ((ActionNode)parent).Params)
+        //        {
+        //            Console.WriteLine(indent + "param.name:" + param.Name);
+        //            Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
+        //            if (param.Name == "source_layer")
+        //            {
+        //                string str = (string)param.Values[0];
+        //                if (str.StartsWith("Blue"))
+        //                {
+        //                    string[] tmp = str.Split(' ');
+        //                    int len = tmp[0].Length;
+        //                    source_layer = str.Substring(len + 1);
+        //                    source_layer_filter = "551";
+        //                }
+        //                else if (str.StartsWith("Red"))
+        //                {
+        //                    string[] tmp = str.Split(' ');
+        //                    int len = tmp[0].Length;
+        //                    source_layer = str.Substring(len + 1);
+        //                    source_layer_filter = "552";
+        //                }
+        //                else if (str.StartsWith("Green"))
+        //                {
+        //                    string[] tmp = str.Split(' ');
+        //                    int len = tmp[0].Length;
+        //                    source_layer = str.Substring(len + 1);
+        //                    source_layer_filter = "553";
+        //                }
+        //                else
+        //                {
+        //                    source_layer = str;
+        //                }
+
+        //                Console.WriteLine(indent + "source_layer=" + source_layer);
+        //            }
+        //            //if (source_layer_found && distance_found) break;
+        //            if (param.Name == "distance")
+        //            {
+        //                distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
+        //                Console.WriteLine(indent + "distString=" + distString);
+        //                isDistance = true;
+        //            }
+        //            if (param.ParamType == "speed")
+        //            {
+        //                speed_limit = (string)((Hashtable)param.Values[0])["value"];
+        //                Console.WriteLine(indent + "speed_limit=" + speed_limit);
+        //                isTimeXSpeed = true;
+        //            }
+        //            if (param.ParamType == "time")
+        //            {
+        //                time_limit = (string)((Hashtable)param.Values[0])["value"];
+        //                Console.WriteLine(indent + "time_limit=" + time_limit);
+        //                isTimeXSpeed = true;
+        //            }
+        //        }
+        //        if (isTimeXSpeed)
+        //        {
+        //            ;
+        //            double a = double.Parse(speed_limit); //mph
+        //            double b = double.Parse(time_limit); //min
+        //            double c = a * b / 60;
+        //            distString = c + " miles";
+        //        }
+
+        //        foreach (string key in currDlgAct.SpeechContext.Keys)
+        //        {
+        //            if (key == "feature_class")
+        //            {
+        //                _updateValueOfAncestor(actionNode, key, (string)currDlgAct.SpeechContext[key]);
+        //                feature_class = (string)currDlgAct.SpeechContext[key];
+        //            }
+        //        }
+
+        //        if (source_layer != "" && distString != "")
+        //        {
+        //            Console.WriteLine(indent + "source_layer=" + source_layer);
+        //            Console.WriteLine(indent + "distString=" + distString);
+        //            Console.WriteLine(indent + "feature_class=" + feature_class);
+
+        //            if (source_layer_filter != "")
+        //            {
+        //                _mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = " + source_layer_filter);
+        //            }
+        //            Console.WriteLine(indent + "source_layer_filter=" + source_layer_filter);
+        //            //_mapMgr.SelectFeaturesByAttributes(source_layer, @"""StationNum"" = 552");
+        //            //Console.WriteLine("_mapMgr.GetTotalSelectedFeaturesInLayer=" + _mapMgr.GetTotalSelectedFeaturesInLayer(source_layer));
+        //            //_mapMgr.ClearMapSelection();
+        //            string outLayerFile = ((IGeoProcessor)this._mapMgr).Buffer(source_layer, distString);
+
+        //            if (outLayerFile.Length > 0)
+        //            {
+        //                Console.WriteLine(indent + "outLayerFile=" + outLayerFile);
+        //                //_mapMgr.AddLayer(outLayerFile);
+        //                //_mapMgr.MoveLayer(source_layer+"_buffer", 2);
+        //                respList.Add(new DialogueResponse(DialogueResponseType.bufferZoneAdded, outLayerFile));
+        //                actionNode.ActState = ActionState.Complete;
+        //                Console.WriteLine(indent + "Complete");
+
+        //                Hashtable v = new Hashtable();
+        //                v.Add("type", "buffer");
+        //                v.Add("source_layer", source_layer + "_buffer");
+        //                if (feature_class != "") v.Add("feature_class", feature_class);
+        //                this._addValueToParam(paramNode, v, indent);
+
+        //                // change its own state
+        //                actionNode.ActState = ActionState.Complete;
+
+        //                // generate response 
+        //                if (paramNode.ParamType == "geometry_polygon")
+        //                {
+        //                    // fixed at the moment
+        //                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "You may refer to this region as " + source_layer + " buffer"));
+        //                    return respList;
+        //                }
+
+        //                // generate response 
+        //                return respList;
+        //            }
+
+        //        }
+        //    }
+        //    // change its own state
+        //    actionNode.ActState = ActionState.Failed;
+
+        //    // generate response 
+        //    Console.WriteLine(indent + "Failed");
+        //    return respList;
+        //}
+
+
+        private ArrayList PerformSymbolizationUsingGraduatedSymbols(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
 
-            Console.WriteLine(indent + "Executor.DrawBuffer actionNode:" + actionNode.Name);
+            Console.WriteLine(indent + "Executor.PerformSymbolizationUsingGraduatedSymbols actionNode:" + actionNode.Name);
             Console.WriteLine(indent + "actionNode.ActState:" + actionNode.ActState);
             ArrayList respList = new ArrayList();
 
@@ -1126,6 +1351,7 @@ namespace CAGA.Dialogue
                 string calssification_schema = "";
                 string feature_class = "";
                 string isLarger = "12";
+                string symbolization_method = "";
 
                 foreach (ParamNode param in ((ActionNode)parent).Params)
                 {
@@ -1154,7 +1380,11 @@ namespace CAGA.Dialogue
                             break;
                     }
                 }
-                _mapMgr.DefineClassBreaksRenderer(feature_class, data_field, Int32.Parse(number_of_class), "none", calssification_schema, isLarger);
+                _mapMgr.DefineClassBreaksRenderer2(feature_class, data_field, Int32.Parse(number_of_class), "none", calssification_schema);
+                actionNode.ActState = ActionState.Complete;
+                // generate response 
+                Console.WriteLine(indent + "Completed");
+                return respList;
             }
             // change its own state
             actionNode.ActState = ActionState.Failed;
@@ -1164,7 +1394,90 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        private ArrayList PerformSymbolizationUsingGraduatedColors(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
 
+            Console.WriteLine(indent + "Executor.PerformSymbolizationUsingGraduatedColors actionNode:" + actionNode.Name);
+            Console.WriteLine(indent + "actionNode.ActState:" + actionNode.ActState);
+            ArrayList respList = new ArrayList();
+
+            if (actionNode.ActState == ActionState.Initiated || actionNode.ActState == ActionState.Executing)
+            {
+                actionNode.ActState = ActionState.Executing;
+                PlanNode parent = actionNode.Parent;
+                Console.WriteLine(indent + "parent:" + parent.Name);
+
+                string number_of_class = "";
+                string data_field = "";
+                string calssification_schema = "";
+                string feature_class = "";
+                string normalizeField = "none";
+                normalizeField = "SqMiles";
+
+                Console.WriteLine(indent + "~~~~~~~~~~~~~~~~~~~~~~~");
+                foreach (ParamNode param in ((ActionNode)parent).Params)
+                {
+                    Console.WriteLine("param.name:" + param.Name);
+                    if (param.Values[0] is string){
+                        Console.WriteLine((string)param.Values[0]);
+                    }else if (param.Values[0] is Hashtable){
+                        foreach (DictionaryEntry pair in (Hashtable)param.Values[0]) {
+                            Console.WriteLine("key = "+pair.Key+";value = "+ pair.Value);
+                        }
+                    }
+                }
+                Console.WriteLine(indent + "~~~~~~~~~~~~~~~~~~~~~~~");
+
+                foreach (ParamNode param in ((ActionNode)parent).Params)
+                {
+                    Console.WriteLine(indent + "param.name:" + param.Name);
+                    Console.WriteLine(indent + "param.Values[0]:" + param.Values[0]);
+                    switch (param.Name)
+                    {
+                        case "number_of_class":
+                            number_of_class = (string)param.Values[0];
+                            Console.WriteLine(indent + "number_of_class:" + number_of_class);
+                            break;
+                        case "data_field":
+                            data_field = (string)param.Values[0];
+                            Console.WriteLine(indent + "data_field:" + data_field);
+                            break;
+                        case "classification_schema":
+                            calssification_schema = (string)param.Values[0];
+                            Console.WriteLine(indent + "calssification_schema:" + calssification_schema);
+                            break;
+                        case "feature_class":
+                            feature_class = (string)param.Values[0];
+                            Console.WriteLine(indent + "feature_class:" + feature_class);
+                            break;            
+                            break;
+                    }
+                }
+
+                PlanNode tmpNode = actionNode.Parent;
+                while (tmpNode != null && !(tmpNode is ParamNode)) tmpNode = tmpNode.Parent;
+                if (tmpNode != null)
+                {
+                    Hashtable v = new Hashtable();
+                    v.Add("Population Distribution of Hispanic", feature_class);
+                    v.Add("data_field", data_field);
+                    v.Add("normalizeField", normalizeField);
+                    this._addValueToParam((ParamNode)tmpNode, v, indent);
+                }   
+
+                _mapMgr.DefineClassBreaksRenderer2(feature_class, data_field, Int32.Parse(number_of_class), normalizeField, calssification_schema);
+
+                actionNode.ActState = ActionState.Complete;
+                // generate response 
+                Console.WriteLine(indent + "Completed");
+                return respList;
+            }
+            // change its own state
+            actionNode.ActState = ActionState.Failed;
+            // generate response 
+            Console.WriteLine(indent + "Failed");
+            return respList;
+        }
 
         private ArrayList AskForPartiality(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
@@ -1230,6 +1543,106 @@ namespace CAGA.Dialogue
                 }
             }
 
+            // change its own state
+            actionNode.ActState = ActionState.Complete;
+            // generate response 
+            return respList;
+        }
+
+        private ArrayList SelectthePotentialHispanicFoodStoreCostumers(ActionNode actionNode, DialogueAct currDlgAct, string indent)
+        {
+            Console.WriteLine(indent + "Executor.SelectthePotentialHispanicFoodStoreCostumers actionNode:" + actionNode.Name);
+            ArrayList respList = new ArrayList();
+            // change its own state
+            actionNode.ActState = ActionState.Executing;
+
+            // do something:
+            string service = "";
+            string PopulationDistributionofHispanic = "";
+            float value = 0;
+            string compare = "";
+            string data_field = "";
+            string normalizeField = "";
+            string service_filepath = "";
+
+            if (actionNode.Parent is ActionNode) {
+                
+                ActionNode parent = (ActionNode)actionNode.Parent;
+                foreach (ParamNode obj in parent.Params)
+                {
+                    if(obj.Values[0] is Hashtable){
+                        foreach (DictionaryEntry item in (Hashtable)obj.Values[0])
+                        {
+                            Console.WriteLine(indent + "key=" + item.Key + ",value=" + item.Value);
+                        }
+                    }
+                    else Console.WriteLine(indent + "string:" + obj.Values[0].ToString());
+                
+                }
+                foreach ( ParamNode param in parent.Params)
+                {
+                    //Console.WriteLine("叭叭叭" + param.Name);
+                    if (param.Name == "service")
+                    {
+                        service = (string)((Hashtable)param.Values[0])["service"];
+                        service_filepath = (string)((Hashtable)param.Values[0])["service_filepath"];
+                        Console.WriteLine(indent + "******叭叭叭******");
+                        Console.WriteLine(indent + "service=" + service);
+                        Console.WriteLine(indent + "service_filepath=" + service_filepath);
+                    }
+                    if(param.Name == "Population Distribution of Hispanic"){
+                        PopulationDistributionofHispanic = (string)((Hashtable)param.Values[0])["Population Distribution of Hispanic"];
+                        data_field = (string)((Hashtable)param.Values[0])["data_field"];
+                        normalizeField = (string)((Hashtable)param.Values[0])["normalizeField"];
+                        Console.WriteLine(indent + "******叭叭叭******");
+                        Console.WriteLine(indent + "PopulationDistributionofHispanic=" + PopulationDistributionofHispanic);
+                        Console.WriteLine(indent + "data_field=" + data_field);
+                        Console.WriteLine(indent + "normalizeField=" + normalizeField);
+                    }
+                    if(param.Name == "criteria"){
+                        if((string)((Hashtable)param.Values[0])["compare"]=="1")compare = ">";
+                        if((string)((Hashtable)param.Values[0])["compare"]=="-1")compare = "<";
+                        value = float.Parse((string)(((Hashtable)param.Values[0])["value"]))/100;
+                        Console.WriteLine(indent + "******叭叭叭******");
+                        Console.WriteLine(indent + "value="+value);
+                    }
+                }
+
+                //string whereClause = data_field + compare + normalizeField + "*" + value.ToString();
+                //Console.WriteLine(indent + whereClause);
+                //_mapMgr.SelectFeaturesByAttributes(PopulationDistributionofHispanic, whereClause);
+                //_mapMgr.CreateLayerFromSel(PopulationDistributionofHispanic, PopulationDistributionofHispanic + "_query");
+
+                //ArrayList inLayerNames = new ArrayList();
+                //inLayerNames.Add(service);
+                //inLayerNames.Add(service);
+                ////inLayerNames.Add(needs + "_query");
+                //this._mapMgr.SelectFeaturesByLocation(needs + "_query", service, "UNION");
+
+
+                string dataSourcePath = @"C:\GISLAB1\Data\";
+                string filePath = System.IO.Path.Combine(dataSourcePath + "Census_Counts_Union selection" + ".lyr");
+                if (System.IO.File.Exists(filePath))
+                {
+                    _mapMgr.AddLayer(filePath, 1);
+                }
+                _mapMgr.SelectFeaturesByAttributes("Census_Counts_Union selection", "");
+                
+                //_mapMgr.Overlay(inLayerNames, "Potential_Hispanic_Food_Store_Sites", "UNION");
+                //_mapMgr.CreateLayerFromSel(needs + "_query", "result");
+                //whereClause = "FID_" + service+"<0";
+                //_mapMgr.ClearMapSelection();
+                //_mapMgr.SelectFeaturesByAttributes("result", whereClause);
+
+
+                //whereClause
+                //_mapMgr.SelectFeaturesByAttributes(needs, whereClause);
+               
+
+                //object newValue = this._mapMgr.GetMapExtent();
+                //this._addValueToParam(paramNode, newValue, indent);
+                //respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "Basic Action: SelectthePotentialHispanicFoodStoreSites"));           
+            }
             // change its own state
             actionNode.ActState = ActionState.Complete;
             // generate response 
@@ -1531,7 +1944,6 @@ namespace CAGA.Dialogue
                     if (region.ContainsKey("feature_class"))
                     {
                         feature_class = region["feature_class"].ToString();
-                        Console.WriteLine("到达这里了么?");
                     }
                     string source_layer = region["source_layer"].ToString();
                     Console.WriteLine(indent + "source_layer=" + source_layer + " feature_class=" + feature_class);
@@ -1819,6 +2231,10 @@ namespace CAGA.Dialogue
                 }
                 question += " are you working on?";
             }
+            if (paramNode.ParamType == "query")
+            {
+                question += "What the percentage do you consider to be potential customers";
+            }
             if (paramNode.ParamType == "source_layer")
             {
                 question = "What ";
@@ -1886,7 +2302,7 @@ namespace CAGA.Dialogue
             }
             else if (paramNode.ParamType == "length" || paramNode.ParamType == "speed" || paramNode.ParamType == "time")
             {
-                question = "What is the " + String.Join(" ", paramNode.Name.Split('_')) + "?";
+                question = "What is the " + paramNode.Description + " do you think ?";
             }
             else if (paramNode.ParamType == "classification_schema")
             {
@@ -1917,6 +2333,7 @@ namespace CAGA.Dialogue
                 || paramNode.ParamType == "data_field"
                 || paramNode.ParamType == "statistics"
                 || paramNode.ParamType == "classification_schema"
+                || paramNode.ParamType == "symbolization_method"
                 || paramNode.ParamType == "quantity"
                 || paramNode.ParamType == "symbol_size"
                 ){
@@ -1935,6 +2352,23 @@ namespace CAGA.Dialogue
                     if (((SortedList)speech).ContainsKey("unit"))
                     {
                         lengthInfo.Add("unit", ((SortedList)speech)["unit"]);
+                    }
+                    return lengthInfo;
+                }
+            }
+            else if (paramNode.ParamType == "query")
+            {
+                if (speech is SortedList)
+                {
+                    Hashtable lengthInfo = new Hashtable();
+
+                    if (((SortedList)speech).ContainsKey("compare"))
+                    {
+                        lengthInfo.Add("compare", ((SortedList)speech)["compare"]);
+                    }
+                    if (((SortedList)speech).ContainsKey("value"))
+                    {
+                        lengthInfo.Add("value", ((SortedList)speech)["value"]);
                     }
                     return lengthInfo;
                 }

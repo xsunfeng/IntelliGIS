@@ -2,9 +2,6 @@
 <grammar version="1.0" xml:lang="en-US" mode="voice" root="toplevel" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0" xmlns:sapi="http://schemas.microsoft.com/Speech/2002/06/SRGSExtensions" sapi:alphabet="x-microsoft-ups">
   <rule id="toplevel" scope="public">
     <one-of>
-     <!-- <item>
-        <ruleref uri="#finding_museums_pitts"/>
-      </item> -->
       <item>
         <ruleref uri="#mapping_nearby"/>
       </item>
@@ -57,13 +54,18 @@
         <ruleref uri="#classification_schema_answer"/>
       </item>
       <item>
+        <ruleref uri="#symbolization_method_answer"/>
+      </item>
+      <item>
         <ruleref uri="#quantity_answer"/>
       </item>
+      <item>
+        <ruleref uri="#query_answer"/>
+      </item>    
     </one-of>
   </rule>
-  
 
-  <!--<rule id="mapping_nearby" scope="public">
+  <rule id="mapping_nearby" scope="public">
     <example> mapping nearby </example>
     <example> Show me the fire stations in Oleander </example>
     <item>
@@ -81,30 +83,8 @@
       <tag> out.admin_area = rules.admin_area_name; </tag>
     </item>
     <tag> out.intention = "Mapping Nearby"; </tag>
-  </rule>!-->
-
-
-  <rule id="mapping_nearby" scope="public">
-    <example> mapping nearby </example>
-    <example> Show me the fire stations in Oleander </example>
-    <item>
-      Show me the
-    </item>
-    <item>
-      museums
-      <tag> out.source_layer = "Museums"; </tag>
-    </item>
-    <item>
-      in
-    </item>
-    <item>
-      <ruleref uri="#admin_area_name"/>
-      <tag> out.admin_area = rules.admin_area_name; </tag>
-    </item>
-    <tag> out.intention = "Mapping Nearby"; </tag>
   </rule>
 
-  
   <rule id="openning_store" scope="public">
     <example> I am interested in opening up a Hispanic food stores in Tarrant County</example>
     <example> Show me the fire stations in Oleander </example>
@@ -138,48 +118,6 @@
     </item>
     <tag> out.intention = "openning store"; </tag>
   </rule>
-
-<!--
-  <rule id="finding_museums_pitts" scope="public">
-    <example>
-      I want to find museums in Pittsburgh"
-    </example>
-    <item repeat="0-1">
-      <one-of>
-        <item>
-          <ruleref uri="#imperative"/>
-        </item>
-        <item>
-          <ruleref uri="#intend"/>
-        </item>
-        <item>I am interested in</item>
-      </one-of>
-    </item>
-    <item repeat="0-1">
-      <one-of>
-        <item>finding</item>
-        <item>seeing</item>
-      </one-of>
-    </item>
-    <item>
-      <ruleref uri="#article"/>
-    </item>
-    <item>
-      <ruleref uri="#feature_class"/>
-      <tag> out.feature_class = rules.feature_class; </tag>
-    </item>
-    <item>
-      <ruleref uri="#prep_inside"/>
-    </item>
-    <item>
-      <ruleref uri="#admin_area_name"/>
-      <tag> out.admin_area = rules.admin_area_name; </tag>
-    </item>
-    <tag> out.intention = "finding museums"; </tag>
-  </rule>
-  
-  -->
-
 
   <rule id="mapping_inside" scope="public">
     <example> mapping inside </example>
@@ -331,10 +269,18 @@
         Major Roads <tag> out = "MajorRoads"; </tag>
       </item>
       <item>
-        Hispanic food stores <tag> out = "Hispanic Themed Food Stores"; </tag>
+        Hispanic food stores <tag> out = "Hispanic_Themed_Food_Stores"; </tag>
       </item>
       <item>
-        Museums <tag> out = "Museums"; </tag>
+        <one-of>
+          <item>
+            Population
+          </item>
+          <item>
+            Census Counts
+          </item>
+        </one-of>
+        <tag> out = "Census_Counts"; </tag>
       </item>
     </one-of>
   </rule>
@@ -373,11 +319,27 @@
     </one-of>
   </rule>
 
+  <rule id="symbolization_method">
+    <one-of>
+      <item> graduated colors </item>
+      <item> graduated symbols </item>
+      <item> charts </item>
+      <item> contour </item>
+    </one-of>
+  </rule>
+
   <rule id="classification_schema_answer">
     <item>
       <ruleref uri="#classification_schema"/>
     </item>
     <tag> out.classification_schema = rules.classification_schema; </tag>
+  </rule>
+
+  <rule id="symbolization_method_answer">
+    <item>
+      <ruleref uri="#symbolization_method"/>
+    </item>
+    <tag> out.symbolization_method = rules.symbolization_method; </tag>
   </rule>
 
   <rule id="article">
@@ -540,11 +502,10 @@
       <item> Rochester <tag> out = "Rochester"; </tag> </item>
       <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
       <item>Tarrant County <tag> out = "Tarrant County"; </tag></item>
-      <item>Pittsburgh <tag> out = "Pittsburgh"; </tag></item> 
     </one-of>
   </rule>
 
-  <rule id="add_feature_class" scope="public">
+  <rule id="add_feature_class">
     <example> Please add lot boundaries </example>
     <example> I would like to understand how the residents are served by these fire stations.</example>
     <item repeat="0-1"> Please </item>
@@ -562,7 +523,6 @@
       <ruleref uri="#feature_class"/>
       <tag> out.feature_class = rules.feature_class; </tag>
     </item>
-    <tag> out.intention = "Get Value From Input"; </tag>
   </rule>
 
   <rule id="region_type_answer">
@@ -608,7 +568,39 @@
       </item>
     </one-of>
   </rule>
-  
+
+  <rule id="query_answer">
+    <ruleref uri="#query"/>
+    <tag> out.query = rules.query; </tag>
+  </rule>
+
+  <rule id="query">
+    <example> greater than seventy percent </example>
+    <one-of>
+      <item>
+        <one-of>
+          <item>greater than</item>
+          <item>more than</item>
+        </one-of>
+        <tag> out.compare = "1"; </tag>
+      </item>
+      <item>
+        <one-of>
+          <item>smaller than</item>
+          <item>less than</item>
+        </one-of>
+        <tag> out.compare = "-1"; </tag>
+      </item>
+    </one-of>
+    <item>
+      <ruleref uri="#Quantity"/>
+      <tag> out.value = rules.Quantity; </tag>
+    </item>
+    <item>
+      percent
+    </item>
+  </rule>
+
 
   <rule id="partiality_answer">
     <example> the features as a whole </example>
@@ -911,7 +903,14 @@
           <item>Monthly Sales</item>
         </one-of>
         <tag> out = "MonthlySales"; </tag>
-      </item>       
+      </item>
+      <item>
+        <one-of>
+          <item>sales</item>
+          <item>Hispanic</item>
+        </one-of>
+        <tag> out = "HISPANIC"; </tag>
+      </item>
     </one-of>
   </rule>
 

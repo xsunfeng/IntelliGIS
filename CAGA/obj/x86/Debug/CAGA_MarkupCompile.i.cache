@@ -4,16 +4,16 @@
 exe
 C#
 .cs
-C:\Users\muk229-admin\Documents\GitHub\IntelliGIS\CAGA\obj\x86\Debug\
+C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\obj\x86\Debug\
 CAGA
 none
 false
 DEBUG;TRACE
-C:\Users\muk229-admin\Documents\GitHub\IntelliGIS\CAGA\App.xaml
+C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\App.xaml
 10-221402896
 
-39-1062274974
-41-791711952
+39-9241668
+4113268723
 Dialogue\ListOptionsWithExamplesWindow.xaml;Dialogue\SelectByAttributeWindow.xaml;Dialogue\SummaryResultsWindow.xaml;Dialogue\ListMapLayerOptionsWindow.xaml;Dialogue\ListPlainOptionsWindow.xaml;Dialogue\StatResultsWindow.xaml;Map\AttrTableWindow.xaml;MainWindow.xaml;Map\SymbologyWindow.xaml;SpeechSimWindow.xaml;
 
 False

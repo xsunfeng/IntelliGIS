@@ -254,7 +254,7 @@ namespace CAGA
                         break;
                     case DialogueResponseType.bufferZoneAdded:
                         
-                        mapMgr.AddLayer(resp.RespContent.ToString(),3);
+                        
                         string layername = mapMgr.GetLayeNameFromPath(resp.RespContent.ToString());
                         speechSyn.SpeakAsync("A buffer zone is added");
                         Log("A buffer zone is added: " + resp.RespContent.ToString(), "info");
@@ -266,7 +266,6 @@ namespace CAGA
                     case DialogueResponseType.mapDocumentOpened:
                         mapMgr.LoadMap(resp.RespContent.ToString());
                         Log("A new map document is opened: " + resp.RespContent.ToString(), "info");
-                        Console.WriteLine("地图已载入");
                         break;
                     case DialogueResponseType.featureLayerInfo:
                         Console.WriteLine("****************************");
@@ -277,7 +276,6 @@ namespace CAGA
                         MapManager.ClearMapSelection();
                         Log("There are total of " + count + " " + feature_class + ".", "info");
                         speechSyn.SpeakAsync("There are total of " + count + " " + feature_class + ".");
-                        Console.WriteLine("图层数量信息");
                         break;
                     case DialogueResponseType.listPlainOptions:
                         PlainOptionListData optionListData = resp.RespContent as PlainOptionListData;

@@ -125,7 +125,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Library\KinectToolbox\bin\Debug\Kinect.Toolbox.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Kinect, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Kinect, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Speech, Version=11.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Microsoft SDKs\Speech\v11.0\Assembly\Microsoft.Speech.dll</HintPath>
@@ -286,6 +286,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="ClassDiagram2.cd">
       <SubType>Designer</SubType>
     </None>
@@ -370,6 +371,10 @@
     <Resource Include="Images\full2.PNG" />
     <Resource Include="Images\partial1.PNG" />
     <Resource Include="Images\partial2.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\graduated_colors.PNG" />
+    <Resource Include="Images\graduated_symbols.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

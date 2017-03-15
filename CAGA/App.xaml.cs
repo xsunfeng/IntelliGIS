@@ -26,7 +26,7 @@ namespace CAGA
             AoInitialize aoi = new AoInitializeClass();
 
             //more license choices could be included here
-            esriLicenseProductCode productCode = esriLicenseProductCode.esriLicenseProductCodeArcEditor;
+            esriLicenseProductCode productCode = esriLicenseProductCode.esriLicenseProductCodeStandard;
             if (aoi.IsProductCodeAvailable(productCode) == esriLicenseStatus.esriLicenseAvailable)
             {
                 aoi.Initialize(productCode);

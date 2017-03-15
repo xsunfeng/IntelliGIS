@@ -13,7 +13,6 @@ using ESRI.ArcGIS.Display;
 using ESRI.ArcGIS.Geoprocessing;
 using ESRI.ArcGIS.Geoprocessor;
 using ESRI.ArcGIS.Geodatabase;
-using ESRI.ArcGIS.GeoDatabaseUI;
 using ESRI.ArcGIS.DataSourcesFile;
 
 
@@ -1019,22 +1018,27 @@ namespace CAGA.Map
             foreach(string layerName in inLayerNames)
             {
                 ILayer layer = this._getLayerByName(layerName);
-                ESRI.ArcGIS.Geodatabase.IDataset dataset = (ESRI.ArcGIS.Geodatabase.IDataset)(layer); // Explicit Cast
-
+                IDataset dataset = ((IFeatureLayer)layer).FeatureClass as IDataset; 
+                //ESRI.ArcGIS.Geodatabase.IDataset dataset = (ESRI.ArcGIS.Geodatabase.IDataset)(layer); // Explicit Cast
+                Console.WriteLine("dataset is " + dataset == null);
                 this._geoProcessor.SetEnvironmentValue("workspace", dataset.Workspace.PathName);
+                Console.WriteLine("workspace is " + dataset.Workspace.PathName);
                 //inLayers += featureClass.FeatureDataset.Name + "\\" + featureClass.AliasName + ";";
-                inLayers += layerName + ";";
+                inLayers += dataset.Workspace.PathName+"\\"+layerName + ".shp;";
             }
             
             if (inLayers == "")
             {
+                Console.WriteLine("6");
                 return "";
             }
 
             string tempDir = System.IO.Path.GetTempPath();
+            Console.WriteLine("tempDir" + tempDir.ToString());
             string outLayerFile = "";
             if (outLayerName == "")
             {
+                Console.WriteLine("5");
                 string filename = "";
                 foreach(string layerName in inLayerNames)
                 {
@@ -1045,17 +1049,21 @@ namespace CAGA.Map
             }
             else
             {
+                Console.WriteLine("4");           
                 outLayerFile = System.IO.Path.Combine(tempDir, outLayerName + ".shp");
             }
             if (System.IO.File.Exists(outLayerFile))
             {
+                Console.WriteLine("3");
                 return outLayerFile;
             }
 
+            Console.WriteLine("overlayType is " + overlayType);
             //create a new instance of an overlay tool
             IGeoProcessorResult results = null;
             if (overlayType == "INTERSECT")
             {
+                Console.WriteLine("2");
                 ESRI.ArcGIS.AnalysisTools.Intersect process = new ESRI.ArcGIS.AnalysisTools.Intersect();
                 process.in_features = inLayers;
                 process.out_feature_class = outLayerFile;
@@ -1064,8 +1072,13 @@ namespace CAGA.Map
             }
             else if (overlayType == "UNION")
             {
+                Console.WriteLine("1");
+                Console.WriteLine("inLayers is " + inLayers);
+                Console.WriteLine("outLayerName is " + outLayerName);               
                 ESRI.ArcGIS.AnalysisTools.Union process = new ESRI.ArcGIS.AnalysisTools.Union(inLayers, outLayerFile);
+               
                 results = (IGeoProcessorResult)this._geoProcessor.Execute(process, null);
+                AddLayer(outLayerFile);
             }
 
             if (results != null && results.Status == esriJobStatus.esriJobSucceeded)
@@ -1073,6 +1086,233 @@ namespace CAGA.Map
                 return outLayerFile;
             }
             return "";
+        }
+
+        public void DefineClassBreaksRenderer2(string layerName, string fieldName, int numClasses, string normalizeField, string classification_scheme)
+        {
+            //numClasses = 3;
+            //normalizeField = "none";
+            //classifyMethod = "equal interval";
+
+            IFeatureLayer pFeatureLayer = null;
+            IFeatureClass pFeatureClass = null;
+
+            if (null != (pFeatureLayer = _getLayerByName(layerName) as IFeatureLayer))
+            {
+                pFeatureClass = pFeatureLayer.FeatureClass;
+            }
+
+            //Create a Class Break Renderer
+            ITable pTable = (ITable)pFeatureClass;
+            ITableHistogram pTableHistogram = new BasicTableHistogramClass();
+            IBasicHistogram pHistogram = (IBasicHistogram)pTableHistogram;
+            pTableHistogram.Field = fieldName;
+            if (normalizeField.ToLower() != "none") pTableHistogram.NormField = normalizeField;
+            pTableHistogram.Table = pTable;
+            object dataFrequency;
+            object dataValues;
+            pHistogram.GetHistogram(out dataValues, out dataFrequency);
+
+            IClassifyGEN pClassify = new NaturalBreaksClass();
+            Console.WriteLine("classifyMethod = " + classification_scheme);
+            switch (classification_scheme.ToLower())
+            {
+                case "equal interval":
+                    pClassify = new EqualIntervalClass();
+                    break;
+                case "quantile":
+                    pClassify = new QuantileClass();
+                    break;
+                case "natural breaks":
+                    pClassify = new NaturalBreaksClass();
+                    break;
+                case "geometrical interval":
+                    pClassify = new GeometricalIntervalClass();
+                    break;
+                default:
+                    break;
+            }
+
+            pClassify.Classify(dataValues, dataFrequency, ref numClasses);
+
+            double[] gClassbreaks = null;
+            gClassbreaks = (double[])pClassify.ClassBreaks;
+
+            ClassBreaksRenderer pClassBreaksRenderer = new ClassBreaksRenderer();
+            pClassBreaksRenderer.Field = fieldName;
+            pClassBreaksRenderer.BreakCount = numClasses;
+            pClassBreaksRenderer.MinimumBreak = gClassbreaks[0];
+            if (normalizeField.ToLower() != "none") pClassBreaksRenderer.NormField = normalizeField;
+
+            //Create a color ramp
+            IAlgorithmicColorRamp pAlgoRamp = new AlgorithmicColorRamp();
+            pAlgoRamp.Algorithm = ESRI.ArcGIS.Display.esriColorRampAlgorithm.esriCIELabAlgorithm;
+            pAlgoRamp.ToColor = GetRGBColor(255,0,0);
+            pAlgoRamp.FromColor = GetRGBColor(255,255,0);
+            pAlgoRamp.Size = numClasses;
+            bool bOK;
+            pAlgoRamp.CreateRamp(out bOK);
+            IEnumColors pColors = pAlgoRamp.Colors;
+
+            //Assign a color symbol, break, and label to each of the classes
+            IFillSymbol pFillSymbol;
+            for (int i = 0; i < numClasses; i++)
+            {
+                pFillSymbol = new SimpleFillSymbol();
+                pFillSymbol.Color = pColors.Next();
+
+                pClassBreaksRenderer.set_Symbol(i, pFillSymbol as ISymbol);
+                pClassBreaksRenderer.set_Break(i, gClassbreaks[i + 1]);
+                pClassBreaksRenderer.set_Label(i, string.Format("{0:0.00} - {1:0.00}", gClassbreaks[i], gClassbreaks[i + 1]));
+            }
+
+            //draw the graduated color map
+            ILayer pLayer = _getLayerByName(layerName);
+            IGeoFeatureLayer pGeoFeatureLayer = pLayer as IGeoFeatureLayer;
+            pGeoFeatureLayer.Renderer = pClassBreaksRenderer as IFeatureRenderer;
+
+
+
+            this._axMapCtrl.ActiveView.PartialRefresh(esriViewDrawPhase.esriViewGeography, pLayer, null);
+            this._axMapCtrl.Update();
+            _axTOCCtrl.SetBuddyControl(_axMapCtrl);
+
+            //string source_layer_filter = "HISPANIC > POP2000*0.7";
+            //this.SelectFeaturesByAttributes(pFeatureLayer.Name, source_layer_filter);
+            //CreateLayerFromSel("Hispanic Themed Food Stores");
+
+        }
+
+        public void SelectMapFeaturesByAttributeQuery(ESRI.ArcGIS.Carto.IActiveView activeView, ESRI.ArcGIS.Carto.IFeatureLayer featureLayer, System.String whereClause)
+        {
+            if (activeView == null || featureLayer == null || whereClause == null)
+            {
+                return;
+            }
+            ESRI.ArcGIS.Carto.IFeatureSelection featureSelection = featureLayer as ESRI.ArcGIS.Carto.IFeatureSelection; // Dynamic Cast
+
+            // Set up the query
+            ESRI.ArcGIS.Geodatabase.IQueryFilter queryFilter = new ESRI.ArcGIS.Geodatabase.QueryFilterClass();
+            queryFilter.WhereClause = whereClause;
+
+            // Invalidate only the selection cache. Flag the original selection
+            activeView.PartialRefresh(ESRI.ArcGIS.Carto.esriViewDrawPhase.esriViewGeoSelection, null, null);
+
+            // Perform the selection
+            featureSelection.SelectFeatures(queryFilter, ESRI.ArcGIS.Carto.esriSelectionResultEnum.esriSelectionResultNew, false);
+
+            // Flag the new selection
+            activeView.PartialRefresh(ESRI.ArcGIS.Carto.esriViewDrawPhase.esriViewGeoSelection, null, null);
+        }
+
+        public void CreateLayerFromSel(string layerName, string newLayerName ){
+            IFeatureLayer pFeatureLayer = null;
+            IFeatureClass pFeatureClass = null;
+            if (null != (pFeatureLayer = _getLayerByName(layerName) as IFeatureLayer))
+            {
+                pFeatureClass = pFeatureLayer.FeatureClass;
+            }
+            IFeatureLayerDefinition pFLDefinition = pFeatureLayer as IFeatureLayerDefinition;
+            IFeatureLayer pNewFeatureLayer = pFLDefinition.CreateSelectionLayer(pFeatureLayer.Name, true, null, null);
+            pNewFeatureLayer.Name = newLayerName;
+            pNewFeatureLayer.MaximumScale = pFeatureLayer.MaximumScale;
+            pNewFeatureLayer.MinimumScale = pFeatureLayer.MinimumScale;
+            pNewFeatureLayer.Selectable = pFeatureLayer.Selectable;
+            pNewFeatureLayer.Visible = pFeatureLayer.Visible;
+            pNewFeatureLayer.ScaleSymbols = pFeatureLayer.ScaleSymbols;
+            this._axMapCtrl.Map.AddLayer(pNewFeatureLayer);
+            
+            //IEnumFieldError fieldErrors;
+            //IEnumInvalidObject invalidObjects;
+            //ExportLayerToShapefile("C:\\", "test.shp", (ILayer)pNewFeatureLayer, out fieldErrors, out invalidObjects);
+        }
+
+        //public void RasterToShapefile(string layerName)
+        //{
+        //    FeatureLayer pLayer = (FeatureLayer)_getLayerByName(layerName);
+        //    IFeatureClass sfeatClass = pLayer.FeatureClass;
+        //    IDataset sdataset = (IDataset)sfeatClass;
+
+        //    IRasterLayer pInputRL = _getLayerByName(layerName) as IRasterLayer;
+        //    IRaster pInputRaster = pInputRL.Raster;
+        //    IWorkspaceFactory pWSF = new ShapefileWorkspaceFactory();
+        //    IWorkspace pWS = pWSF.OpenFromFile("C:\\DATA\\CHAP6", 0);
+        //    IConversionOp pConversionOp = new RasterConversionOp() as IConversionOp;
+        //    //IFeatureClass pOutFClass = pConversionOp.RasterDataToPolygonFeatureData((IGeoDataset)sdataset,(IWorkspace)pWS, "roads.shp", true);
+        //}
+
+        public static bool ExportLayerToShapefile(
+        string shapePath,
+        string shapeName,
+        ILayer source,
+        out IEnumFieldError fieldErrors,
+        out IEnumInvalidObject invalidObjects)
+        {
+            IGeoFeatureLayer sourceFeatLayer = (IGeoFeatureLayer)source;
+            IFeatureLayer sfeatlayer = (IFeatureLayer)sourceFeatLayer;
+            IFeatureClass sfeatClass = sfeatlayer.FeatureClass;
+            IDataset sdataset = (IDataset)sfeatClass;
+            IDatasetName sdatasetName = (IDatasetName)sdataset.FullName;
+
+            ISelectionSet sSelectionSet = (
+                (ITable)source).Select(new QueryFilter(),
+                esriSelectionType.esriSelectionTypeHybrid,
+                esriSelectionOption.esriSelectionOptionNormal,
+                sdataset.Workspace);
+
+            IWorkspaceFactory factory;
+            factory = new ShapefileWorkspaceFactory();
+            IWorkspace targetWorkspace = factory.OpenFromFile(shapePath, 0);
+            IDataset targetDataset = (IDataset)targetWorkspace;
+
+            IName targetWorkspaceName = targetDataset.FullName;
+            IWorkspaceName tWorkspaceName = (IWorkspaceName)targetWorkspaceName;
+
+            IFeatureClassName tFeatClassname = (IFeatureClassName)new FeatureClassName();
+            IDatasetName tDatasetName = (IDatasetName)tFeatClassname;
+            tDatasetName.Name = shapeName;
+            tDatasetName.WorkspaceName = tWorkspaceName;
+
+            IFieldChecker fieldChecker = new FieldChecker();
+            IFields sFields = sfeatClass.Fields;
+            IFields tFields = null;
+
+            fieldChecker.InputWorkspace = sdataset.Workspace;
+            fieldChecker.ValidateWorkspace = targetWorkspace;
+
+            fieldChecker.Validate(sFields, out fieldErrors, out tFields);
+            if (fieldErrors != null)
+            {
+                IFieldError fieldError = null;
+                while ((fieldError = fieldErrors.Next()) != null)
+                {
+                    Console.WriteLine(fieldError.FieldError + " : " + fieldError.FieldIndex);
+                }
+                Console.WriteLine("[ExportDataViewModel.cs] Errors encountered during field validation");
+            }
+
+            string shapefieldName = sfeatClass.ShapeFieldName;
+            int shapeFieldIndex = sfeatClass.FindField(shapefieldName);
+            IField shapefield = sFields.get_Field(shapeFieldIndex);
+            IGeometryDef geomDef = shapefield.GeometryDef;
+            IClone geomDefClone = (IClone)geomDef;
+            IClone targetGeomDefClone = geomDefClone.Clone();
+            IGeometryDef tGeomDef = (IGeometryDef)targetGeomDefClone;
+
+            IFeatureDataConverter2 featDataConverter = (IFeatureDataConverter2)new FeatureDataConverter();
+            invalidObjects = featDataConverter.ConvertFeatureClass(
+                sdatasetName,
+                null,
+                sSelectionSet,
+                null,
+                tFeatClassname,
+                tGeomDef,
+                tFields,
+                "",
+                1000, 0);
+
+            string fullpath = System.IO.Path.Combine(shapePath, shapeName);
+            return System.IO.File.Exists(fullpath);
         }
 
         public void DefineClassBreaksRenderer(string layerName, string fieldName, int numClasses, string normalizeField, string classifyMethod, string isLarger)
