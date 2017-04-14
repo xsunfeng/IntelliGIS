@@ -136,7 +136,6 @@ namespace CAGA
             if (kinectMgr.LoadKinectSensor() == false)
             {
                 Log("Kinect sensor is not ready.", "error");
-                return;
             }
             else
             {               
@@ -144,9 +143,9 @@ namespace CAGA
             }
 
             // Load the managers to display respective images
-            kinectMgr.LoadColorManager(colorDisplay);
-            kinectMgr.LoadDepthManager(depthDisplay);
-            kinectMgr.LoadSkeletonDisplayManager(skeletonCanvas);
+            //kinectMgr.LoadColorManager(colorDisplay);
+            //kinectMgr.LoadDepthManager(depthDisplay);
+            //kinectMgr.LoadSkeletonDisplayManager(skeletonCanvas);
 
             // Load and start the speech recognition
             string grammarPath = System.IO.Path.Combine(Environment.CurrentDirectory, @"NUI\Speech\grammar.xml");
@@ -156,10 +155,10 @@ namespace CAGA
             Log("Speech recognition is started.", "info");
 
             // Load and start the gesture recognition (not functing yet)
-            kinectMgr.LoadGestureRecognizer();
-            kinectMgr.GestureRecognzied += Gesture_Recognized;
-            kinectMgr.StartGestureRecognition();
-            Log("Gesture recognition is started.", "info");
+            //kinectMgr.LoadGestureRecognizer();
+            //kinectMgr.GestureRecognzied += Gesture_Recognized;
+            //kinectMgr.StartGestureRecognition();
+            //Log("Gesture recognition is started.", "info");
 
             // Load the speech synthesizer
             speechSyn = new SpeechSynthesizer();
@@ -274,6 +273,7 @@ namespace CAGA
                         MapManager.SelectFeaturesByAttributes(feature_class, "");
                         int count = this.MapManager.GetTotalSelectedFeaturesInLayer(feature_class);
                         MapManager.ClearMapSelection();
+                        feature_class = String.Join(" ", feature_class.Split('_'));
                         Log("There are total of " + count + " " + feature_class + ".", "info");
                         speechSyn.SpeakAsync("There are total of " + count + " " + feature_class + ".");
                         break;
@@ -582,7 +582,6 @@ namespace CAGA
 
         private void SimSpeechBtn_Click(object sender, RoutedEventArgs e)
         {
-            //peechSimWindow simWindow = new SpeechSimWindow(this.kinectMgr);
             isSimulated = true;
             SpeechSimWindow simWindow = new SpeechSimWindow(this.kinectMgr);
             simWindow.Show();

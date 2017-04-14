@@ -50,8 +50,6 @@ namespace CAGA.NUI
         
         public bool LoadKinectSensor()
         {
-            
-
             if (kinectSensor == null)
                 return false;
 
@@ -71,8 +69,6 @@ namespace CAGA.NUI
             });
             kinectSensor.SkeletonFrameReady += kinectRuntime_SkeletonFrameReady;
             kinectSensor.Start();
-
-            
             
             return true;
         }

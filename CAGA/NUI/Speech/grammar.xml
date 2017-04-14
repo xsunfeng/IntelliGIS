@@ -18,9 +18,6 @@
         <ruleref uri="#add_feature_class"/>
       </item>
       <item>
-        <ruleref uri="#region_type_answer"/>
-      </item>
-      <item>
         <ruleref uri="#partiality_answer"/>
       </item>
       <item>
@@ -61,10 +58,13 @@
       </item>
       <item>
         <ruleref uri="#query_answer"/>
-      </item>    
+      </item>
+      <item>
+        <ruleref uri="#example"/>
+      </item>
     </one-of>
   </rule>
-
+  
   <rule id="mapping_nearby" scope="public">
     <example> mapping nearby </example>
     <example> Show me the fire stations in Oleander </example>

@@ -29,28 +29,42 @@ namespace  CAGA.NUI
         {
             this.grammarFile = file;
             this.kinectSensor = sensor;
-            audioSource = kinectSensor.AudioSource;
-            audioSource.AutomaticGainControlEnabled = false;
-            audioSource.BeamAngleMode = BeamAngleMode.Adaptive;
-
-            Func<RecognizerInfo, bool> matchingFunc = r =>
-            {
-                string value;
-                r.AdditionalInfo.TryGetValue("Kinect", out value);
-                return "True".Equals(value, StringComparison.InvariantCultureIgnoreCase) && "en-US".Equals(r.Culture.Name, StringComparison.InvariantCultureIgnoreCase);
-            };
-            var recognizerInfo = SpeechRecognitionEngine.InstalledRecognizers().Where(matchingFunc).FirstOrDefault();
-            if (recognizerInfo == null)
-                return;
-
-            speechRecognitionEngine = new SpeechRecognitionEngine(recognizerInfo.Id);
-
             var grammar = new Grammar(grammarFile);
-            speechRecognitionEngine.LoadGrammar(grammar);
 
-            audioStream = audioSource.Start();
-            speechRecognitionEngine.SetInputToAudioStream(audioStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+            if (kinectSensor == null)
+            {
+                // Create an in-process speech recognizer for the en-US locale.
+                speechRecognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US"));
 
+                // Create and load a dictation grammar.
+                speechRecognitionEngine.LoadGrammar(grammar);
+
+                // Configure input to the speech recognizer.
+                speechRecognitionEngine.SetInputToDefaultAudioDevice();
+            }
+            else // there is a kinect detected
+            {
+                audioSource = kinectSensor.AudioSource;
+                audioSource.AutomaticGainControlEnabled = false;
+                audioSource.BeamAngleMode = BeamAngleMode.Adaptive;
+
+                Func<RecognizerInfo, bool> matchingFunc = r =>
+                {
+                    string value;
+                    r.AdditionalInfo.TryGetValue("Kinect", out value);
+                    return "True".Equals(value, StringComparison.InvariantCultureIgnoreCase) && "en-US".Equals(r.Culture.Name, StringComparison.InvariantCultureIgnoreCase);
+                };
+                var recognizerInfo = SpeechRecognitionEngine.InstalledRecognizers().Where(matchingFunc).FirstOrDefault();
+                if (recognizerInfo == null)
+                    return;
+
+                speechRecognitionEngine = new SpeechRecognitionEngine(recognizerInfo.Id);
+
+                speechRecognitionEngine.LoadGrammar(grammar);
+
+                audioStream = audioSource.Start();
+                speechRecognitionEngine.SetInputToAudioStream(audioStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+            }
             speechRecognitionEngine.AudioStateChanged += onAudioStateChanged;
             speechRecognitionEngine.SpeechRecognized += onSpeechRecognized;
             speechRecognitionEngine.RecognizeCompleted += onSpeechRecognizeCompleted;

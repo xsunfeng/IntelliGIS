@@ -18,9 +18,6 @@
         <ruleref uri="#add_feature_class"/>
       </item>
       <item>
-        <ruleref uri="#region_type_answer"/>
-      </item>
-      <item>
         <ruleref uri="#partiality_answer"/>
       </item>
       <item>

@@ -1917,6 +1917,7 @@ namespace CAGA.Dialogue
             
             if (region != null && featureClass != "")
             {
+                featureClass = String.Join(" ", featureClass.Split('_'));
                 if (region["type"].ToString() == "drawing")
                 {
                     string graphicsName = region["value"].ToString();
@@ -1951,7 +1952,7 @@ namespace CAGA.Dialogue
                     string[] tmp = source_layer.Split('_');
                     respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "The " + feature_class + " within " + tmp[0]+" "+tmp[1] + " are highlighted in the map!"));
                     int count = this._mapMgr.GetTotalSelectedFeaturesInLayer(feature_class);
-                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are " + count + " " + feature_class + " selected."));
+                    respList.Add(new DialogueResponse(DialogueResponseType.speechInfo, "There are " + count + " selected."));
                     respList.Add(new DialogueResponse(DialogueResponseType.debugInfo, "selecting by buffer"));
                 }
 
