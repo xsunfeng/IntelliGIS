@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Windows.Controls.Ribbon;
 using System.Speech.Synthesis;
+using System.Xml;
 using Newtonsoft.Json.Linq;
 
 using CAGA.NUI;

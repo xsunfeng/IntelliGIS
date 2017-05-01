@@ -66,6 +66,54 @@ namespace CAGA.Dialogue
             this._respList.Clear();
         }
 
+        public RefNode RefParser(string keyword) {
+            Hashtable tempAct = this._kbase.SearchAction(keyword);
+            ActionNode actionNode = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"]); // act_type, complexity, description, name
+            RefNode refNode = new RefNode(actionNode);
+
+            ArrayList recipeList = this._kbase.SearchRecipe(keyword);
+            if (recipeList.Count == 0) {
+                this._respList.Add(new DialogueResponse(DialogueResponseType.speechError, "The reference node is not in the knowledge base!"));
+                return refNode;
+            }
+            Hashtable recipeInfo = (Hashtable)recipeList[0];
+            string recipeXML = recipeInfo["content"].ToString();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(recipeXML);
+            Hashtable _arcmap = new Hashtable();
+
+            string _name = "", _type = "", _layer = "", _attribute = "", _value = "";
+            // parse ARCMAP tag
+            XmlNodeList paramList = doc.GetElementsByTagName("ARCMAP");
+            foreach (XmlNode param in paramList)
+            {
+                _name = param.Attributes["Name"].Value;
+                _type = param.Attributes["Type"].Value;
+                _layer = param.Attributes["Layer"].Value;
+                Console.WriteLine("name=" + _name + "; type=" + _type + "; layer=" + _layer);
+            }
+
+            // parse ARCMAP tag
+            paramList = doc.GetElementsByTagName("SelectByAttribute");
+            foreach (XmlNode param in paramList)
+            {
+                _attribute = param.Attributes["Attribute"].Value;
+                _value = param.Attributes["Value"].Value;
+                Console.WriteLine("attribute=" + _attribute + "; type=" + _value);
+            }
+
+            
+
+            refNode.Type = _type;
+            refNode.sourceName = _name;
+            refNode.sourceLayer = _layer;
+            refNode.query = _attribute + " = '" + _value + "'";
+            refNode.execute();
+
+            return refNode;
+
+        }
+
         public bool Explain(DialogueAct dlgAct)
         {
             string indent = "";
@@ -311,76 +359,122 @@ namespace CAGA.Dialogue
         private ActionNode _explainActionFromNode(PlanNode planNode, Hashtable tempAct, DialogueAct dlgAct, string indent)
         {
             Console.WriteLine(indent + "Dialogue.PlanGraph  _explainActionFromNode  " + planNode.Name);
-            
+            ActionNode pNode = (ActionNode)planNode;
+            ActionNode newAction = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"]);
+
             if (planNode is ActionNode)
             {
                 Console.WriteLine(indent + "IsActionNode  actionNode:" + planNode.Name.ToLower() + "  tempAct" + tempAct["name"].ToString());
-                ActionNode actionNode = (ActionNode)planNode;
-                if (actionNode.Name.ToLower() == tempAct["name"].ToString().ToLower())
+                //               ActionNode actionNode = (ActionNode)planNode;
+                switch (newAction.ActType)
                 {
-                    // If the action has not been initiated, initiate it and add the agent
-                    if (actionNode.ActState == ActionState.Unknown)
-                    {
-                        actionNode.ActState = ActionState.Initiated;
-                    }
-                    if (actionNode.SearchAgent(dlgAct.Agent) == null)
-                    {
-                        actionNode.Agents.Add(dlgAct.Agent);
-                    }
-                    // If the action has been completed, or failed, start a new one, attached it to the same parent
-                    if (actionNode.ActState == ActionState.Complete || actionNode.ActState == ActionState.Failed)
-                    {
-                        ActionNode newAction = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"], actionNode.Parent);
-                        newAction.Agents.Add(dlgAct.Agent);
-                        newAction.ActState = ActionState.Initiated;
-                        if (actionNode.Parent != null)
+                    case "ACT":
                         {
-                            if (actionNode.Parent is ActionNode)
+                            if (pNode.Name.ToLower() == tempAct["name"].ToString().ToLower())
                             {
-                                ((ActionNode)(actionNode.Parent)).SubActions.Add(newAction);
-                            }
-                            else if (actionNode.Parent is ParamNode)
-                            {
-                                ((ParamNode)(actionNode.Parent)).SubActions.Add(newAction);
-                            }
-                        }
-                        return newAction;
-                    }
-                    return actionNode;
-                }
+                                // If the action has not been initiated, initiate it and add the agent
+                                if (pNode.ActState == ActionState.Unknown)
+                                {
+                                    pNode.ActState = ActionState.Initiated;
+                                }
+                                if (pNode.SearchAgent(dlgAct.Agent) == null)
+                                {
+                                    pNode.Agents.Add(dlgAct.Agent);
+                                }
+                                // If the action has been completed, or failed, start a new one, attached it to the same parent
+                                if (pNode.ActState == ActionState.Complete || pNode.ActState == ActionState.Failed)
+                                {
+                                    //                       ActionNode newAction = new ActionNode((string)tempAct["name"], (string)tempAct["act_type"], (string)tempAct["complexity"], (string)tempAct["description"], actionNode.Parent);
+                                    newAction.Parent = pNode.Parent;
+                                    newAction.Agents.Add(dlgAct.Agent);
+                                    newAction.ActState = ActionState.Initiated;
+                                    if (pNode.Parent != null)
+                                    {
+                                        if (pNode.Parent is ActionNode)
+                                        {
+                                            //There seems to be a logical error, because the newAction is now added as a subaction of pNode.Parent.  This is equivalent to modifying the recipe for pNode.Parent action.  The correct way to handle this should be:  
+                                            // if the tempAct matches with one of the subactions that has not been initiated (potential intention), then replace that subact with newAction
+                                            ActionNode pParent = (ActionNode)(pNode.Parent);
+                                            foreach (ActionNode subact in pParent.SubActions)
+                                                if ((subact.Name == newAction.Name) & (subact.ActState == CAGA.Dialogue.ActionState.Unknown))
+                                                {
+                                                    ((ActionNode)(pNode.Parent)).SubActions.Add(newAction);
+                                                    newAction.Parent = pParent;
+                                                    ((ActionNode)(pNode.Parent)).SubActions.Remove(subact);
+                                                }
 
-                // search the params and subactions
-                foreach (ParamNode paramNode in actionNode.Params)
-                {
-                    ActionNode actNode = this._explainActionFromNode(paramNode, tempAct, dlgAct, indent + "  ");
-                    if (actNode != null)
-                    {
-                        return actNode;
-                    }
+
+                                        }
+                                        else if (pNode.Parent is ParamNode)
+                                        {
+                                            ((ParamNode)(pNode.Parent)).SubActions.Add(newAction);
+                                        }
+                                    }
+                                    return newAction;
+                                }
+                                return pNode;
+                            }
+
+                            // search the params and subactions
+                            foreach (ParamNode paramNode in pNode.Params)
+                            {
+                                ActionNode actNode = this._explainActionFromNode(paramNode, tempAct, dlgAct, indent + "  ");
+                                if (actNode != null)
+                                {
+                                    return actNode;
+                                }
+                            }
+                            foreach (ActionNode subActNode in pNode.SubActions)
+                            {
+                                ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
+                                if (actNode != null)
+                                {
+                                    return actNode;
+                                }
+                            }
+                            return null;
+                        }
+                    case "REF":
+                        // If the parent is a Action node and the new act is a reference, try to explain it as a parameter of its subaction
+                        {
+                            //
+                            return null;
+                        }
                 }
-                foreach (ActionNode subActNode in actionNode.SubActions)
-                {
-                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
-                    if (actNode != null)
-                    {
-                        return actNode;
-                    }
-                }
-                
+                return null;
             }
             else if (planNode is ParamNode)
             {
-                ParamNode paramNode = (ParamNode)planNode;
-                foreach (ActionNode subActNode in paramNode.SubActions)
+                switch (newAction.ActType)
                 {
-                    ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
-                    if (actNode != null)
-                    {
-                        return actNode;
-                    }
-                }   
+                    case "ACT":
+                        {
+                            ParamNode paramNode = (ParamNode)planNode;
+                            foreach (ActionNode subActNode in paramNode.SubActions)
+                            {
+                                ActionNode actNode = this._explainActionFromNode(subActNode, tempAct, dlgAct, indent + "  ");
+                                if (actNode != null)
+                                {
+                                    return actNode;
+                                }
+                            }
+                            return null;
+                        }
+                    case "REF":
+                        {
+                            // explain the REF for potential match with the parameter, if the parent still expecting a parameter (paraStatus=unknown)
+                            //retrieval the REF type, if it matches with the Parameter type, move forward
+                            // Create a RefNode based on the newAction
+                            // RefNode has a parant of planNode
+                            // RefNode.execute to calculate the referenced entities and set the parameter of the planNode
+                            RefNode newRef = new RefNode(newAction);
+                            newRef.parent = (ParamNode)planNode;
+                            newRef.execute();
+                            return null;
+                        }
+                }
+                return null;
             }
-
             return null;
         }
 
@@ -765,7 +859,7 @@ namespace CAGA.Dialogue
                 // Check to remove.
                 if (tmpParam.Flag == false)
                 {
-                    Console.WriteLine("删除的是" + tmpParam.Name);
+                    Console.WriteLine("what deleted is " + tmpParam.Name);
                     // Remove.
                     actionNode.Params.RemoveAt(index);
                 }

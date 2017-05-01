@@ -143,6 +143,7 @@ namespace CAGA.Dialogue
                 return respList;
             }
             bool isExplained = this._planGraph.Explain(this._currDlgAct);
+            this._planGraph.RefParser("Oleander");
             if (isExplained == false)
             {
                 respList.Add(new DialogueResponse(DialogueResponseType.speechError, "The input cannot be interpreted!"));

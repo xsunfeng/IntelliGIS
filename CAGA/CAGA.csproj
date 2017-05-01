@@ -170,6 +170,7 @@
     <Compile Include="Dialogue\ListOptionsWithExamplesWindow.xaml.cs">
       <DependentUpon>ListOptionsWithExamplesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogue\RefNode.cs" />
     <Compile Include="Dialogue\SelectByAttributeWindow.xaml.cs">
       <DependentUpon>SelectByAttributeWindow.xaml</DependentUpon>
     </Compile>

@@ -70,10 +70,11 @@ C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\NUI\Speech\grammar.xm
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\CAGA.exe
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\CAGA.pdb
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Kinect.dll
-C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.dll
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Kinect.xml
+C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\obj\x86\Debug\CAGA.csprojResolveAssemblyReference.cache
+C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\RibbonControlsLibrary.dll
+C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.dll
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\RibbonControlsLibrary.pdb
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\RibbonControlsLibrary.xml
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.pdb
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.xml
-C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\obj\x86\Debug\CAGA.csprojResolveAssemblyReference.cache

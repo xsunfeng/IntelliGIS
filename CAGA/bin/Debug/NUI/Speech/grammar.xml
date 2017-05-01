@@ -13,9 +13,12 @@
       </item>
       <item>
         <ruleref uri="#admin_area_answer"/>
-      </item>    
+      </item>
       <item>
         <ruleref uri="#add_feature_class"/>
+      </item>
+      <item>
+        <ruleref uri="#region_type_answer"/>
       </item>
       <item>
         <ruleref uri="#partiality_answer"/>
@@ -58,7 +61,7 @@
       </item>
       <item>
         <ruleref uri="#query_answer"/>
-      </item>    
+      </item>
     </one-of>
   </rule>
 
@@ -87,8 +90,12 @@
     <example> Show me the fire stations in Oleander </example>
     <item repeat="0-1">
       <one-of>
-        <item><ruleref uri="#imperative"/></item>
-        <item><ruleref uri="#intend"/></item>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
         <item>I am interested in</item>
       </one-of>
     </item>
@@ -120,7 +127,7 @@
     <example> mapping inside </example>
     <example> I want to map what is inside a region</example>
     <example> show me the map of parcels and dwelling units within the delineated region </example>
-    
+
     <item repeat="0-1">
       <one-of>
         <item>
@@ -149,11 +156,11 @@
         </item>
       </one-of>
     </item>
-    
+
     <item>
       <ruleref uri="#prep_inside"/>
     </item>
-    
+
     <item repeat="0-1">
       <ruleref uri="#region"/>
     </item>
@@ -161,7 +168,7 @@
     <tag> out.intention = "Mapping Inside"; </tag>
   </rule>
 
-  
+
 
   <rule id="intend">
     <example> I want </example>
@@ -187,7 +194,7 @@
       <item> show </item>
     </one-of>
   </rule>
-  
+
   <rule id="mapping">
     <example> mapping </example>
     <example> generate a map </example>
@@ -233,8 +240,8 @@
       <item> within </item>
     </one-of>
   </rule>
-  
-  
+
+
   <rule id="feature_class">
     <example> the parcels </example>
     <example> zoning </example>
@@ -346,7 +353,7 @@
       <item> the </item>
     </one-of>
   </rule>
-  
+
   <rule id="region">
     <item repeat="0-1">
       <ruleref uri="#article"/>
@@ -367,42 +374,42 @@
 
   <rule id="modify_previous_answer">
     <example> They are parcels </example>
-      <one-of>
+    <one-of>
+      <item>
         <item>
+          <ruleref uri="#negative"></ruleref>
+        </item>
+        <item repeat="0-1">
+          <ruleref uri="#article"></ruleref>
+        </item>
+        <one-of>
           <item>
-            <ruleref uri="#negative"></ruleref>
+            distance
           </item>
-          <item repeat="0-1">
-            <ruleref uri="#article"></ruleref>
+          <item>
+            speed limit
           </item>
-            <one-of>
-              <item>
-                distance 
-              </item>
-              <item>
-                speed limit
-              </item>
-              <item>
-                time limit
-              </item>
-            </one-of>
-            should be
-            <one-of>
-            <item>
-              <ruleref uri="#distance"/>
-              <tag> out.distance = rules.distance; </tag>
-            </item>
-            <item>
-              <ruleref uri="#speed_limit"/>
-              <tag> out.speed_limit = rules.speed_limit; </tag>
-            </item>
-            <item>
-              <ruleref uri="#time_limit"/>
-              <tag> out.time_limit = rules.time_limit; </tag>
-            </item>
-          </one-of>
+          <item>
+            time limit
+          </item>
+        </one-of>
+        should be
+        <one-of>
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <ruleref uri="#speed_limit"/>
+            <tag> out.speed_limit = rules.speed_limit; </tag>
+          </item>
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit; </tag>
+          </item>
+        </one-of>
       </item>
-      
+
       <item>
         How about
         <one-of>
@@ -421,19 +428,19 @@
         </one-of>
       </item>
 
-        <item>
-          Can you make them larger        
-          <tag> out.symbol_size = "true"; </tag>
-        </item>
-        <item>
-          Can you make them smaller
-          <tag> out.symbol_size = "false"; </tag>
-        </item>
-        
+      <item>
+        Can you make them larger
+        <tag> out.symbol_size = "true"; </tag>
+      </item>
+      <item>
+        Can you make them smaller
+        <tag> out.symbol_size = "false"; </tag>
+      </item>
+
     </one-of>
-    <tag> out.correction = "true"; </tag>      
+    <tag> out.correction = "true"; </tag>
   </rule>
-  
+
 
   <rule id="feature_class_answer">
     <example> They are parcels </example>
@@ -466,7 +473,7 @@
     </item>
   </rule>
 
-  
+
   <rule id="admin_area_answer">
     <example> I think it should be the city of Oleader </example>
     <example> It is city of Rochester, NY </example>
@@ -484,7 +491,7 @@
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
-    
+
     <item>
       <ruleref uri="#admin_area_name"/>
       <tag> out.admin_area = rules.admin_area_name; </tag>
@@ -494,11 +501,21 @@
   <rule id="admin_area_name">
     <item repeat="0-1"> city of </item>
     <one-of>
-      <item>Oleander <tag> out = "Oleander"; </tag> </item>
-      <item> Orlando <tag> out = "Orlando"; </tag> </item>
-      <item> Rochester <tag> out = "Rochester"; </tag> </item>
-      <item> Baltimore <tag> out = "Baltimore"; </tag> </item>
-      <item>Tarrant County <tag> out = "Tarrant County"; </tag></item>
+      <item>
+        Oleander <tag> out = "Oleander"; </tag>
+      </item>
+      <item>
+        Orlando <tag> out = "Orlando"; </tag>
+      </item>
+      <item>
+        Rochester <tag> out = "Rochester"; </tag>
+      </item>
+      <item>
+        Baltimore <tag> out = "Baltimore"; </tag>
+      </item>
+      <item>
+        Tarrant County <tag> out = "Tarrant County"; </tag>
+      </item>
     </one-of>
   </rule>
 
@@ -528,7 +545,7 @@
     <example> it is drawn manually </example>
     <example> drawn manually </example>
     <example> a buffer zone </example>
-    
+
     <item repeat="0-1">
       <one-of>
         <item> the region is </item>
@@ -631,7 +648,7 @@
       </item>
       <item>
         fully <tag> out = "whole"; </tag>
-      </item> 
+      </item>
       <item>
         partially inside <tag> out = "partial"; </tag>
       </item>
@@ -640,11 +657,11 @@
       </item>
     </one-of>
   </rule>
-  
-  
+
+
   <rule id="rdy_to_draw" scope="public">
     <example> I'm ready to draw </example>
-    
+
     <item>
       <one-of>
         <item> I am ready to </item>
@@ -657,7 +674,7 @@
         <item> draw </item>
       </one-of>
     </item>
-    
+
     <tag> out.intention = "Specify Region By Drawing"; </tag>
   </rule>
 
@@ -710,7 +727,7 @@
             <tag> out.source_layer = rules.source_layer; </tag>
           </item>
         </item>
-        
+
         <item>
           explore
           <item repeat="0-1">
@@ -731,7 +748,7 @@
             <ruleref uri="#source_layer"/>
             <tag> out.source_layer = rules.source_layer; </tag>
           </item>
-        </item>        
+        </item>
       </one-of>
     </item>
     <tag> out.intention = "Specify Region By Buffer"; </tag>
@@ -740,12 +757,12 @@
   <rule id="aff_or_neg" scope="public">
     <example> Yes </example>
     <example> No </example>
-    
+
     <item>
       <one-of>
         <item>
           <ruleref uri="#affirmative"/>
-          <tag> out.affirmative = rules.affirmative; </tag> 
+          <tag> out.affirmative = rules.affirmative; </tag>
         </item>
         <item>
           <ruleref uri="#negative"/>
@@ -756,7 +773,7 @@
   </rule>
 
   <rule id="affirmative">
-    
+
     <one-of>
       <item>
         yes <tag> out = "yes"; </tag>
@@ -777,7 +794,7 @@
         sure <tag> out = "sure"; </tag>
       </item>
     </one-of>
-    
+
   </rule>
 
   <rule id="negative">
@@ -839,13 +856,15 @@
     <example> total </example>
     <example> total number </example>
     <example> average </example>
-    
+
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
-    
+
     <one-of>
-      <item> statistics <tag> out = "statistics"; </tag></item>
+      <item>
+        statistics <tag> out = "statistics"; </tag>
+      </item>
       <item>
         sum <tag> out = "sum"; </tag>
       </item>
@@ -880,7 +899,7 @@
     <example> dwelling units </example>
     <example> areas of parcels</example>
     <example> land use </example>
-    
+
     <item repeat="0-1">
       <ruleref uri="#article"/>
     </item>
@@ -914,10 +933,10 @@
   <rule id="data_field_answer">
     <example> The region is a set of features filtered by attributes </example>
     <example> a set of features filtered by attributes </example>
-      <item>
-        <ruleref uri="#data_field"/>
-        <tag> out.data_field = rules.data_field; </tag>
-      </item>
+    <item>
+      <ruleref uri="#data_field"/>
+      <tag> out.data_field = rules.data_field; </tag>
+    </item>
   </rule>
 
   <rule id="summarize_data" scope="public">
@@ -934,7 +953,7 @@
         </item>
       </one-of>
     </item>
-    
+
     <item>
       <ruleref uri="#statistics"/>
       <tag> out.statistics = rules.statistics; </tag>
@@ -960,7 +979,7 @@
       <ruleref uri="#data_field"></ruleref>
       <tag> out.group_by_field = rules.data_field; </tag>
     </item>
-    
+
     <tag> out.intention = "Summarize Data"; </tag>
   </rule>
 
@@ -968,7 +987,7 @@
     <example> grouped by </example>
     <example> in groups of </example>
     <example> in each type of </example>
-    
+
     <one-of>
       <item>
         grouped by
@@ -984,7 +1003,7 @@
       </item>
     </one-of>
   </rule>
-  
+
   <rule id="distance_answer" scope="public">
     <example> it is 10 kilometers </example>
     <example> I think it should be about 10 miles </example>
@@ -1029,7 +1048,7 @@
 
   </rule>
 
-  
+
   <rule id="distance">
     <example> two miles </example>
     <example> three kilometers </example>
@@ -1064,8 +1083,8 @@
     <ruleref uri="#TimeUnit"/>
     <tag> out.unit = rules.TimeUnit; </tag>
   </rule>
- 
-  
+
+
   <rule id="operation">
     <example> add the buffer </example>
     <example> perform the intersect analysis </example>
@@ -1108,7 +1127,7 @@
 
     </one-of>
   </rule>
-  
+
   <rule id="layer_name">
     <example> the cities </example>
     <example> the lakes </example>
@@ -1178,9 +1197,9 @@
   </rule>
 
   <rule id="quantity_answer">
-      <item>
-        <ruleref uri = "#Quantity"/>
-      </item>
+    <item>
+      <ruleref uri = "#Quantity"/>
+    </item>
     <tag> out.quantity = rules.Quantity</tag>
   </rule>
 

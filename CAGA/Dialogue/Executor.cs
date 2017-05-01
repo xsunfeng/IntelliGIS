@@ -7,6 +7,7 @@ using CAGA.Map;
 using System.Speech.Synthesis;
 using System.Globalization;
 
+
 namespace CAGA.Dialogue
 {
     class Executor
@@ -103,7 +104,9 @@ namespace CAGA.Dialogue
                     break;
                 case "select the potential hispanic food store costumers": //32
                     result = this.SelectthePotentialHispanicFoodStoreCostumers(actionNode, currDlgAct, indent);
-                    break;   
+                    break;
+                //case "Calculate Service Area":
+                //    result = this.CalculateSericeArea(actionNode); 
                 default:
                     break;
             }
@@ -1063,6 +1066,28 @@ namespace CAGA.Dialogue
             return respList;
         }
 
+        //private ArrayList CalculateServiceArea(ActionNode actionNode)
+        //{
+        //    ActionNode pNode = actionNode.Parent as ActionNode;
+
+        //    foreach (ParamNode param in pNode.Params)
+        //        if (param.Name == "Store Locations")
+        //        {
+        //            IFeatureClass Stores = param.Values.
+
+        //            string str = (string)param.Values[0];
+        //            source_layer = str;
+        //            Console.WriteLine(indent + "source_layer=" + source_layer);
+        //        } 
+        //    else 
+        //    if (param.ParamType == "length")
+        //    {
+        //        distString = (string)((Hashtable)param.Values[0])["value"] + " " + (string)((Hashtable)param.Values[0])["unit"];
+        //        Console.WriteLine(indent + "distString=" + distString);
+        //    }
+        //    ParamNode para1 = pNode.Params;
+
+        //}
 
         private ArrayList DrawBuffer(ActionNode actionNode, DialogueAct currDlgAct, string indent)
         {
