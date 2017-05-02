@@ -12,8 +12,13 @@ DEBUG;TRACE
 C:\Users\cai\Documents\GitHub\IntelliGIS\CAGA\App.xaml
 10-221402896
 
+<<<<<<< HEAD
 40-408826941
 41-1912565985
+=======
+40-1582461364
+41-1619670564
+>>>>>>> fcb2da7957ca2cd198060ef853f2bd7d6fe06025
 Dialogue\ListOptionsWithExamplesWindow.xaml;Dialogue\SelectByAttributeWindow.xaml;Dialogue\SummaryResultsWindow.xaml;Dialogue\ListMapLayerOptionsWindow.xaml;Dialogue\ListPlainOptionsWindow.xaml;Dialogue\StatResultsWindow.xaml;Map\AttrTableWindow.xaml;MainWindow.xaml;Map\SymbologyWindow.xaml;SpeechSimWindow.xaml;
 
 False
