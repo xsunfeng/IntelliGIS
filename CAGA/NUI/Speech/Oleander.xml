@@ -1,0 +1,1340 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<grammar version="1.0" xml:lang="en-US" mode="voice" root="toplevel" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0" xmlns:sapi="http://schemas.microsoft.com/Speech/2002/06/SRGSExtensions" sapi:alphabet="x-microsoft-ups">
+  <rule id="toplevel" scope="public">
+    <one-of>
+      <item>
+        <ruleref uri="#show_map"/>
+      </item>
+      <item>
+        <ruleref uri="#mapping_inside"/>
+      </item>
+      <item>
+        <ruleref uri="#feature_class_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#admin_area_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#add_feature_class"/>
+      </item>
+      <item>
+        <ruleref uri="#region_type_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#partiality_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#data_field_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#rdy_to_draw"/>
+      </item>
+      <item>
+        <ruleref uri="#aff_or_neg"/>
+      </item>
+      <!--item>
+        <ruleref uri="#show_statistics"/>
+      </item-->
+      <item>
+        <ruleref uri="#summarize_data"/>
+      </item>
+      <item>
+        <ruleref uri="#perform_bufferop"/>
+      </item>
+      <item>
+        <ruleref uri="#distance_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#modify_previous_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#openning_store"/>
+      </item>
+      <item>
+        <ruleref uri="#classification_schema_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#symbolization_method_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#quantity_answer"/>
+      </item>
+      <item>
+        <ruleref uri="#query_answer"/>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="show_map" scope="public">
+    <example> visualize map data </example>
+    <example> Show me the fire stations in Oleander </example>
+    <item>
+      Show me the
+      <tag>out.p1="Show map"</tag>
+    </item>
+    <item>
+      Show me
+      <tag>out.p1="Show map"</tag>
+    </item>
+    <item>
+      <ruleref uri="#entities"/>
+      <tag> out.p2=rules.latest();</tag>
+    </item>
+  </rule>
+  
+  <rule id="entities" scope="public">
+    <one-of>
+      <item>
+        fire stations
+        <tag>out="fire station"</tag>
+      </item>
+      <item>
+        one handred year flood zone
+        <tag>out="one hundred year flood zone"</tag>
+      </item>
+      <item>
+        one percent chance flood zone
+        <tag>out="one hundred year flood zone"</tag>
+      </item>
+      <item>
+        city of Oleander
+        <tag>out="Oleander"</tag>
+      </item>
+    </one-of>
+ </rule>
+
+
+  <rule id="within_phrases" scope="public">
+    <example> parcels within the City of Oleander</example>
+      <item>
+        <ruleref uri="entities"/>
+        <tag> out.within_target=rules.latest();</tag>
+      </item>
+      <item>
+        within
+        <tag>out.prep="within"</tag>
+      </item>
+      <item>
+        <ruleref uri="entities"/>
+        <tag> out.within_source=rules.latest();</tag>
+      </item>
+  </rule>
+  
+  
+
+  <rule id="Count_features" scope="public">
+    <example> Count the number of features </example>
+    <example> How many parcels within 0ne hundred year flood zone?</example>
+    <item>
+      How many
+      <tag>out.p1="Count"</tag>
+    </item>
+    <item>
+      how many
+      <tag>out.p1="Count"</tag>
+    </item>
+    <item>
+      <ruleref uri="#entities"/>
+      <tag> out.p2=rules.latest();</tag>
+    </item>
+  </rule>
+
+ 
+  
+  
+
+  <rule id="mapping_nearby" scope="public">
+    <example> mapping nearby </example>
+    <example> Show me the fire stations in Oleander </example>
+    <item>
+      Show me the
+    </item>
+    <item>
+      fire stations
+      <tag> out.source_layer = "Fire Stations"; </tag>
+    </item>
+    <item>
+      in
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+    <tag> out.intention = "Mapping Nearby"; </tag>
+  </rule>
+
+  <rule id="openning_store" scope="public">
+    <example> I am interested in opening up a Hispanic food stores in Tarrant County</example>
+    <example> Show me the fire stations in Oleander </example>
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
+        <item>I am interested in</item>
+      </one-of>
+    </item>
+    <item repeat="0-1">
+      <one-of>
+        <item>opening</item>
+        <item>opening up</item>
+        <item>setting up</item>
+      </one-of>
+    </item>
+    <item>
+      <ruleref uri="#article"/>
+    </item>
+    <item>
+      <ruleref uri="#feature_class"/>
+      <tag> out.feature_class = rules.feature_class; </tag>
+    </item>
+    <item>
+      <ruleref uri="#prep_inside"/>
+    </item>
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+    <tag> out.intention = "openning store"; </tag>
+  </rule>
+
+  <rule id="mapping_inside" scope="public">
+    <example> mapping inside </example>
+    <example> I want to map what is inside a region</example>
+    <example> show me the map of parcels and dwelling units within the delineated region </example>
+
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#mapping"/>
+    </item>
+
+    <item repeat="0-1">
+      <item repeat="0-1">
+        <ruleref uri="#prep_topic"/>
+      </item>
+      <one-of>
+        <item> what is </item>
+        <item> what are </item>
+        <item repeat="1-">
+          <ruleref uri="#feature_class"></ruleref>
+          <tag> out.feature_class = rules.feature_class; </tag>
+        </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#prep_inside"/>
+    </item>
+
+    <item repeat="0-1">
+      <ruleref uri="#region"/>
+    </item>
+
+    <tag> out.intention = "Mapping Inside"; </tag>
+  </rule>
+
+
+
+  <rule id="intend">
+    <example> I want </example>
+    <example> I need to </example>
+    <one-of>
+      <item> I want </item>
+      <item> I need </item>
+      <item> I want to </item>
+      <item> I need to </item>
+      <item> I am going to </item>
+      <item> I am gonna </item>
+      <item> I would like to </item>
+    </one-of>
+  </rule>
+
+  <rule id="imperative">
+    <item repeat="0-1">
+      please
+    </item>
+    <one-of>
+      <item> show me </item>
+      <item> give me </item>
+      <item> show </item>
+    </one-of>
+  </rule>
+
+  <rule id="mapping">
+    <example> mapping </example>
+    <example> generate a map </example>
+    <example> the map </example>
+    <example> map </example>
+
+    <one-of>
+      <item> mapping </item>
+      <item>
+        <item repeat="0-1">
+          <one-of>
+            <item> generate </item>
+            <item> display </item>
+          </one-of>
+        </item>
+        <item repeat="0-1">
+          <ruleref uri="#article"/>
+        </item>
+        <item> map </item>
+      </item>
+
+    </one-of>
+  </rule>
+
+  <rule id="prep_topic">
+    <one-of>
+      <item> of </item>
+      <item> with </item>
+      <item> with regard to </item>
+      <item> about </item>
+      <item> with respec to </item>
+      <item> in the matter of </item>
+      <item> considering </item>
+      <item> concerning </item>
+      <item> regarding </item>
+    </one-of>
+  </rule>
+
+  <rule id="prep_inside">
+    <one-of>
+      <item> in </item>
+      <item> inside </item>
+      <item> within </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="feature_class">
+    <example> the parcels </example>
+    <example> zoning </example>
+    <example> lot boundaries </example>
+    <example> Flood areas </example>
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <one-of>
+      <item>
+        parcels <tag> out = "Parcels"; </tag>
+      </item>
+      <item>
+        lot boundaries <tag> out = "lot boundaries"; </tag>
+      </item>
+      <item>
+        zoning <tag> out = "zoning"; </tag>
+      </item>
+      <item>
+        city limit <tag> out = "city limit"; </tag>
+      </item>
+      <item>
+        flood areas <tag> out = "flood areas"; </tag>
+      </item>
+      <item>
+        Building Footprints <tag> out = "BuildingFootprints"; </tag>
+      </item>
+      <item>
+        Major Roads <tag> out = "MajorRoads"; </tag>
+      </item>
+      <item>
+        Hispanic food stores <tag> out = "Hispanic_Themed_Food_Stores"; </tag>
+      </item>
+      <item>
+        <one-of>
+          <item>
+            Population
+          </item>
+          <item>
+            Census Counts
+          </item>
+        </one-of>
+        <tag> out = "Census_Counts"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="source_layer">
+    <example> the parcels </example>
+    <example> zoning </example>
+    <example> lot boundaries </example>
+    <example> Flood areas </example>
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <one-of>
+      <item>
+        Fire Stations <tag> out = "Fire Stations"; </tag>
+      </item>
+      <item>
+        Blue Fire Station<tag> out = "Blue Fire Stations"; </tag>
+      </item>
+      <item>
+        Red Fire Station <tag> out = "Red Fire Stations"; </tag>
+      </item>
+      <item>
+        Green Fire Station <tag> out = "Green Fire Stations"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="classification_schema">
+    <one-of>
+      <item> quantile </item>
+      <item> equal interval </item>
+      <item> natural breaks </item>
+      <item> geometrical interval </item>
+    </one-of>
+  </rule>
+
+  <rule id="symbolization_method">
+    <one-of>
+      <item> graduated colors </item>
+      <item> graduated symbols </item>
+      <item> charts </item>
+      <item> contour </item>
+    </one-of>
+  </rule>
+
+  <rule id="classification_schema_answer">
+    <item>
+      <ruleref uri="#classification_schema"/>
+    </item>
+    <tag> out.classification_schema = rules.classification_schema; </tag>
+  </rule>
+
+  <rule id="symbolization_method_answer">
+    <item>
+      <ruleref uri="#symbolization_method"/>
+    </item>
+    <tag> out.symbolization_method = rules.symbolization_method; </tag>
+  </rule>
+
+  <rule id="article">
+    <one-of>
+      <item> a </item>
+      <item> an </item>
+      <item> the </item>
+    </one-of>
+  </rule>
+
+  <rule id="region">
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <item repeat="0-1">
+      <one-of>
+        <item> given </item>
+        <item> certain </item>
+        <item> delineated </item>
+      </one-of>
+    </item>
+    <one-of>
+      <item> region </item>
+      <item> area </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="modify_previous_answer">
+    <example> They are parcels </example>
+    <one-of>
+      <item>
+        <item>
+          <ruleref uri="#negative"></ruleref>
+        </item>
+        <item repeat="0-1">
+          <ruleref uri="#article"></ruleref>
+        </item>
+        <one-of>
+          <item>
+            distance
+          </item>
+          <item>
+            speed limit
+          </item>
+          <item>
+            time limit
+          </item>
+        </one-of>
+        should be
+        <one-of>
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <ruleref uri="#speed_limit"/>
+            <tag> out.speed_limit = rules.speed_limit; </tag>
+          </item>
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit; </tag>
+          </item>
+        </one-of>
+      </item>
+
+      <item>
+        How about
+        <one-of>
+          <item>
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <ruleref uri="#speed_limit"/>
+            <tag> out.speed_limit = rules.speed_limit; </tag>
+          </item>
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit; </tag>
+          </item>
+        </one-of>
+      </item>
+
+      <item>
+        Can you make them larger
+        <tag> out.symbol_size = "true"; </tag>
+      </item>
+      <item>
+        Can you make them smaller
+        <tag> out.symbol_size = "false"; </tag>
+      </item>
+
+    </one-of>
+    <tag> out.correction = "true"; </tag>
+  </rule>
+
+
+  <rule id="feature_class_answer">
+    <example> They are parcels </example>
+    <example> It is dwelling units </example>
+    <item repeat="0-1"> I think</item>
+
+    <item repeat="0-1">
+      <one-of>
+        <item> it should be </item>
+        <item> it is </item>
+        <item> it must be </item>
+        <item> it could be </item>
+        <item> they are </item>
+      </one-of>
+    </item>
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <item>
+      <one-of>
+        <item>
+          <ruleref uri="#feature_class"/>
+          <tag> out.feature_class = rules.feature_class; </tag>
+        </item>
+        <item>
+          <ruleref uri="#source_layer"/>
+          <tag> out.source_layer = rules.source_layer; </tag>
+        </item>
+      </one-of>
+    </item>
+  </rule>
+
+
+  <rule id="admin_area_answer">
+    <example> I think it should be the city of Oleader </example>
+    <example> It is city of Rochester, NY </example>
+    <item repeat="0-1"> I think</item>
+
+    <item repeat="0-1">
+      <one-of>
+        <item> it should be </item>
+        <item> it is </item>
+        <item> it must be </item>
+        <item> it could be </item>
+      </one-of>
+    </item>
+
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+
+    <item>
+      <ruleref uri="#admin_area_name"/>
+      <tag> out.admin_area = rules.admin_area_name; </tag>
+    </item>
+  </rule>
+
+  <rule id="admin_area_name">
+    <item repeat="0-1"> city of </item>
+    <one-of>
+      <item>
+        Oleander <tag> out = "Oleander"; </tag>
+      </item>
+      <item>
+        Orlando <tag> out = "Orlando"; </tag>
+      </item>
+      <item>
+        Rochester <tag> out = "Rochester"; </tag>
+      </item>
+      <item>
+        Baltimore <tag> out = "Baltimore"; </tag>
+      </item>
+      <item>
+        Tarrant County <tag> out = "Tarrant County"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="add_feature_class">
+    <example> Please add lot boundaries </example>
+    <example> I would like to understand how the residents are served by these fire stations.</example>
+    <item repeat="0-1"> Please </item>
+    <item repeat="0-1">
+      <one-of>
+        <item> add </item>
+      </one-of>
+    </item>
+
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+
+    <item>
+      <ruleref uri="#feature_class"/>
+      <tag> out.feature_class = rules.feature_class; </tag>
+    </item>
+  </rule>
+
+  <rule id="region_type_answer">
+    <example> The region is a set of features filtered by attributes </example>
+    <example> a set of features filtered by attributes </example>
+    <example> it is drawn manually </example>
+    <example> drawn manually </example>
+    <example> a buffer zone </example>
+
+    <item repeat="0-1">
+      <one-of>
+        <item> the region is </item>
+        <item> the regio will be </item>
+        <item> the regio should be </item>
+        <item> it is </item>
+        <item> it will be </item>
+        <item> it should be </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#region_type"/>
+      <tag> out.region_type = rules.region_type; </tag>
+    </item>
+  </rule>
+
+  <rule id="region_type">
+    <one-of>
+      <item>
+        a set of features filtered by attributes <tag> out = "features"; </tag>
+      </item>
+      <item>
+        a set of areal features <tag> out = "features"; </tag>
+      </item>
+      <item>
+        areal features <tag> out = "features"; </tag>
+      </item>
+      <item>
+        drawn manually <tag> out = "drawing"; </tag>
+      </item>
+      <item>
+        a buffer zone <tag> out = "buffer"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="query_answer">
+    <ruleref uri="#query"/>
+    <tag> out.query = rules.query; </tag>
+  </rule>
+
+  <rule id="query">
+    <example> greater than seventy percent </example>
+    <one-of>
+      <item>
+        <one-of>
+          <item>greater than</item>
+          <item>more than</item>
+        </one-of>
+        <tag> out.compare = "1"; </tag>
+      </item>
+      <item>
+        <one-of>
+          <item>smaller than</item>
+          <item>less than</item>
+        </one-of>
+        <tag> out.compare = "-1"; </tag>
+      </item>
+    </one-of>
+    <item>
+      <ruleref uri="#Quantity"/>
+      <tag> out.value = rules.Quantity; </tag>
+    </item>
+    <item>
+      percent
+    </item>
+  </rule>
+
+
+  <rule id="partiality_answer">
+    <example> the features as a whole </example>
+    <example> only the parts inside</example>
+    <example> partially </example>
+    <item>
+      <ruleref uri="#partiality"/>
+      <tag> out.partiality = rules.partiality; </tag>
+    </item>
+  </rule>
+
+  <rule id="partiality">
+    <one-of>
+      <item>
+        the features as a whole <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        the whole features <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        the parts inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        only the parts inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        their inside parts  <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        partially <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        fully <tag> out = "whole"; </tag>
+      </item>
+      <item>
+        partially inside <tag> out = "partial"; </tag>
+      </item>
+      <item>
+        fully inside <tag> out = "whole"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="rdy_to_draw" scope="public">
+    <example> I'm ready to draw </example>
+
+    <item>
+      <one-of>
+        <item> I am ready to </item>
+        <item> I'm ready to </item>
+      </one-of>
+    </item>
+
+    <item>
+      <one-of>
+        <item> draw </item>
+      </one-of>
+    </item>
+
+    <tag> out.intention = "Specify Region By Drawing"; </tag>
+  </rule>
+
+  <rule id="perform_bufferop" scope="public">
+    <example> buffer operation </example>
+    <example> I would like to explore the Parcels within 2 kilometers from fire stations </example>
+    <item>
+      <one-of>
+        <item> buffer operation </item>
+        <item> perform buffering </item>
+        <item>
+          <item repeat ="0-1">
+            I would like to
+          </item>
+          explore the
+          <item>
+            <ruleref uri="#feature_class"/>
+            <tag> out.feature_class = rules.feature_class;</tag>
+          </item>
+          within
+          <one-of>
+            <item>
+              <ruleref uri="#distance"/>
+              <tag> out.distance = rules.distance; </tag>
+            </item>
+            <item>
+              <ruleref uri="#time_limit"/>
+              <tag> out.time_limit = rules.time_limit; </tag>
+            </item>
+          </one-of>
+          from
+          <item>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
+          </item>
+        </item>
+
+        <item>
+          <item repeat ="0-1">
+            I would like to
+          </item>
+          explore
+          <item>
+            <ruleref uri="#time_limit"/>
+            <tag> out.time_limit = rules.time_limit;</tag>
+          </item>
+          around
+          <item>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
+          </item>
+        </item>
+
+        <item>
+          explore
+          <item repeat="0-1">
+            <ruleref uri="#distance"/>
+            <tag> out.distance = rules.distance; </tag>
+          </item>
+          <item>
+            <one-of>
+              <item> surrounding </item>
+              <item> around </item>
+            </one-of>
+          </item>
+          <item> around </item>
+          <item repeat="0-1">
+            <ruleref uri="#article"/>
+          </item>
+          <item>
+            <ruleref uri="#source_layer"/>
+            <tag> out.source_layer = rules.source_layer; </tag>
+          </item>
+        </item>
+      </one-of>
+    </item>
+    <tag> out.intention = "Specify Region By Buffer"; </tag>
+  </rule>
+
+  <rule id="aff_or_neg" scope="public">
+    <example> Yes </example>
+    <example> No </example>
+
+    <item>
+      <one-of>
+        <item>
+          <ruleref uri="#affirmative"/>
+          <tag> out.affirmative = rules.affirmative; </tag>
+        </item>
+        <item>
+          <ruleref uri="#negative"/>
+          <tag> out.negative = "negative"; </tag>
+        </item>
+      </one-of>
+    </item>
+  </rule>
+
+  <rule id="affirmative">
+
+    <one-of>
+      <item>
+        yes <tag> out = "yes"; </tag>
+      </item>
+      <item>
+        affirmative <tag> out = "affirmative"; </tag>
+      </item>
+      <item>
+        yup <tag> out = "yup"; </tag>
+      </item>
+      <item>
+        yes please <tag> out = "yes"; </tag>
+      </item>
+      <item>
+        yeah <tag> out = "yeah"; </tag>
+      </item>
+      <item>
+        sure <tag> out = "sure"; </tag>
+      </item>
+    </one-of>
+
+  </rule>
+
+  <rule id="negative">
+    <one-of>
+      <item>
+        no <tag> out = "no"; </tag>
+      </item>
+      <item>
+        negative <tag> out = "negative"; </tag>
+      </item>
+      <item>
+        nope <tag> out = "nope"; </tag>
+      </item>
+      <item>
+        veto <tag> out = "veto"; </tag>
+      </item>
+      <item>
+        never <tag> out = "never"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="show_statistics" scope="public">
+    <example> show statistics </example>
+    <example> please show me the statistics of dwelling units </example>
+
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#statistics"/>
+      <tag> out.statistics = rules.statistics; </tag>
+    </item>
+
+    <item repeat="0-1">
+      <item repeat="0-1">
+        <ruleref uri="#prep_topic"/>
+      </item>
+      <one-of>
+        <item repeat="1-">
+          <ruleref uri="#data_field"></ruleref>
+          <tag> out.data_field = rules.data_field; </tag>
+        </item>
+      </one-of>
+    </item>
+    <tag> out.intention = "Show Statistics"; </tag>
+  </rule>
+
+  <rule id="statistics">
+    <example> statistics </example>
+    <example> total </example>
+    <example> total number </example>
+    <example> average </example>
+
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+
+    <one-of>
+      <item>
+        statistics <tag> out = "statistics"; </tag>
+      </item>
+      <item>
+        sum <tag> out = "sum"; </tag>
+      </item>
+      <item>
+        total <tag> out = "sum"; </tag>
+      </item>
+      <item>
+        total number <tag> out = "sum"; </tag>
+      </item>
+      <item>
+        mean <tag> out = "mean"; </tag>
+      </item>
+      <item>
+        average <tag> out = "mean"; </tag>
+      </item>
+      <item>
+        average number <tag> out = "mean"; </tag>
+      </item>
+      <item>
+        maximum <tag> out = "maximum"; </tag>
+      </item>
+      <item>
+        minimum <tag> out = "minimum"; </tag>
+      </item>
+      <item>
+        distribution <tag> out = "distribution"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="data_field">
+    <example> dwelling units </example>
+    <example> areas of parcels</example>
+    <example> land use </example>
+
+    <item repeat="0-1">
+      <ruleref uri="#article"/>
+    </item>
+    <one-of>
+      <item>
+        dwelling units <tag> out = "dwelling units"; </tag>
+      </item>
+      <item>
+        areas of parcels <tag> out = "area"; </tag>
+      </item>
+      <item>
+        land use <tag> out = "land use"; </tag>
+      </item>
+      <item>
+        <one-of>
+          <item>sales</item>
+          <item>Monthly Sales</item>
+        </one-of>
+        <tag> out = "MonthlySales"; </tag>
+      </item>
+      <item>
+        <one-of>
+          <item>sales</item>
+          <item>Hispanic</item>
+        </one-of>
+        <tag> out = "HISPANIC"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="data_field_answer">
+    <example> The region is a set of features filtered by attributes </example>
+    <example> a set of features filtered by attributes </example>
+    <item>
+      <ruleref uri="#data_field"/>
+      <tag> out.data_field = rules.data_field; </tag>
+    </item>
+  </rule>
+
+  <rule id="summarize_data" scope="public">
+    <example> please show me the statistics of dwelling units grouped by land use </example>
+    <example> please show me the total area in each type of land use </example>
+
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#imperative"/>
+        </item>
+        <item>
+          <ruleref uri="#intend"/>
+        </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#statistics"/>
+      <tag> out.statistics = rules.statistics; </tag>
+    </item>
+
+    <item repeat="0-1">
+      <item repeat="0-1">
+        <ruleref uri="#prep_topic"/>
+      </item>
+      <one-of>
+        <item repeat="1-">
+          <ruleref uri="#data_field"></ruleref>
+          <tag> out.summarize_field = rules.data_field; </tag>
+        </item>
+      </one-of>
+    </item>
+
+    <item>
+      <ruleref uri="#group_by"/>
+    </item>
+
+    <item>
+      <ruleref uri="#data_field"></ruleref>
+      <tag> out.group_by_field = rules.data_field; </tag>
+    </item>
+
+    <tag> out.intention = "Summarize Data"; </tag>
+  </rule>
+
+  <rule id="group_by">
+    <example> grouped by </example>
+    <example> in groups of </example>
+    <example> in each type of </example>
+
+    <one-of>
+      <item>
+        grouped by
+      </item>
+      <item>
+        in groups of
+      </item>
+      <item>
+        in each type of
+      </item>
+      <item>
+        in each kind of
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="distance_answer" scope="public">
+    <example> it is 10 kilometers </example>
+    <example> I think it should be about 10 miles </example>
+    <item repeat="0-1">
+      <ruleref uri="#assertion"/>
+      <tag> out.assertion = "distance"; </tag>
+    </item>
+    <one-of>
+      <item>
+        <ruleref uri="#distance"/>
+        <tag> out.distance = rules.distance; </tag>
+      </item>
+      <item>
+        <ruleref uri="#speed_limit"/>
+        <tag> out.speed_limit = rules.speed_limit; </tag>
+      </item>
+      <item>
+        <ruleref uri="#time_limit"/>
+        <tag> out.time_limit = rules.time_limit; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="assertion">
+    <example> I think it should be  </example>
+    <example> It is about  </example>
+    <item repeat="0-1"> I think</item>
+
+    <one-of>
+      <item> it should be </item>
+      <item> it is </item>
+      <item> it must be </item>
+    </one-of>
+
+    <item repeat="0-1">
+      <one-of>
+        <item> about </item>
+        <item> around </item>
+      </one-of>
+    </item>
+
+  </rule>
+
+
+  <rule id="distance">
+    <example> two miles </example>
+    <example> three kilometers </example>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.value = rules.Quantity; </tag>
+
+    <ruleref uri="#Unit"/>
+    <tag> out.unit = rules.Unit; </tag>
+  </rule>
+
+
+  <rule id="speed_limit">
+    <example> two miles </example>
+    <example> three kilometers </example>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.value = rules.Quantity; </tag>
+
+    <ruleref uri="#SpeedUnit"/>
+    <tag> out.unit = rules.SpeedUnit; </tag>
+  </rule>
+
+
+  <rule id="time_limit">
+    <example> two miles </example>
+    <example> three kilometers </example>
+
+    <ruleref uri="#Quantity"/>
+    <tag> out.value = rules.Quantity; </tag>
+
+    <ruleref uri="#TimeUnit"/>
+    <tag> out.unit = rules.TimeUnit; </tag>
+  </rule>
+
+
+  <rule id="operation">
+    <example> add the buffer </example>
+    <example> perform the intersect analysis </example>
+    <one-of>
+      <item>
+        add the buffer <tag> out = "buffer"; </tag>
+      </item>
+      <item>
+        perform the buffer analysis <tag> out = "buffer"; </tag>
+      </item>
+      <item>
+        perform the intersect analysis <tag> out = "intersect"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="preposition">
+    <example> on </example>
+    <example> near </example>
+    <example> at </example>
+    <example> within </example>
+    <example> in </example>
+
+    <one-of>
+      <item>
+        on <tag> out = "on"; </tag>
+      </item>
+      <item>
+        near <tag> out = "near"; </tag>
+      </item>
+      <item>
+        at <tag> out = "at"; </tag>
+      </item>
+      <item>
+        within <tag> out = "in"; </tag>
+      </item>
+      <item>
+        in <tag> out = "in"; </tag>
+      </item>
+
+    </one-of>
+  </rule>
+
+  <rule id="layer_name">
+    <example> the cities </example>
+    <example> the lakes </example>
+    <example> the layer of country </example>
+    <item repeat="0-1"> the </item>
+    <item repeat="0-1"> layer of </item>
+    <one-of>
+      <item>
+        cities <tag> out = "cities"; </tag>
+      </item>
+      <item>
+        lakes <tag> out = "lakes"; </tag>
+      </item>
+      <item>
+        country <tag> out = "country"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="Unit">
+    <example> mile </example>
+    <example> miles </example>
+    <example> kilometers </example>
+    <example> kilometer </example>
+
+    <one-of>
+      <item>
+        mile <tag> out = "mile"; </tag>
+      </item>
+      <item>
+        miles <tag> out = "mile"; </tag>
+      </item>
+      <item>
+        kilometer <tag> out = "kilometer"; </tag>
+      </item>
+      <item>
+        kilometers <tag> out = "kilometer"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="SpeedUnit">
+    <one-of>
+      <item>
+        mile per hour <tag> out = "mile per hour"; </tag>
+      </item>
+      <item>
+        kilometers per hour <tag> out = "kilometers per hour"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+
+  <rule id="TimeUnit">
+    <one-of>
+      <item>
+        minutes <tag> out = "minutes"; </tag>
+      </item>
+      <item>
+        seconds <tag> out = "seconds"; </tag>
+      </item>
+      <item>
+        hours <tag> out = "hours"; </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <rule id="quantity_answer">
+    <item>
+      <ruleref uri = "#Quantity"/>
+    </item>
+    <tag> out.quantity = rules.Quantity</tag>
+  </rule>
+
+  <rule id="Quantity">
+    <example> one </example>
+    <example> two </example>
+    <example> three </example>
+    <example> four </example>
+    <one-of>
+      <item>
+        one <tag> out = 1; </tag>
+      </item>
+      <item>
+        two <tag> out = 2; </tag>
+      </item>
+      <item>
+        three <tag> out = 3; </tag>
+      </item>
+      <item>
+        four <tag> out = 4; </tag>
+      </item>
+      <item>
+        five <tag> out = 5; </tag>
+      </item>
+      <item>
+        six <tag> out = 6; </tag>
+      </item>
+      <item>
+        seven <tag> out = 7; </tag>
+      </item>
+      <item>
+        eight <tag> out = 8; </tag>
+      </item>
+      <item>
+        nine <tag> out = 9; </tag>
+      </item>
+      <item>
+        ten <tag> out = 10; </tag>
+      </item>
+      <item>
+        twenty <tag> out = 20; </tag>
+      </item>
+      <item>
+        thirty <tag> out = 30; </tag>
+      </item>
+      <item>
+        forty <tag> out = 40; </tag>
+      </item>
+      <item>
+        fifty <tag> out = 50; </tag>
+      </item>
+      <item>
+        sixty <tag> out = 60; </tag>
+      </item>
+      <item>
+        seventy <tag> out = 70; </tag>
+      </item>
+    </one-of>
+  </rule>
+</grammar>

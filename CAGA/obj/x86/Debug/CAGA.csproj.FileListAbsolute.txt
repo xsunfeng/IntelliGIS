@@ -78,3 +78,4 @@ C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\RibbonControlsLibrary
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\RibbonControlsLibrary.xml
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.pdb
 C:\Users\fzs122\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\Microsoft.Windows.Shell.xml
+C:\Users\cai\Documents\GitHub\IntelliGIS\CAGA\bin\Debug\CAGA.exe.config
