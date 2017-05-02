@@ -120,7 +120,8 @@ namespace CAGA.Map
             this._symWindow.Initialize();
 
             ShapefileWorkspaceFactoryClass tempWSFactory = new ShapefileWorkspaceFactoryClass();
-            this._tempWorkspace = tempWSFactory.OpenFromFile(System.IO.Path.GetTempPath(), 0);
+            string tempDir = System.IO.Path.GetTempPath();
+            this._tempWorkspace = tempWSFactory.OpenFromFile(tempDir, 0);
                 
             /*
             Type factoryType = Type.GetTypeFromProgID("esriDataSourcesGDB.AccessWorkspaceFactory");

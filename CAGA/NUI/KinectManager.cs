@@ -34,17 +34,22 @@ namespace CAGA.NUI
 
         public KinectManager()
         {
-            //loop through all the Kinects attached to this PC, and start the first that is connected without an error.
-            foreach (KinectSensor kinect in KinectSensor.KinectSensors)
+            try
             {
-                if (kinect.Status == KinectStatus.Connected)
+                //loop through all the Kinects attached to this PC, and start the first that is connected without an error.
+                foreach (KinectSensor kinect in KinectSensor.KinectSensors)
                 {
-                    kinectSensor = kinect;
-                    break;
+                    if (kinect.Status == KinectStatus.Connected)
+                    {
+                        kinectSensor = kinect;
+                        break;
+                    }
                 }
+                //listen to any status change for Kinects
+                KinectSensor.KinectSensors.StatusChanged += Kinects_StatusChanged;
             }
-            //listen to any status change for Kinects
-            KinectSensor.KinectSensors.StatusChanged += Kinects_StatusChanged;
+            catch {
+            }
         }
 
         
